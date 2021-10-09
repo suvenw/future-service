@@ -126,11 +126,11 @@ Sensitive-word | 基于 DFA 算法实现的高性能敏感词工具 | [https://g
 
 序号 | 操作名称 | 执行脚本
 ----|------|----
-1.| 克隆项目: |git clone http://git.suven.com:10000/B2/suven_framework.git
-2.|进入项目目录: |   cd future
+1.| 克隆项目: |git clone https://gitee.com/suvenw/future-service.git
+2.|进入项目目录: |   cd future-service
 3.| 清除项目缓存:  |  gradle clean
 4.| 编译项目: |   gradle idea
-5.|打包项目jar: |   gradle copyLib
+5.|打包项目jar: |   gradle lib
 6.|打包项目配置文件: | gradle copyEtc
 7.|打包项目源码包: | gradle sourcesJar
 
@@ -148,17 +148,17 @@ Sensitive-word | 基于 DFA 算法实现的高性能敏感词工具 | [https://g
     
 <dependencies>
     <dependency>
-        <groupId>e com.suven.framework</groupId>
+        <groupId>com.suven.framework</groupId>
         <artifactId>future-generator</artifactId>
         <version>${future.version}</version>
     </dependency>
     <dependency>
-        <groupId>e com.suven.framework</groupId>
+        <groupId>com.suven.framework</groupId>
         <artifactId>future-http</artifactId>
         <version>${future.version}</version>
     </dependency>
     <dependency>
-        <groupId>e com.suven.framework</groupId>
+        <groupId>com.suven.framework</groupId>
         <artifactId>future-utils</artifactId>
         <version>${future.version}</version>
     </dependency>
