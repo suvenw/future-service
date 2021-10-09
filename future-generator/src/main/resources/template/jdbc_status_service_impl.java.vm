@@ -1,0 +1,245 @@
+package ${packageName}.${moduleName}.service;
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+${importServicePackage}
+
+import ${packageName}.${moduleName}.entity.${className};
+import ${packageName}.${moduleName}.dao.${className}Dao;
+import ${packageName}.${moduleName}.dto.request.${className}RequestDto;
+import ${packageName}.${moduleName}.dto.response.${className}ResponseDto;
+import ${mainPath}.common.data.BasePage;
+import ${mainPath}.common.enums.TbStatusEnum;
+import ${mainPath}.http.data.vo.ResponseResultList;
+import ${mainPath}.util.excel.ExcelUtils;
+
+
+
+/**
+ * @ClassName: ${className}ServiceImpl.java
+ *
+ * @Author 作者 : ${author}
+ * @CreateDate 创建时间: ${datetime}
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: ${description} RPC业务接口逻辑实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+@Service
+public class ${className}ServiceImpl  implements ${className}Service {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+	private ${className}Dao  ${paramName}Dao;
+
+
+
+	/**
+	 * 保存用户信息同时更新数据库和缓存的实现方法
+	 * @param ${paramName}RequestDto ${className}ResponseDto
+	 * @return
+	 */
+	@Override
+	public ${className}ResponseDto save${className}(${className}RequestDto ${paramName}RequestDto){
+		${className} ${paramName} = ${className}.build().clone(${paramName}RequestDto);
+		${paramName} = ${paramName}Dao.save${className}(${paramName});
+		if(${paramName} == null){
+			return null;
+		}
+		${className}ResponseDto ${paramName}ResponseDto = ${className}ResponseDto.build().clone(${paramName});
+		return ${paramName}ResponseDto;
+
+	}
+	
+	/**
+	 * 更新用户信息同时更新数据库和缓存的实现方法
+	 * @param ${paramName}RequestDto  ${className}ResponseDto
+	 * @return
+	 */
+	@Override
+	public boolean update${className}(${className}RequestDto ${paramName}RequestDto){
+
+		${className} ${paramName} = ${className}.build().clone(${paramName}RequestDto);
+
+		return ${paramName}Dao.update${className}(${paramName});
+
+	}
+	
+	
+
+
+	
+
+
+	/**
+	* 通过主键ID删除对象信息实现缓存和数据库,同时删除的方法
+	* @param  ${paramName}Ids
+	* @return
+	*/
+	@Override
+	public int del${className}ByIds(List<Long> ${paramName}Ids){
+		if(null != ${paramName}Ids && ${paramName}Ids.size() == 1){
+			boolean update =   ${paramName}Dao.del${className}ById(${paramName}Ids.get(0));
+			return  update ? 1 : 0;
+		}
+		return ${paramName}Dao.del${className}ByIdList(${paramName}Ids);
+	}
+
+
+	/**
+	 * 通过主键ID更新对象用户信息实现缓存和数据库更新的方法
+	 * @param  ${paramName}Id 
+	 * @return
+	 */
+	@Override
+	public ${className}ResponseDto get${className}ById(long ${paramName}Id){
+		${className} ${paramName} =  ${paramName}Dao.get${className}ById(${paramName}Id);
+		if(${paramName} == null){
+			return null;
+		}
+		${className}ResponseDto ${paramName}ResponseDto = ${className}ResponseDto.build().clone(${paramName});
+
+		return ${paramName}ResponseDto ;
+
+	}
+
+	
+
+	
+		/**
+	 * 通过分页获取${className}信息实现查找缓存和数据库的方法
+	 * @param page BasePage
+	 * @return
+    * @author ${author}
+    * @date ${datetime}
+	 */
+	@Override
+	public List<${className}ResponseDto> get${className}ByPage(BasePage page){
+		List<${className}>  list = ${paramName}Dao.get${className}ListByPage(page);
+		List<${className}ResponseDto> resDtoList = new ArrayList<>();
+		if(null == list || list.isEmpty()){
+			return resDtoList;
+		}
+		list.forEach(${paramName} -> {
+			${className}ResponseDto ${paramName}ResponseDto = ${className}ResponseDto.build().clone(${paramName});
+
+
+			resDtoList.add(${paramName}ResponseDto);
+		});
+		return resDtoList;
+
+		}
+
+        /**
+        * 通过分页获取${className}信息实现查找缓存和数据库的方法
+        * @param page BasePage
+        * @return
+        * @author ${author}
+        * @date ${datetime}
+        */
+		@Override
+        public ResponseResultList<${className}ResponseDto> get${className}ByNextPage(BasePage page){
+            List<${className}ResponseDto>  list = this.get${className}ByPage(page);
+            boolean isNext =  page.isNextPage(list);
+            ResponseResultList<${className}ResponseDto> responseResultList = ResponseResultList.build().toIsNextPage(isNext).toList(list);
+            return responseResultList;
+
+        }
+
+
+    /**
+    * @Title: 启用${description}信息
+    * @Description:
+    * @return
+    * @throw
+    * @author ${author}
+    * @date ${datetime}
+    */
+	@Override
+    public boolean turnOn(List<Long> ids){
+         boolean result = ${paramName}Dao.updateStatusByIds(TbStatusEnum.ENABLE.index(), ids);
+			return result;
+    }
+    /**
+    * @Title: 禁用${description}信息
+    * @Description:
+    * @return
+    * @throw
+    * @author ${author}
+    * @date ${datetime}
+    */
+	@Override
+    public boolean turnOff(List<Long> ids){
+		boolean result = ${paramName}Dao.updateStatusByIds(TbStatusEnum.DISABLE.index(), ids);
+		return result;
+    }
+
+    /**
+    * @Title: 修改排序字段${description}信息
+    * @Description:
+    * @author ${author}
+    * @date ${datetime}
+    */
+	@Override
+    public boolean updateSortById(long id ,int sort){
+       return ${paramName}Dao.updateSortById(id,sort);
+    }
+
+
+    /**
+    * @Title: 禁用${description}信息
+    * @Description:
+    * @author ${author}
+    * @date ${datetime}
+    */
+	@Override
+    public boolean updateSortByIds(List<Long> idList,List<Integer> sortList){
+         return  ${paramName}Dao.updateSortByIds(sortList, idList);
+    }
+	
+	/**
+	 * 保存用户信息同时更新数据库和缓存的实现方法
+	 * @return
+	 */
+	@Override
+	public ${className}  set${className}(){
+		${className} ${paramName} = new ${className}();
+		 ${serviceVo}
+		 
+		 return ${paramName};
+	}
+
+	/**
+         * 获取总行数
+         * @param ${className}RequestDto
+         * @return
+         */
+	@Override
+	public int get${className}Count(${className}RequestDto ${paramName}RequestDto){
+		${className} ${paramName} = ${className}.build().clone(${paramName}RequestDto);
+		return ${paramName}Dao.get${className}Count(${paramName});
+	}
+
+	@Override
+	public boolean saveData(InputStream initialStream) {
+		return ExcelUtils.readExcel(initialStream,${paramName}Dao, ${className}.class,0);
+	}
+
+
+}

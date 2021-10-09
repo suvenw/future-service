@@ -1,0 +1,14 @@
+package com.suven.framework.common.api;
+
+public interface DocumentConst {
+
+    public static interface Api{
+        public static final String API_DOC_GROUP = "API_DOC_GROUP";
+        public static final String API_DOC_DES =   "API 接口文档";
+    }
+
+    public static interface Sys{
+        public static final String SYS_DOC_GROUP = "SYS_DOC_GROUP";
+        public static final String SYS_DOC_DES =   "后台管理文档接口";
+    }
+}

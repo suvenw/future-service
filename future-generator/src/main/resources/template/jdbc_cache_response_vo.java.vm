@@ -1,0 +1,64 @@
+package ${packageName}.${moduleName}.vo.response;
+
+
+import java.io.Serializable;
+import java.util.Date;
+
+import ${mainPath}.common.data.${baseEntity};
+import ${mainPath}.common.api.ApiDesc;
+import com.alibaba.excel.annotation.ExcelProperty;
+
+/**
+ * @ClassName: ${className}ResponseVo.java
+ *
+ * @Author 作者 : ${author}
+ * @CreateDate 创建时间: ${datetime}
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: ${description} http业务接口交互数据返回参数实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+public class ${className}ResponseVo  extends ${baseEntity} implements Serializable {
+
+
+
+#foreach ($column in $columns)
+#if( $column.fieldAttrName )
+$column.explainAttrName
+$column.docAttrName
+$column.excelAttrName
+$column.fieldAttrName
+#end
+
+#end
+
+    public static ${className}ResponseVo build(){
+        return new ${className}ResponseVo();
+    }
+
+#foreach ($column in $columns)
+    #if( $column.fieldAttrName )
+$column.setAttrName
+$column.buildResponseVoName
+$column.getAttrName
+    #end
+
+#end
+
+
+
+
+
+
+}

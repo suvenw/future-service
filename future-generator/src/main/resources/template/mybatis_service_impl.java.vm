@@ -1,0 +1,476 @@
+package ${packageName}.${moduleName}.service;
+
+
+${importServicePackage}
+import org.springframework.beans.factory.annotation.Autowired;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.io.InputStream;
+
+
+import ${packageName}.${moduleName}.entity.${className};
+import ${packageName}.${moduleName}.dao.${className}Dao;
+import ${packageName}.${moduleName}.dto.request.${className}RequestDto;
+import ${packageName}.${moduleName}.dto.response.${className}ResponseDto;
+import ${packageName}.${moduleName}.dto.enums.${className}QueryEnum;
+
+import ${mainPath}.core.db.IterableConverter;
+import ${mainPath}.core.mybatis.MyBatisUtils;
+import ${mainPath}.core.db.ext.Query;
+import ${mainPath}.common.data.BasePage;
+import ${mainPath}.common.enums.ResultEnum;
+import ${mainPath}.http.data.vo.ResponseResultList;
+import ${mainPath}.util.PageUtils;
+import ${mainPath}.util.excel.ExcelUtils;
+
+
+
+
+
+
+
+/**
+ * @ClassName: ${className}ServiceImpl.java
+ *
+ * @Author 作者 : ${author}
+ * @CreateDate 创建时间: ${datetime}
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: ${description} RPC业务接口逻辑实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+@Service
+public class ${className}ServiceImpl  implements ${className}Service {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    private ${className}Dao  ${paramName}Dao;
+
+
+
+    /**
+     * 保存${description}同时更新数据库和缓存的实现方法
+     * @param ${paramName}RequestDto ${className}ResponseDto
+     * @return
+     */
+    @Override
+    public ${className}ResponseDto save${className}(${className}RequestDto ${paramName}RequestDto){
+        if(${paramName}RequestDto== null){
+            return null;
+        }
+        ${className} ${paramName} = ${className}.build().clone(${paramName}RequestDto);
+        boolean result = ${paramName}Dao.save(${paramName});
+        if(!result){
+            return null;
+        }
+        ${className}ResponseDto ${paramName}ResponseDto = ${className}ResponseDto.build().clone(${paramName});
+        return ${paramName}ResponseDto;
+
+
+    }
+
+    /**
+     * 保存${description}同时更新数据库和缓存的实现方法,同时保存Id主键到对象中
+     * @param ${paramName}RequestDto ${className}ResponseDto
+     * @return
+     */
+    @Override
+    public ${className}ResponseDto saveId${className}(${className}RequestDto ${paramName}RequestDto){
+        if(${paramName}RequestDto== null){
+            return null;
+        }
+        ${className} ${paramName} = ${className}.build().clone(${paramName}RequestDto);
+        ${paramName} = ${paramName}Dao.saveId(${paramName});
+        if(null == ${paramName}){
+            return null;
+        }
+        ${className}ResponseDto ${paramName}ResponseDto = ${className}ResponseDto.build().clone(${paramName});
+        return ${paramName}ResponseDto;
+
+
+    }
+    /**
+     * 保存${description}同时更新数据库和缓存的实现方法,同时保存Id主键到对象中
+     * @param entityList ${className}RequestDto集合
+     * @return
+     */
+    @Override
+    public boolean saveBatchId${className}(Collection<${className}RequestDto> entityList) {
+        if(null == entityList ){
+            return false;
+        }
+        List<${className}> list = new ArrayList<>();
+        entityList.forEach(e -> list.add(${className}.build().clone(e)));
+        boolean result = ${paramName}Dao.saveBatchId(list);
+        return result;
+    }
+    /**
+     * 批量保存${description}同时更新数据库和缓存的实现方法
+     * @param entityList ${className}RequestDto集合
+     * @return
+     */
+    @Override
+    public boolean saveBatch${className}(Collection<${className}RequestDto> entityList, int batchSize) {
+        if(null == entityList || entityList.size() !=  batchSize){
+            return false;
+        }
+        List<${className}> list = new ArrayList<>();
+        entityList.forEach(e -> list.add(${className}.build().clone(e)));
+        boolean result = ${paramName}Dao.saveBatch(list,batchSize);
+        return result;
+    }
+
+    @Override
+    public boolean saveOrUpdateBatch${className}(Collection<${className}RequestDto> entityList, int batchSize) {
+        if(null == entityList || entityList.size() != batchSize ){
+            return false;
+        }
+        List<${className}> list = new ArrayList<>();
+        entityList.forEach(e -> list.add(${className}.build().clone(e)));
+        boolean result = ${paramName}Dao.saveOrUpdateBatch(list,batchSize);
+        return result;
+    }
+
+
+    @Override
+    public boolean updateBatchById(Collection<${className}RequestDto> entityList, int batchSize) {
+        if(null == entityList || entityList.size() != batchSize ){
+            return false;
+        }
+        List<${className}> list = new ArrayList<>();
+        entityList.forEach(e -> list.add(${className}.build().clone(e)));
+        boolean result =  ${paramName}Dao.updateBatchById(list,batchSize);
+        return result;
+    }
+
+    /**
+     * 更新${description}同时更新数据库和缓存的实现方法
+     * @param ${paramName}RequestDto  ${className}ResponseDto
+     * @return
+     */
+    @Override
+    public boolean update${className}(${className}RequestDto ${paramName}RequestDto){
+
+          if(null ==  ${paramName}RequestDto){
+              return false;
+          }
+
+        ${className} ${paramName} = ${className}.build().clone(${paramName}RequestDto);
+
+        return ${paramName}Dao.updateById(${paramName});
+
+
+    }
+
+
+
+
+
+
+
+    /**
+     * 通过主键ID删除对象信息实现缓存和数据库,同时删除的方法
+     * @param  idList
+     * @return
+     */
+    @Override
+    public int del${className}ByIds(List<Long> idList){
+        boolean result = false;
+        if(null == idList){
+            return ResultEnum.FAIL.id();
+        }
+        if( idList.size() == 1) {
+            result = ${paramName}Dao.removeById(idList.get(0));
+        }else {
+            result =  ${paramName}Dao.removeByIds(idList);
+        }
+        if(result){
+            return ResultEnum.SUCCESS.id();
+        }
+        return ResultEnum.FAIL.id();
+
+    }
+
+
+    /**
+     * 通过主键ID更新对象${description}实现缓存和数据库更新的方法
+     * @param  ${paramName}Id
+     * @return
+     */
+    @Override
+    public ${className}ResponseDto get${className}ById(long ${paramName}Id){
+        if(${paramName}Id < 0 ){
+            return null;
+        }
+        ${className} ${paramName} =  ${paramName}Dao.getById(${paramName}Id);
+        if(${paramName} == null){
+            return null;
+        }
+        ${className}ResponseDto ${paramName}ResponseDto = ${className}ResponseDto.build().clone(${paramName});
+
+        return ${paramName}ResponseDto ;
+
+    }
+
+    /**
+     * 通过参数limit0,1获取对象${description}的查询方法
+     * @param  queryEnum
+     * @return
+     */
+     @Override
+     public   ${className}ResponseDto get${className}ByOne( ${className}QueryEnum queryEnum,${className}RequestDto ${paramName}RequestDto){
+          if(${paramName}RequestDto == null ){
+              return null;
+          }
+           QueryWrapper<${className}> queryWrapper = ${paramName}Dao.builderQueryEnum( queryEnum, ${paramName}RequestDto);
+            //分页对象        PageHelper
+           Page<${className}> iPage = new Page<>(0, 1);
+           iPage.setSearchCount(false);
+           List<${className}>  list = ${paramName}Dao.getListByPage(iPage,queryWrapper);
+           if(null == list || list.isEmpty()){
+                 return null;
+           }
+           ${className} ${paramName} = list.get(0);
+           ${className}ResponseDto ${paramName}ResponseDto = ${className}ResponseDto.build().clone(${paramName});
+
+            return ${paramName}ResponseDto ;
+       }
+
+
+ /**
+   * 通过条件查询${className}信息列表,实现查找缓存和数据库的方法,但不统计总页数
+   * @param paramObject Object
+   * @return
+   * @author ${author}
+   * @date ${datetime}
+   */
+  @Override
+  public List<${className}ResponseDto> get${className}ListByQuery( Object  paramObject, ${className}QueryEnum queryEnum){
+
+      QueryWrapper<${className}> queryWrapper = ${paramName}Dao.builderQueryEnum( queryEnum, paramObject);
+
+      List<${className}>  list = ${paramName}Dao.getListByQuery(queryWrapper);
+      if(null == list ){
+          list = new ArrayList<>();
+      }
+      List<${className}ResponseDto>  resDtoList =  IterableConverter.convertList(list,${className}ResponseDto.class);
+      return resDtoList;
+
+  }
+
+
+    /**
+     * 通过分页获取${className}信息列表,实现查找缓存和数据库的方法,但不统计总页数
+     * @param page BasePage
+     * @return
+     * @author ${author}
+     * @date ${datetime}
+     */
+    @Override
+    public List<${className}ResponseDto> get${className}ListByPage(BasePage page,${className}QueryEnum queryEnum){
+
+        QueryWrapper<${className}> queryWrapper =${paramName}Dao.builderQueryEnum(queryEnum,  page.getParamObject());
+        //分页对象        PageHelper
+        Page<${className}> iPage = new Page<>(page.getPageNo(), page.getPageSize());
+        iPage.setSearchCount(false);
+        List<${className}>  list = ${paramName}Dao.getListByPage(iPage,queryWrapper);
+        if(null == list ){
+            list = new ArrayList<>();
+        }
+        List<${className}ResponseDto>  resDtoList =  IterableConverter.convertList(list,${className}ResponseDto.class);
+        return resDtoList;
+
+    }
+
+
+
+   /**
+     * 通过分页获取${className} ${description}信息实现查找缓存和数据库的方法,不查总页数
+     * @param page BasePage
+     * @return
+     * @author ${author}
+     * @date ${datetime}
+     */
+    @Override
+    public ResponseResultList<${className}ResponseDto> get${className}ByQueryPage(BasePage page,${className}QueryEnum queryEnum){
+
+        ResponseResultList<${className}ResponseDto> responseResultList = ResponseResultList.build();
+        QueryWrapper<${className}> queryWrapper = ${paramName}Dao.builderQueryEnum(queryEnum,  page.getParamObject());
+        //分页对象        PageHelper
+        Page<${className}> iPage = new Page<>(page.getPageNo(), page.getPageSize());
+        iPage.setSearchCount(false);
+        List<${className}>  list = ${paramName}Dao.getListByPage(iPage,queryWrapper);
+        if(null == list ){
+            list = new ArrayList<>();
+        }
+        List<${className}ResponseDto>  resDtoList =  IterableConverter.convertList(list,${className}ResponseDto.class);
+        boolean isNext =  page.isNextPage(resDtoList);
+        responseResultList.toIsNextPage(isNext).toList(resDtoList);
+        return responseResultList;
+    }
+
+    /**
+     * 通过分页获取${className}信息列表,实现查找缓存和数据库的方法,并且查询总页数
+     * @param page BasePage
+     * @return
+     * @author ${author}
+     * @date ${datetime}
+     */
+    @Override
+    public ResponseResultList<${className}ResponseDto> get${className}ByNextPage(BasePage page,${className}QueryEnum queryEnum){
+        ResponseResultList<${className}ResponseDto> responseResultList = ResponseResultList.build();
+        QueryWrapper<${className}> queryWrapper = ${paramName}Dao.builderQueryEnum(queryEnum,  page.getParamObject());;
+        //分页对象        PageHelper
+        Page<${className}> iPage = new Page<>(page.getPageNo(), page.getPageSize());
+        iPage.setSearchCount(true);
+        List<${className}>  list = ${paramName}Dao.getListByPage(iPage,queryWrapper);
+        if(null == list ){
+            list = new ArrayList<>();
+        }
+        List<${className}ResponseDto>  resDtoList =  IterableConverter.convertList(list,${className}ResponseDto.class);
+        boolean isNext =  page.isNextPage(resDtoList);
+        responseResultList.toIsNextPage(isNext).toList(resDtoList).toTotal((int)iPage.getTotal());
+        return responseResultList;
+
+    }
+#if( $column.baseEntityNo==2 )
+
+    /**
+     * @Title: 启用${description}信息
+     * @Description:
+     * @return
+     * @throw
+     * @author ${author}
+     * @date ${datetime}
+     */
+    @Override
+    public boolean turnOn(List<Long> idList){
+        if(null == idList || idList.isEmpty()){
+            return false;
+        }
+        ${className} ${paramName} = ${className}.build().toStatus(TbStatusEnum.ENABLE.index());
+
+        //修改条件s
+        UpdateWrapper<${className}> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.in( "id",idList);
+
+        boolean result = ${paramName}Dao.update( ${paramName},updateWrapper );
+        return result;
+    }
+    /**
+     * @Title: 禁用${description}信息
+     * @Description:
+     * @return
+     * @throw
+     * @author ${author}
+     * @date ${datetime}
+     */
+    @Override
+    public boolean turnOff(List<Long> idList){
+        if(null == idList || idList.isEmpty()){
+            return false;
+        }
+        ${className} ${paramName} = ${className}.build().toStatus(TbStatusEnum.DISABLE.index());
+
+        //修改条件s
+        UpdateWrapper<${className}> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.in( "id",idList);
+
+        boolean result = ${paramName}Dao.update( ${paramName},updateWrapper );
+        return result;
+    }
+
+    /**
+     * @Title: 修改排序字段${description}信息
+     * @Description:
+     * @author ${author}
+     * @date ${datetime}
+     */
+    @Override
+    public boolean updateSortById(long id ,int sort){
+        if(id < 0 ){
+            return false;
+        }
+        ${className} ${paramName} = ${className}.build().toSort(sort);
+        //修改条件s
+        UpdateWrapper<${className}> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id",id);
+        boolean result = ${paramName}Dao.update( ${paramName},updateWrapper);
+        return result;
+    }
+
+
+    /**
+     * @Title: 禁用${description}信息
+     * @Description:
+     * @author ${author}
+     * @date ${datetime}
+     */
+    @Override
+    public boolean updateSortByIds(List<Long> idList,List<Integer> sortList){
+        if(null == idList || null == sortList || idList.isEmpty() ){
+            return false;
+        }
+        List<${className}> ${paramName}List = new ArrayList<>();
+        for (int i = 0 ,j  = idList.size(); i < j ; i++){
+            ${className}  ${paramName} = ${className} .build().toSort(sortList.get(i));
+            ${paramName}.toId(idList.get(i));
+            ${paramName}List.add(${paramName});
+            //修改条件s
+//            UpdateWrapper< ${className}> updateWrapper = new UpdateWrapper<>();
+//           updateWrapper.eq("id",idList.get(i));
+//            ${paramName}Dao.update(${paramName},updateWrapper);
+
+        }
+            ${paramName}Dao.updateBatchById(${paramName}List);
+
+        return true;
+    }
+ #end
+
+    @Override
+    public PageUtils queryPage(Map<String, Object> params) {
+        IPage iPage =  new Query<${className}>().getPage(params);
+        QueryWrapper<${className}> queryWrapper = new QueryWrapper<>();
+        IPage<${className}> page = ${paramName}Dao.page(iPage,queryWrapper);
+        return new PageUtils(page);
+    }
+
+
+    /**
+     * 保存${description}同时更新数据库和缓存的实现方法
+     * @return
+     */
+    public ${className}  set${className}(){
+        ${className} ${paramName} = new ${className}();
+        ${serviceVo}
+
+        return ${paramName};
+    }
+
+    @Override
+    public boolean saveData(InputStream initialStream) {
+        return ExcelUtils.readExcel(initialStream,${paramName}Dao, ${className}.class,0);
+    }
+
+
+}

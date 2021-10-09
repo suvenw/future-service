@@ -1,0 +1,223 @@
+package ${packageName}.${moduleName}.service;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.io.InputStream;
+
+
+import ${packageName}.${moduleName}.dto.request.${className}RequestDto;
+import ${packageName}.${moduleName}.dto.response.${className}ResponseDto;
+import ${packageName}.${moduleName}.dto.enums.${className}QueryEnum;
+import ${mainPath}.common.data.BasePage;
+import ${mainPath}.util.PageUtils;
+import ${mainPath}.http.data.vo.ResponseResultList;
+
+
+
+
+/**
+ * @ClassName: ${className}Service.java
+ *
+ * @Author 作者 : ${author}
+ * @CreateDate 创建时间: ${datetime}
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: ${description} RPC业务接口逻辑实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+
+public interface ${className}Service {
+
+
+
+    /**
+     * 保存${description}更新数据库和缓存的实现方法
+     * @param ${paramName}RequestDto  ${className}RequestDto
+     * @return
+     */
+    ${className}ResponseDto save${className}(${className}RequestDto ${paramName}RequestDto);
+
+
+     /**
+     * 保存${description}同时更新数据库和缓存的实现方法,同时保存Id主键到对象中
+     * @param ${paramName}RequestDto  ${className}RequestDto
+     * @return
+     */
+    ${className}ResponseDto saveId${className}(${className}RequestDto ${paramName}RequestDto);
+
+
+     /**
+     * 保存${description}同时更新数据库和缓存的实现方法,同时保存Id主键到对象中
+     * @return
+     */
+    boolean saveBatchId${className}(Collection<${className}RequestDto> entityList);
+
+    /**
+     * 保存${description}更新数据库和缓存的实现方法
+     * @return
+     */
+    boolean saveBatch${className}(Collection<${className}RequestDto> entityList, int batchSize);
+
+    /**
+     * 保存${description}更新数据库和缓存的实现方法
+     * @return
+     */
+    boolean saveOrUpdateBatch${className}(Collection<${className}RequestDto> entityList, int batchSize);
+
+
+
+    /**
+     * 更新${description}同时更新数据库和缓存的实现方法
+     * @param ${paramName}RequestDto  ${className}RequestDto
+     * @return
+     */
+    boolean update${className} (${className}RequestDto ${paramName}RequestDto);
+
+    /**
+     * 更新${description}同时更新数据库和缓存的实现方法
+     * @return
+     */
+    boolean updateBatchById(Collection<${className}RequestDto> entityList, int batchSize);
+
+
+    /**
+     * 通过主键ID删除对象信息实现缓存和数据库,同时删除的方法
+     * @param  ${paramName}Ids
+     * @return
+     */
+    int del${className}ByIds(List<Long>  ${paramName}Ids);
+
+
+    /**
+     * 通过主键ID更新对象${description}实现缓存和数据库更新的方法
+     * @param  ${paramName}Id
+     * @return
+     */
+        ${className}ResponseDto get${className}ById(long ${paramName}Id);
+
+    /**
+     * 通过参数limit0,1获取对象${description}的查询方法
+     * @param  queryEnum
+     * @return
+     */
+    ${className}ResponseDto get${className}ByOne( ${className}QueryEnum queryEnum,${className}RequestDto ${paramName}RequestDto);
+
+
+    /**
+    * 通过分页和枚举条件获取${className}信息实现查找缓存和数据库的方法
+    * @param paramObject Object
+    * @return
+    * @author ${author}
+    * @date ${datetime}
+    */
+    List<${className}ResponseDto> get${className}ListByQuery(Object  paramObject, ${className}QueryEnum queryEnum);
+
+
+    /**
+     * 通过分页获取${className}信息实现查找缓存和数据库的方法
+     * @param page BasePage
+     * @return
+     * @author ${author}
+     * @date ${datetime}
+     */
+    List<${className}ResponseDto> get${className}ListByPage(BasePage page,${className}QueryEnum queryEnum);
+
+
+
+
+    /**
+     * 通过分页获取${className} ${description}信息实现查找缓存和数据库的方法,包括查总页数
+     * @param page BasePage
+     * @return
+     * @author ${author}
+     * @date ${datetime}
+     */
+    ResponseResultList<${className}ResponseDto> get${className}ByNextPage(BasePage page,${className}QueryEnum queryEnum);
+
+    /**
+     * 通过分页获取${className} ${description}信息实现查找缓存和数据库的方法,不查总页数
+     * @param page BasePage
+     * @return
+     * @author ${author}
+     * @date ${datetime}
+     */
+    ResponseResultList<${className}ResponseDto> get${className}ByQueryPage(BasePage page,${className}QueryEnum queryEnum);
+
+
+#if( $column.baseEntityNo==2 )
+    /**
+     * @Title: 启用${description}信息
+     * @Description:
+     * @return
+     * @throw
+     * @author ${author}
+     * @date ${datetime}
+     *  --------------------------------------------------------
+     *  modifyer    modifyTime                 comment
+     *
+     *  --------------------------------------------------------
+     */
+    public boolean turnOn(List<Long> idList);
+
+    /**
+     * @Title: 禁用${description}信息
+     * @Description:
+     * @return
+     * @throw
+     * @author ${author}
+     * @date ${datetime}
+     *  --------------------------------------------------------
+     *  modifyer    modifyTime                 comment
+     *
+     *  --------------------------------------------------------
+     */
+    public boolean turnOff(List<Long> idList);
+
+
+    /**
+     * @Title: 修改排序字段${description}信息
+     * @Description:
+     * @return
+     * @author ${author}
+     * @date ${datetime}
+     *  --------------------------------------------------------
+     *  modifyer    modifyTime                 comment
+     *
+     *  --------------------------------------------------------
+     */
+    public boolean updateSortById(long id ,int sort);
+
+
+    /**
+     * @Title: 禁用${description}信息
+     * @Description:
+     * @return
+     * @author ${author}
+     * @date ${datetime}
+     */
+    public boolean updateSortByIds(List<Long> idList,List<Integer> sortList);
+#end
+
+    public PageUtils queryPage(Map<String, Object> params);
+
+
+    /**
+    * 通过上传excel 保存数据到数据库
+    * @param initialStream
+    * @return
+    */
+    public boolean saveData(InputStream initialStream);
+
+}

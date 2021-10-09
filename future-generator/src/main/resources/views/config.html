@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>代码生成器</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<link rel="stylesheet" href="plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="css/main.css">
+<script src="libs/jquery.min.js"></script>
+<script src="plugins/layer/layer.js"></script>
+<script src="libs/bootstrap.min.js"></script>
+<script src="libs/vue.min.js"></script>
+<script src="plugins/jqgrid/grid.locale-cn.js"></script>
+<script src="plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="js/common.js"></script>
+</head>
+<body>
+<div id="rrapp">
+
+	<div class="panel panel-default">
+
+		<div class="panel-heading">输入类的基本信息</div>
+			<div class="panel-heading-inner">
+                <label class="label">使用模板:</label>
+                <select class="form-select" v-model="q.tempEnum" @keyup.enter="query"  name="tempEnum"  >
+                    <option value="" selected="selected">请选择模板</option>
+                    <option value="JdbcCodeCacheEnum">JDBC缓存模板JdbcCodeCacheEnum</option>
+                    <option value="JdbcCodeStatusEnum">JDBC排序模板JdbcCodeStatusEnum</option>
+                    <option value="MybatisCodeEnum">MYBATIS排序模板MybatisCodeEnum</option>
+                </select>
+                <label class="label">基础Dao类名称:</label>
+                <select class="form-select" v-model="q.entityDao" @keyup.enter="query"  name="entityDao"  >
+                    <option value="" selected="selected">请选择基础Dao类</option>
+                    <option value="JdbcBaseCacheDao">JdbcBaseCacheDao</option>
+                    <option value="JdbcBaseEntityDao">JdbcBaseEntityDao</option>
+                    <option value="MyBatisBaseCacheDao">MyBatisBaseCacheDao</option>
+                    <option value="MyBatisBaseEntityDao">MyBatisBaseEntityDao</option>
+                </select>
+
+
+            </div>
+            <div class="panel-heading-inner">
+                <label class="label">数据库类型:</label>
+                <select class="form-select" v-model="q.databaseType" @keyup.enter="query"  name="databaseType"  >
+                    <option value="" selected="selected">请选择数据库</option>
+                    <option value="mysql">MYSQL数据库</option>
+                    <option value="oracle">ORACLE数据库</option>
+                    <option value="sqlserver">SQLSERVER数据库</option>
+                    <option value="postgresql">POSTGRESQL数据库</option>
+                </select>
+
+                <label class="label">基础Bean类名称:</label>
+                <select class="form-select" v-model="q.entity" @keyup.enter="query"  name="entity"  >
+                    <option value="" selected="selected">请选择基础Bean类</option>
+                    <option value="BaseEntity">BaseEntity</option>
+                    <option value="BaseStatusEntity">BaseStatusEntity</option>
+                </select>
+
+            </div>
+             <div class="panel-heading-inner">
+				<!--
+				<label class="label">数据库类型:</label><input type="text" class="form-control" v-model="q.databaseType"    @keyup.enter="query"  name="databaseType"    placeholder="eg: mysql,oracle,sqlserver,postgresql ">
+                <label class="label">是否使用SpringMVC:</label><input type="text" class="form-control" v-model="q.mvc"    @keyup.enter="query"   name="mvc"    placeholder="eg: 1.SpringMVC ">
+                -->
+                <label class="label">生成界面类型:</label><input type="text" class="form-control" v-model="q.pageVal"      @keyup.enter="query"   name="pageVal"         placeholder="0.不生成界面,1.生成AntDesign界面,2.生成Element界面">
+                <label class="label">是否使用Dubbo:</label><input type="text" class="form-control" v-model="q.dubbo"   @keyup.enter="query"   name="dubbo"   placeholder="eg: 1.Dubbo,默认为0,以spring生成">
+            </div>
+			<div class="grid-btn">
+				<a class="btn btn-primary" @click="config"><i class="fa fa-file-code-o"></i>&nbsp;修改生成环境</a>
+			</div>
+            </div>
+
+
+            <table id="jqGrid"></table>
+            <div id="jqGridPager"></div>
+</div>
+
+<script src="js/config.js"></script>
+</body>
+</html>

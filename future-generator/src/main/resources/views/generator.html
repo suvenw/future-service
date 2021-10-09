@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>代码生成器</title>
+<meta charset="UTF-8">
+<!--<meta http-equiv="X-UA-Compatible" content="IE=edge">-->
+<!--<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">-->
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=8">
+	<meta http-equiv="Expires" content="0">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<meta http-equiv="Cache" content="no-cache">
+
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<link rel="stylesheet" href="plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="css/main.css">
+<script src="libs/jquery.min.js"></script>
+<script src="plugins/layer/layer.js"></script>
+<script src="libs/bootstrap.min.js"></script>
+<script src="libs/vue.min.js"></script>
+<script src="plugins/jqgrid/grid.locale-cn.js"></script>
+<script src="plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="js/common.js"></script>
+</head>
+<body>
+<div id="rrapp">
+	<div class="panel panel-default">
+		<div class="panel-heading">输入类的基本信息</div>
+		<div class="panel-heading-inner">
+			<label class="label">主包根目录:</label><input type="text" class="form-control" v-model="q.mainPath"   name="mainPath" placeholder="mainPath,主包根目录,eg: vip.suven ">
+			<label class="label">包目   录:</label><input type="text" class="form-control" v-model="q.packageName"    name="packageName"  placeholder="packageName, 包目录,eg: vip.suven.modules">
+			<label class="label">模块 名称:</label><input type="text" class="form-control" v-model="q.moduleName"   name="moduleName"placeholder="moduleName,模块名称,eg:generator">
+			<label class="label">模块作者  名:</label><input type="text" class="form-control" v-model="q.author"   name="author"  placeholder="author,作者名,eg:suven">
+			<label class="label">模块邮    :箱</label><input type="text" class="form-control" v-model="q.email"   name="email"    placeholder="email,邮箱,eg:suvenw@gmail.com">
+			<label class="label">模块删除表前缀:</label><input type="text" class="form-control" v-model="q.tablePrefix"   name="tablePrefix"  placeholder="tablePrefix,删除表前缀,eg:tb_">
+		</div>
+	</div>
+	<div class="grid-btn">
+		<div class="form-group col-sm-2">
+			<input type="text" class="form-control"  placeholder="表名" id="tableNames">
+		</div>
+		<a class="btn btn-default" @click="query">查询</a>
+<!--		<a class="btn btn-primary" @click="generator"><i class="fa fa-file-code-o"></i>&nbsp;生成文件代码</a>-->
+		<a class="btn btn-primary" @click="columns" id="columns"><i class="fa fa-file-code-o"></i>&nbsp;查看表字段</a>
+		<a class="btn btn-primary" style="display: none" @click="tablesShow" id="tables"><i class="fa fa-file-code-o"></i>&nbsp;查看表（返回）</a>
+		<a class="btn btn-primary" style="display: none" @click="codeCreate" id="generatorCode"><i class="fa fa-file-code-o"></i>&nbsp;生成</a>
+		<a class="btn btn-primary" style="display: none" @click="download" id="generatorCodeZip"><i class="fa fa-file-code-o"></i>&nbsp;下载生成代码</a>
+	</div>
+
+    <table id="jqGrid"></table>
+    <div id="jqGridPager"></div>
+
+
+	<table id="jqGrid2"></table>
+</div>
+
+<script src="js/generator.js"></script>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+package ${packageName}.${moduleName}.entity;
+
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import ${mainPath}.common.data.${BaseEntity};
+import ${mainPath}.common.api.DataSourceModuleName;
+
+#if(${hasBigDecimal})
+import java.math.BigDecimal;
+#end
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * @ClassName: ${className}.java
+ *
+ * @Author 作者 : ${author}
+ * @CreateDate 创建时间: ${datetime}
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: ${description} 的数据库表对应的实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+
+@TableName(${tableName})
+@DS(DataSourceModuleName.${moduleName})
+public class ${className} extends ${BaseEntity} implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+#foreach ($column in $columns)
+	/**
+	 * $column.columnName
+	 */
+	#if($column.columnName == $pk.columnName)
+@TableId
+	#end
+private $column.attrType $column.attrname;
+#end
+
+}

@@ -1,0 +1,286 @@
+package ${packageName}.${moduleName}.dao;
+
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Arrays;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ${packageName}.${moduleName}.cache.${className}Cache;
+import ${packageName}.${moduleName}.entity.${className};
+import ${mainPath}.core.db.${baseEntityDao};
+import ${mainPath}.common.data.BasePage;
+import QueryTypeEnum;
+
+ /**
+  * @ClassName: ${className}Dao.java
+  *
+  * @Author 作者 : ${author}
+  * @email 邮箱 : ${email}
+  * @CreateDate 创建时间: ${datetime}
+  * @Version 版本: v1.0.0
+  * <pre>
+  *
+  *  @Description: ${description} 的数据缓存交互处理类
+  *
+  * </pre>
+  * <pre>
+  * 修改记录
+  *    修改后版本:     修改人：  修改日期:     修改内容:
+  * ----------------------------------------------------------------------------
+  *
+  * ----------------------------------------------------------------------------
+  * @RequestMapping("/${moduleName}/${paramName}")
+  * </pre>
+  * @Copyright: (c) 2021 gc by https://www.suven.top
+  **/
+
+@Component
+public class ${className}Dao extends ${baseEntityDao}<${className}> {
+
+	private Logger logger = LoggerFactory.getLogger(${className}Dao.class);
+
+
+
+	@Autowired
+	private ${className}Cache ${paramName}Cache;
+
+	private final String SQL = "SELECT  ${selectSQL} FROM ${tableName} ";
+
+	private final String SQL_INSERT = "INSERT INTO ${tableName} ( ${insertSQL} ) "
+				+ " VALUES(${insertVal} ) ";
+
+	private final String SQL_INSERT_ID = "INSERT INTO ${tableName} (${columnId}, ${insertSQL}) "
+				+ " VALUES( ?, ${insertVal} ) ";
+
+	private final String SQL_UPDATE = "UPDATE ${tableName} SET ${updateSQL} "
+				+ " WHERE ${columnId} = ? " ;
+
+
+	private final String SQL_DELETE = " DELETE FROM ${tableName} WHERE ${columnId} = ? ";
+
+	private final String SQL_DELETE_IN = " DELETE FROM ${tableName} WHERE ${columnId}  IN ( ? ) ";
+
+	private final String SQL_COUNT="SELECT  count(1) FROM ${tableName} ";
+
+
+	/**
+	 * 保存创建${className},并且保存到缓存中
+	 * @param ${paramName}
+	 */
+      public ${className} save${className}(${className} ${paramName}){
+        if(null == ${paramName})
+            return  null;
+
+		${listObject}
+		${insertDbList}
+
+       ${paramName} =  this.saveEntity(${paramName},SQL_INSERT,${dbList});
+        return ${paramName};
+
+      }
+
+
+	/**
+	* 保存创建${className},并且保存到缓存中
+	* @param ${paramName}
+	*/
+	public boolean saveId${className}(${className} ${paramName}){
+		if(null == ${paramName})
+			return  false;
+
+		${listObject}
+		${updateWhereDbList}
+		${insertDbList}
+
+        return this.saveIdEntity(${paramName},SQL_INSERT_ID,${dbList});
+
+	}
+
+
+	/**
+	 * 更新${paramName}信息,where条件为${paramName}Id,更新${paramName}
+	 * @param ${paramName}
+	 */
+	public boolean update${className}(${className} ${paramName}){
+		boolean flg = false ;
+		if(null == ${paramName})
+		   return  flg;
+
+		${listObject}
+		${updateDbList}
+		${updateWhereDbList}
+
+		flg = this.updateEntity(${paramName},SQL_UPDATE,${dbList});
+		return flg;
+
+	}
+
+	/**
+	 * 通过主键${paramName}Id删除${paramName}
+	 *  @param ${paramName}Id
+	 */
+	public boolean  del${className}ById(long  ${paramName}Id){
+		if(${paramName}Id == 0)
+	        return false;
+		return  this.delEntityById(${className}.class,SQL_DELETE,${paramName}Id);
+
+	}
+
+	/**
+	* 通过主键${paramName}Id删除${paramName}
+	*  @param ${paramName}Ids
+	*/
+	public int  del${className}ByIdList(List<Long>  ${paramName}Ids){
+		if(${paramName}Ids == null || ${paramName}Ids.isEmpty() )
+			return 0;
+		return  this.delEntityByIdList(${className}.class,SQL_DELETE_IN,${paramName}Ids);
+
+	}
+
+
+
+
+	/**
+	 * 通过主键${paramName}删除${paramName}
+	 *  @param ${paramName}
+	 */
+	public boolean  del${className}(${className} ${paramName}){
+		if(null == ${paramName} || ${paramName}.getId() < 0)
+	        return false;
+        return  this.delEntityById(${className}.class,SQL_DELETE,${paramName}.getId());
+
+	}
+
+		/**
+	 * 通过主键${paramName}Id查找${className}
+	 * @param ${paramName}
+	 */
+	public ${className} get${className}(${className} ${paramName}){
+		if(null == ${paramName} || ${paramName}.getId() < 0){
+		   return  null;
+		}
+		long id =  ${paramName}.getId();
+        String sql = SQL
+               + " WHERE ${columnId} = ? ";
+        return this.getEntityById(${className}.class,${paramName}Mapper,sql,id);
+	}
+
+	/**
+	 * 通过主键${paramName}Id查找${className}
+	 * @param ${paramName}Id
+	 */
+	public ${className} get${className}ById(long ${paramName}Id){
+		if(${paramName}Id <= 0)
+		   return  null;
+
+		String sql = SQL
+		       + "   WHERE ${columnId} = ? ";
+
+        return this.getEntityById(${className}.class,${paramName}Mapper,sql,${paramName}Id);
+
+
+	}
+
+
+	/**
+	 * 通过主键id集合批量查找${className} Collection<Long>
+	 * @param colle
+	 */
+	public List<${className}>  get${className}ListByIdList(Collection<Long> colle){
+		if(null == colle || colle.isEmpty()) {
+		   return  null;
+		}
+
+		String sql = SQL
+               + "   WHERE ${columnId} IN ( ? ) ";
+
+        List<${className}> list = this.getEntityListByIdList(${className}.class,${paramName}Mapper,sql,colle);
+        return  list;
+	}
+
+	/**
+	 * 通过主键id集合批量查找${className}
+	 * @param colle
+	 */
+	public Map<Long,${className}>  get${className}MapByIdList(Collection<Long> colle){
+		if(CollectionUtils.isEmpty(colle)){
+			return new HashMap<Long, ${className}>();
+		}
+
+		String sql = SQL
+				+ "   WHERE ${columnId} in ( ? )  ";
+        Map<Long,${className}> map = this.getEntityMapByIdList(${className}.class,${paramName}Mapper,sql,colle);
+		return map;
+	}
+	/**
+	 * 通过分页Pager查找${className}
+	 * @param page
+	 */
+	//@Deprecated
+	public List<${className}>  get${className}ListByPage(BasePage page){
+		if(null == page ) {
+		   return  null;
+		}
+	${className} ${paramName} = ${className}.build( ).clone(page.getParamObject());
+
+		List<Object> list = new ArrayList<>();
+		StringBuilder sql=new StringBuilder();
+		sql.append(SQL);
+		sql.append(" where 1=1 ");
+
+	#foreach($po in $queryList)
+		#if (${po.queryMode}!='' && ${po.queryMode}!=0)
+	this.addEasyQuery(sql, "$po.columnName", QueryTypeEnum.getByCode(${po.queryMode}),list, ${paramName}.get${po.attrName}());
+		#end
+	#end
+
+		sql.append("  ORDER BY id DESC  limit ? , ?  ");
+
+		list.add(page.getStart());
+		list.add(page.getPageSize());
+
+		List<${className}> dbList  = this.getEntityByPage(${className}.class,${paramName}Mapper,sql.toString(),list);//从缓存中查找
+
+		return  dbList;
+	}
+
+	/**
+ 	* 查找${className} 总行数
+ 	* @param page
+ 	*/
+	//@Deprecated
+	public int get${className}Count(${className} ${paramName}){
+		String sql = SQL_COUNT
+		+ "   WHERE 1 =1 ";
+		List<Object> list = new ArrayList<>();
+
+		return this.getEntityByPageCount(${className}.class,sql,list);//从缓存中查找
+
+		}
+
+	/**
+	 * 查询使用映射对象Mapper
+	 * @param ${paramName}Mapper
+	 */
+	private RowMapper<${className}> ${paramName}Mapper =(rs, rowNum) -> {
+            ${className} vo = new ${className}();${mapperBeanVo}
+            return vo;
+	};
+
+	@Override
+	public void setSetterValues(int index, PreparedStatement ps,${className} ${paramName}) {
+
+	}
+
+}

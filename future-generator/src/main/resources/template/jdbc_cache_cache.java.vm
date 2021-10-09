@@ -1,0 +1,49 @@
+package ${packageName}.${moduleName}.cache;
+
+import org.springframework.stereotype.Component;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ${mainPath}.core.redis.BaseRedisClient;
+import ${packageName}.${moduleName}.entity.${className};
+
+
+/**
+ * @ClassName: ${className}Cache.java
+ *
+ * @Author 作者 : ${author}
+ * @email 邮箱 : ${email}
+ * @CreateDate 创建时间: ${datetime}
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: ${description} 的数据缓存交互处理类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * @RequestMapping("/${moduleName}/${paramName}")
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+@Component
+public class ${className}Cache extends BaseRedisClient<${className}>{
+
+
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	/**
+	 * 修改缓存对象的默认key的实现方法
+	 */
+	@Override
+	public String getPrefixKey(Class<?> clazz) {
+		// TODO Auto-generated method stub
+		return super.getPrefixKey(clazz);
+	}
+
+
+}

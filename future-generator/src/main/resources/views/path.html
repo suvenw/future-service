@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>代码生成器</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<link rel="stylesheet" href="plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="css/main.css">
+<script src="libs/jquery.min.js"></script>
+<script src="plugins/layer/layer.js"></script>
+<script src="libs/bootstrap.min.js"></script>
+<script src="libs/vue.min.js"></script>
+<script src="plugins/jqgrid/grid.locale-cn.js"></script>
+<script src="plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="js/common.js"></script>
+</head>
+<body>
+<div id="rrapp">
+
+	<div class="panel panel-default">
+
+		<div class="panel-heading">输入项目运行路径信息</div>
+			<div class="panel-heading-inner">
+
+				<!--
+				<label class="label">数据库类型:</label><input type="text" class="form-control" v-model="q.databaseType"    @keyup.enter="query"  name="databaseType"    placeholder="eg: mysql,oracle,sqlserver,postgresql ">
+                -->
+                <label class="label">序号唯一标识:</label><input type="text" class="form-control" v-model="q.id"      @keyup.enter="query"   name="id"          placeholder="1,2,3.修改,0为新增">
+				<label class="label">用户名:</label><input type="text" class="form-control" v-model="q.userNme"  @keyup.enter="query"  name="userNme"  placeholder="userNme">
+                <label class="label">项目根路径:</label><input type="text" class="form-control" v-model="q.baseProjectPath"  @keyup.enter="query"  name="baseProjectPath" placeholder="baseProjectPath">
+                <label class="label">html路径:</label><input type="text" class="form-control" v-model="q.htmlPath"  @keyup.enter="query"  name="htmlPath" placeholder="htmlPath">
+
+                <label class="label">HTTP项目路径:</label><input type="text" class="form-control" v-model="q.httpProjectPath"      @keyup.enter="query"   name="httpProjectPath" placeholder="httpProjectPath">
+                <label class="label">RPC项目路径:</label><input type="text" class="form-control" v-model="q.rpcProjectPath"   @keyup.enter="query"   name="rpcProjectPath"   placeholder="eg: 1.rpcProjectPath">
+                <label class="label">API项目路径:</label><input type="text" class="form-control" v-model="q.apiProjectPath"    @keyup.enter="query"   name="apiProjectPath"    placeholder="eg:apiProjectPath ">
+                <label class="label">模板项目路径:</label><input type="text" class="form-control" v-model="q.templatesPath"  @keyup.enter="query"  name="templatesPath"  placeholder="templatesPath">
+
+                <label class="label">是否默使用:</label><input type="text" class="form-control" v-model="q.isUse"    @keyup.enter="query"   name="isUse"    placeholder="eg:isUse,1.是使用中,0,否 ">
+
+            </div>
+                <div class="grid-btn">
+                    <a class="btn btn-primary" @click="select"><i class="fa fa-file-code-o"></i>&nbsp;选择修改项目</a>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a class="btn btn-primary" @click="pathUpdate"><i class="fa fa-file-code-o"></i>&nbsp;确认修改项目路径</a>
+
+                </div>
+            </div>
+
+            <table id="jqGrid"></table>
+            <div id="jqGridPager"></div>
+</div>
+
+<script src="js/path.js"></script>
+</body>
+</html>

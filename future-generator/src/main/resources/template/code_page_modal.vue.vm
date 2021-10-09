@@ -1,0 +1,339 @@
+<template>
+    <a-drawer
+          :title="title"
+          :width="800"
+          placement="right"
+          @close="handleCancel"
+          :visible="visible">
+
+    <a-spin :spinning="confirmLoading">
+      <a-form :form="form">
+
+##<#list columns as po><#rt/>
+#foreach($po in $showList)
+#if ($po.attrname !='id')
+
+        <a-form-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="$po.comments">
+          #if  ($po.showType =='2')
+          <a-date-picker showTime format='YYYY-MM-DD HH:mm:ss' v-decorator="[ '${po.attrname}', #if ($po.regex !='')validatorRules.${po.attrname} #else{}#end]" />
+            ##下拉框 3
+          #elseif ($po.showType =='3')
+            <a-select  placeholder="请选择$po.comments" >
+              <a-select-option value="">请选择</a-select-option>
+              <a-select-option value="1">有效</a-select-option>
+              <a-select-option value="0">无效</a-select-option>
+            </a-select>
+          ##单选框 4
+          #elseif ($po.showType =='4')
+            <a-radio-group class="fontiframe" name="radioGroup" >
+              <a-radio class="radioGroup" value="1">有效</a-radio>
+              <a-radio class="radioGroup" value="0">无效</a-radio>
+            </a-radio-group>
+          ##多选框 5
+          #elseif ($po.showType =='5')
+            <a-select
+                    mode="multiple"
+                    style="width: 100%"
+                    placeholder="请选择$po.comments"
+                    optionFilterProp = "children"
+                    v-model="selectedRole">
+              <a-select-option v-for="(role,roleindex) in roleList" :key="roleindex.toString()" :value="role.id">
+                {{ role.roleName }}
+              </a-select-option>
+            </a-select>
+
+          ##多文本 6
+          #elseif ($po.showType =='6')
+            <a-textarea :rows="5"  placeholder="请输入$po.comments" />
+
+          ##文件 7
+          #elseif ($po.showType =='7')
+            <a-upload
+                    name="file"
+                    :multiple="true"
+                    @change="handleChangeFileUpload"
+                    :customRequest="customFileUploadRequest"
+            >
+              <a-button> <a-icon type="upload" /> 点击上传 </a-button>
+            </a-upload>
+
+          ##树型 8
+          #elseif ($po.showType =='8')
+
+          ##图片 9
+          #elseif ($po.showType =='9')
+            <div class="clearfix">
+              <a-upload
+                      name="file"
+                      :multiple="false"
+                      listType="picture-card"
+                      :fileList="fileList"
+                      @preview="handlePreview"
+                      :beforeUpload="beforeUpload"
+                      @change="handleChangeImageUpload"
+                      :customRequest="customImageUploadRequest"
+              >
+                <div v-if="fileList.length < 3">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传</div>
+                </div>
+              </a-upload>
+              <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+                <img alt="example" style="width: 100%" :src="previewImage" />
+              </a-modal>
+            </div>
+
+          #else
+          <a-input placeholder="请输入$po.comments" v-decorator="['$po.attrname',
+                   #if ($po.regex !='')validatorRules.${po.attrname} #else{}#end]" />
+          #end
+        </a-form-item>
+#end
+#end
+##</#list>
+
+      </a-form>
+    </a-spin>
+    <a-button :disabled="disableSubmit" type="primary" @click="handleOk">确定</a-button>
+    <a-button type="primary" @click="handleCancel">取消</a-button>
+  </a-drawer>
+</template>
+
+<script>
+  import { httpAction,postAction,fileUpload } from '@/api/manage'
+  import pick from 'lodash.pick'
+  import moment from "moment"
+  import {  #foreach($po in $showList) #if ($po.attrname !='id') #if($po.regex !='') validate$po.regex,#end #end #end } from "@/utils/validate"
+
+  export default {
+    name: "${className}Modal",
+    data () {
+      return {
+        title:"操作",
+        visible: false,
+        visibleCheck: true,
+        model: {},
+        selectedRole:[],
+        disableSubmit:false,
+        roleList:[
+          {"id":"1","roleName":"测试1","roleCode":"test1"},
+          {"id":"2","roleName":"测试2","roleCode":"test2"},
+          {"id":"3","roleName":"测试3","roleCode":"test3"}],
+        labelCol: {
+          xs: { span: 24 },
+          sm: { span: 5 },
+        },
+        wrapperCol: {
+          xs: { span: 24 },
+          sm: { span: 16 },
+        },
+        confirmLoading: false,
+        headers:{},
+        form: this.$form.createForm(this),
+        previewVisible: false,
+        //图片预览
+        previewImage: '',
+        //上传的图片列表
+        fileList: [],
+        // 表单验证
+        validatorRules:{
+        #foreach($po in $showList)
+        #if ($po.attrname !='id')
+        #if ($po.regex !='')
+        $po.attrname:{rules: [{ required: true, message: '请输入$po.comments!' },{validator: validate$po.regex}]},
+        #end
+        #end
+        #end
+        },
+        url: {
+          add: "/${moduleName}/${pathName}/add",
+          edit: "/${moduleName}/${pathName}/modify",
+          fileUpload: "/${moduleName}/${pathName}/import",
+          fileUploadImg: "/upload/file",
+        },
+      }
+    },
+    created () {
+
+    },
+    computed:{
+    },
+    methods: {
+      add () {
+        this.edit({});
+      },
+      edit (record) {
+        this.form.resetFields();
+        this.model = Object.assign({}, record);
+        this.visible = true;
+        this.$nextTick(() => {
+          this.form.setFieldsValue(pick(this.model
+          #foreach($po in $addList)
+            #if ($po.attrname !='id' && $po.dataType!=("date")) ,'${po.attrname}'
+            #end
+            #end
+         ))
+//时间格式化
+#foreach($po in $addList)
+#if ($po.attrname !='id'  && $po.dataType==("datetime"))
+this.form.setFieldsValue({${po.attrname}:this.model.${po.attrname} ? moment(this.model.${po.attrname}):null})
+#end
+#end
+});
+
+      },
+      close () {
+        this.$emit('close');
+        this.visible = false;
+      },
+      onChose(checked) {
+        if (checked) {
+          this.status = 1;
+          this.visibleCheck = true;
+        } else {
+          this.status = 0;
+          this.visibleCheck = false;
+        }
+      },
+      handleOk () {
+        const that = this;
+        // 触发表单验证
+        this.form.validateFields((err, values) => {
+          if (!err) {
+            that.confirmLoading = true;
+            let httpurl = '';
+            let method = '';
+            if(!this.model.id){
+              httpurl+=this.url.add;
+              method = 'post';
+            }else{
+              httpurl+=this.url.edit;
+               method = 'post';
+            }
+            let formData = Object.assign(this.model, values);
+            //时间格式化
+             #foreach($po in $addList)
+                    #if($po.attrname !='id' && $po.dataType =='date')
+
+                    formData.$po.attrname = formData.$po.attrname?formData.$po.attrname.format():null;
+                    #elseif( $po.attrname !='id' && $po.dataType =='datetime')
+                    formData.$po.attrname = formData.$po.attrname?formData.${po.attrname}.format('YYYY-MM-DD HH:mm:ss'):null;
+                    #end
+            #end
+            formData.selectedroles = this.selectedRole.length>0?this.selectedRole.join(","):'';
+            console.log(formData)
+            httpAction(httpurl,formData,method).then((res)=>{
+
+                if(res.code == 0){ //res.success
+                  ${js_successMsg}
+                  that.$emit('ok');
+                }else{
+                  ${js_warningMsg}
+                }
+            }).finally(() => {
+              that.confirmLoading = false;
+              that.close();
+            })
+
+
+
+          }
+        })
+      },
+      handleCancel () {
+        this.previewVisible = false;
+        this.close()
+      },
+      //图片上传前 格式验证
+      beforeUpload: function(file){
+        var fileType = file.type;
+        if(fileType.indexOf('image')<0){
+          this.$message.warning('请上传图片');
+          return false;
+        }
+        //TODO 验证文件大小
+      },
+      //文件上传触发事件
+      handleChangeFileUpload (info) {
+        if (info.file.status !== 'uploading') {
+          console.log(info.file, info.fileList);
+        }
+        if (info.file.status === 'done') {
+          ${js_fileSuccessMsg}
+        } else if (info.file.status === 'error') {
+          ${js_fileWarningMsg}
+        }
+      },
+      //文件上传 自定义请求 进行上传
+      customFileUploadRequest:function({ onSuccess, onError, file }) {
+        //setTimeout(() => {
+        postAction(this.url.fileUpload,fileUpload(file)).then((res)=>{
+          if(res.code ==0){
+            onSuccess(null, file);
+          }else{
+            onError();
+          }
+          //}, 100);
+        }).finally(() => {
+          this.confirmLoading = false;
+        })
+      },
+      //图片点击放大预览
+      handlePreview(file) {
+        this.previewImage = file.url || file.thumbUrl;
+        this.previewVisible = true;
+      },
+      //图片上传触发事件
+      handleChangeImageUpload({fileList}) {
+        for (var i = fileList.length - 1; i >= 0; i--) {
+          var obj = fileList[i]
+          if (obj.status != 'done') {
+            fileList.splice(i, 1);
+          }
+        }
+        this.fileList = fileList;
+      },
+      //图片上传 自定义请求 进行上传
+      customImageUploadRequest:function({ onSuccess, onError, file }) {
+        postAction(this.url.fileUploadImg,fileUpload(file)).then((res)=> {
+          let data=res.data;
+          if (data.status == 0) {
+            let file = {};
+            file.uid = data.path;
+            file.name = data.path;
+            file.url = data.domain + data.path;
+            file.status="done";
+            this.fileList.push(file);
+          }
+        })
+      },
+    }
+  }
+</script>
+
+<style lang="less" scoped>
+/** Button按钮间距 */
+  .ant-btn {
+    margin-left: 30px;
+    margin-bottom: 30px;
+    float: right;
+  }
+</style>
+
+
+
+<style>
+  /* you can make up upload button and sample style by using stylesheets */
+  .ant-upload-select-picture-card i {
+    font-size: 32px;
+    color: #999;
+  }
+
+  .ant-upload-select-picture-card .ant-upload-text {
+    margin-top: 8px;
+    color: #666;
+  }
+</style>
