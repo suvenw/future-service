@@ -1,7 +1,7 @@
 group 'com.suven.framework'
 version '1.0.0-SNAPSHOT'
 
-def mavenVersion = "0.0.3"
+def mavenVersion = "1.0.2"
 def mavenGroup = "com.suven.framework"
 
 def mavenUrl ="https://oa.sixeco.com/nexus"

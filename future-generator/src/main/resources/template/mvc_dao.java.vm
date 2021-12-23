@@ -118,7 +118,7 @@ public class ${className}Dao extends ${baseEntityDao}<${className}Mapper, ${clas
 
         List<${className}> resDtoList = new ArrayList<>();
         if(queryWrapper == null){
-            queryWrapper = new QueryWrapper();
+            return null;
         }
 
         IPage<${className}> page = super.page(iPage, queryWrapper);
@@ -147,7 +147,7 @@ public class ${className}Dao extends ${baseEntityDao}<${className}Mapper, ${clas
 
         List<${className}> resDtoList = new ArrayList<>();
         if(queryWrapper == null){
-            queryWrapper = new QueryWrapper();
+            return null;
         }
 
         List<${className}> list = super.list(queryWrapper);
@@ -170,10 +170,10 @@ public class ${className}Dao extends ${baseEntityDao}<${className}Mapper, ${clas
     public QueryWrapper<${className}> builderQueryEnum(${className}QueryEnum queryEnum,  Object queryObject){
            QueryWrapper<${className}> queryWrapper = new QueryWrapper<>();
            if(queryEnum == null){
-               return queryWrapper;
+               return null;
            }
            if(queryObject == null){
-               return queryWrapper;
+               return null;
            }
             ${className}  ${paramName} = ${className}.build().clone(queryObject);
            switch (queryEnum){

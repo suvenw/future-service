@@ -242,6 +242,9 @@ public class ${className}ServiceImpl  implements ${className}Service {
               return null;
           }
            QueryWrapper<${className}> queryWrapper = ${paramName}Dao.builderQueryEnum( queryEnum, ${paramName}RequestDto);
+           if(null == queryWrapper ){
+                return null;
+            }
             //分页对象        PageHelper
            Page<${className}> iPage = new Page<>(0, 1);
            iPage.setSearchCount(false);
@@ -267,7 +270,9 @@ public class ${className}ServiceImpl  implements ${className}Service {
   public List<${className}ResponseDto> get${className}ListByQuery( Object  paramObject, ${className}QueryEnum queryEnum){
 
       QueryWrapper<${className}> queryWrapper = ${paramName}Dao.builderQueryEnum( queryEnum, paramObject);
-
+      if(null == queryWrapper ){
+            return null;
+      }
       List<${className}>  list = ${paramName}Dao.getListByQuery(queryWrapper);
       if(null == list ){
           list = new ArrayList<>();
@@ -289,6 +294,9 @@ public class ${className}ServiceImpl  implements ${className}Service {
     public List<${className}ResponseDto> get${className}ListByPage(BasePage page,${className}QueryEnum queryEnum){
 
         QueryWrapper<${className}> queryWrapper =${paramName}Dao.builderQueryEnum(queryEnum,  page.getParamObject());
+        if(null == queryWrapper ){
+             return null;
+         }
         //分页对象        PageHelper
         Page<${className}> iPage = new Page<>(page.getPageNo(), page.getPageSize());
         iPage.setSearchCount(false);
@@ -315,6 +323,9 @@ public class ${className}ServiceImpl  implements ${className}Service {
 
         ResponseResultList<${className}ResponseDto> responseResultList = ResponseResultList.build();
         QueryWrapper<${className}> queryWrapper = ${paramName}Dao.builderQueryEnum(queryEnum,  page.getParamObject());
+         if(null == queryWrapper ){
+             return responseResultList;
+         }
         //分页对象        PageHelper
         Page<${className}> iPage = new Page<>(page.getPageNo(), page.getPageSize());
         iPage.setSearchCount(false);
@@ -338,7 +349,10 @@ public class ${className}ServiceImpl  implements ${className}Service {
     @Override
     public ResponseResultList<${className}ResponseDto> get${className}ByNextPage(BasePage page,${className}QueryEnum queryEnum){
         ResponseResultList<${className}ResponseDto> responseResultList = ResponseResultList.build();
-        QueryWrapper<${className}> queryWrapper = ${paramName}Dao.builderQueryEnum(queryEnum,  page.getParamObject());;
+        QueryWrapper<${className}> queryWrapper = ${paramName}Dao.builderQueryEnum(queryEnum,  page.getParamObject());
+        if(null == queryWrapper ){
+             return responseResultList;
+        }
         //分页对象        PageHelper
         Page<${className}> iPage = new Page<>(page.getPageNo(), page.getPageSize());
         iPage.setSearchCount(true);
