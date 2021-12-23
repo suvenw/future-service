@@ -1,11 +1,11 @@
 group 'com.suven.framework'
 version '1.0.0-SNAPSHOT'
 
-def mavenVersion = "0.0.02"
+def mavenVersion = "0.0.3"
 def mavenGroup = "com.suven.framework"
 
 def mavenUrl ="https://oa.sixeco.com/nexus"
-def mavenUserName='admin'
+def mavenUserName='suven'
 def mavenPassword='sixeco123'
 def mainClassName = 'com.suven.framework.MqMain'
 
@@ -57,11 +57,10 @@ subprojects {
 
     repositories {
         maven { url  "${mavenUrl}/content/groups/public/" }
-       maven { url "http://pypi.doubanio.com/simple/" }
-        maven { url "https://repo.maven.apache.org/maven2/" }
-
-        maven { url "https://mvnrepository.com/artifact/" }
-        maven { url "https://maven.springframework.org/release/" }
+//        maven { url "http://pypi.doubanio.com/simple/" }
+//        maven { url "https://repo.maven.apache.org/maven2/" }
+//        maven { url "https://mvnrepository.com/artifact/" }
+//        maven { url "https://maven.springframework.org/release/" }
 
     }
 
@@ -552,7 +551,7 @@ project(':future-http-file') {
         compile 'com.aliyun.oss:aliyun-sdk-oss:3.7.0'
         compile 'com.aliyun:aliyun-java-sdk-core:4.4.1'
         compile 'com.aliyun:aliyun-java-sdk-dysmsapi:1.1.0'
-//        compile 'com.github.caspar-chen:swagger-ui-layer:1.1.9'
+        compile 'com.suven.framework:swagger-ui-layer:0.0.01'
 
         compile 'org.apache.curator:curator-framework:2.12.0'
 

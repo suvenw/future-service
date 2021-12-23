@@ -42,7 +42,7 @@ import java.util.List;
 import static com.suven.framework.file.util.FileMsgEnum.DELETE_FILE_PATH_IS_NULL;
 
 
-@ApiDoc(module = "文件存储阿里云OSS文件服务的相关api",group = "File-group",groupDesc = "文件存上传下载文档")
+@ApiDoc(module = "文件存储阿里云OSS文件服务的相关api",group = "File-group",groupDesc = "阿里OSS文件存上传下载文档")
 @Controller
 public class FileAliyunOssController {
 
@@ -113,8 +113,8 @@ public class FileAliyunOssController {
                 return;
             }
 			vo.setOssUrl(storePath);
-//            vo.setPath(ossFileName);
-			vo.setPath(fileConfigSetting.getOss().getDomain()+"/"+ossFileName);
+            vo.setPath(ossFileName);
+			vo.setFullPath(fileConfigSetting.getOss().getDomain()+"/"+ossFileName);
             vo.setDomain(fileConfigSetting.getOss().getDomain());
             output.write(vo);
         } catch (OSSException oe) {
@@ -215,8 +215,8 @@ public class FileAliyunOssController {
 					return;
 				}
 				vo.setOssUrl(storePath);
-//              vo.setPath(ossFileName);
-				vo.setPath(fileConfigSetting.getOss().getDomain()+"/"+ossFileName);
+              vo.setPath(ossFileName);
+				vo.setFullPath(fileConfigSetting.getOss().getDomain()+"/"+ossFileName);
 				vo.setDomain(fileConfigSetting.getOss().getDomain());
 				output.write(vo);
 				if (storePath == null) {
@@ -286,8 +286,8 @@ public class FileAliyunOssController {
 				return;
 			}
 			vo.setOssUrl(storePath);
-//            vo.setPath(ossFileName);
-			vo.setPath(fileConfigSetting.getOss().getDomain()+"/"+ossFileName);
+            vo.setPath(ossFileName);
+			vo.setFullPath(fileConfigSetting.getOss().getDomain()+"/"+ossFileName);
 			vo.setDomain(fileConfigSetting.getOss().getDomain());
 			output.write(vo);
 		} catch (OSSException oe) {

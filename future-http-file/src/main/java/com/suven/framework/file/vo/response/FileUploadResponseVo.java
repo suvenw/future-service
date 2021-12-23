@@ -14,10 +14,12 @@ public class FileUploadResponseVo {
       private String errorMsg;
     @ApiDesc(value =  "当初文件偏移位置,文件数据读取的下标")
       private long offset;
-    @ApiDesc(value =  "上传文件原路径或加密密匙")
+    @ApiDesc(value =  "上传文件相对路径")
       private String path;
     @ApiDesc(value =  "域名")
     private String domain;
+    @ApiDesc(value =  "上传文件相对url全路径")
+    private String fullPath;
     @ApiDesc(value =  "阿里oss文件路径")
     private String ossUrl;
 
@@ -89,5 +91,13 @@ public class FileUploadResponseVo {
 
     public void setOssUrl(String ossUrl) {
         this.ossUrl = ossUrl;
+    }
+
+    public String getFullPath() {
+        return fullPath;
+    }
+
+    public void setFullPath(String fullPath) {
+        this.fullPath = fullPath;
     }
 }
