@@ -46,6 +46,7 @@ public class SysURLCommand implements IURLCommand {
 
     public static final String sys_get_post_param = "/sys/postParam";
     public static final String sys_get_get_param = "/sys/getParam";
+    public static final String sys_get_sign_param = "/sys/signParam";
 
     public static final String sys_get_framework = "";
 

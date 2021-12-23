@@ -105,7 +105,7 @@ public class MsgController {
             request = SystemParamSignParse.class,
             response = long.class
     )
-    @RequestMapping(value = SysURLCommand.sys_get_get_param, method = RequestMethod.GET)
+    @RequestMapping(value = SysURLCommand.sys_get_sign_param, method = RequestMethod.GET)
     public void getSystemParamSign(OutputMessage out,SystemParamSignParse signParse)  {
         String param = "";
         if(signParse.getSalt() == 1){
@@ -114,7 +114,7 @@ public class MsgController {
             param  = CryptUtil.md5(signParse.getCliSign()).toLowerCase();
         }
 
-        String result =  "原始参数:["+signParse.getCliSign()+"]\n + md5 加密后的结果:[" + param +"]";
+        String result =  "原始参数:["+signParse.getCliSign()+"]\n  md5 加密后的结果:[" + param +"]";
         out.write(result);
     }
 
