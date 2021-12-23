@@ -1,12 +1,12 @@
 group 'com.suven.framework'
 version '1.0.0-SNAPSHOT'
 
-def mavenVersion = "1.0.2"
+def mavenVersion = "1.0.3"
 def mavenGroup = "com.suven.framework"
 
 def mavenUrl ="https://oa.sixeco.com/nexus"
 def mavenUserName='suven'
-def mavenPassword='sixeco123'
+def mavenPassword='xxxxx123'
 def mainClassName = 'com.suven.framework.MqMain'
 
 

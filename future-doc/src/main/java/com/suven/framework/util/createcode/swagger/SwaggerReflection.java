@@ -55,7 +55,7 @@ public class SwaggerReflection {
     public Reflections initReflections() {
         Map<String, ApiPackages> apiPackagesMap = applicationContext.getBeansOfType(ApiPackages.class);
         Set<String> packageList  = new HashSet(16);
-        packageList.add("com");
+//        packageList.add("com");
         if(apiPackagesMap != null && !apiPackagesMap.isEmpty()){
             apiPackagesMap.values().forEach(com ->{
                 if(null != com.getPackages()) {

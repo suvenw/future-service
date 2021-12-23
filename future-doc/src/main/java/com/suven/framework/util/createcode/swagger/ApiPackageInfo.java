@@ -1,6 +1,7 @@
 package com.suven.framework.util.createcode.swagger;
 
 import com.suven.framework.common.api.ApiPackages;
+import org.springframework.stereotype.Component;
 
 /**
  * @Author 作者 : suven.wang
@@ -18,6 +19,7 @@ import com.suven.framework.common.api.ApiPackages;
  * </pre>
  * @Copyright: (c) 2021 gc by https://www.suven.top
  **/
+@Component
 public class ApiPackageInfo  implements ApiPackages {
 
     String packages = "com.suven";
