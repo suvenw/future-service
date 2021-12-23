@@ -1,17 +1,13 @@
 package com.suven.framework.generator.config;
 
 import com.suven.framework.generator.dao.*;
+import com.suven.framework.generator.temp.*;
 import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.suven.framework.generator.enums.BaseEntityEnum;
-import com.suven.framework.generator.temp.CreateCodeEnum;
-import com.suven.framework.generator.temp.JdbcCodeCacheEnum;
-import com.suven.framework.generator.temp.JdbcCodeStatusEnum;
-import com.suven.framework.generator.temp.MybatisCodeEnum;
 import com.suven.framework.generator.utils.RRException;
-import com.suven.framework.generator.dao.*;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -101,6 +97,8 @@ public class SysDataConfig {
             return JdbcCodeStatusEnum.class;
         }else if("MybatisCodeEnum".equalsIgnoreCase(tempEnum)){
             return MybatisCodeEnum.class;
+        }else if("MvcCodeEnum".equalsIgnoreCase(tempEnum)){
+            return MvcCodeEnum.class;
         }else {
             throw new RRException("不支持当前模板：" + tempEnum);
         }
@@ -113,11 +111,18 @@ public class SysDataConfig {
 
     public BaseEntityEnum getBaseEntityNo(){
         String entity =  sysConfig.getEntity();
-        if(BaseEntityEnum.BASE_ENTITY.getValue().equalsIgnoreCase(entity)){
-            return  BaseEntityEnum.BASE_ENTITY;
-        }else if(BaseEntityEnum.BASE_STATUS_ENTITY.getValue().equalsIgnoreCase(entity)){
-            return  BaseEntityEnum.BASE_STATUS_ENTITY;
+        BaseEntityEnum  entityEnum =  BaseEntityEnum.getEnum(entity);
+        if(null != entityEnum){
+            return entityEnum;
         }
+//        if(BaseEntityEnum.BASE_ENTITY.getValue().equalsIgnoreCase(entity)){
+//            return  BaseEntityEnum.BASE_ENTITY;
+//        }else if(BaseEntityEnum.BASE_STATUS_ENTITY.getValue().equalsIgnoreCase(entity)){
+//            return  BaseEntityEnum.BASE_STATUS_ENTITY;
+//        }
+//        else if(BaseEntityEnum.BASE_TIME_ENTITY.getValue().equalsIgnoreCase(entity)){
+//            return  BaseEntityEnum.BASE_TIME_ENTITY;
+//        }
         throw new RRException("不支持当前模板：" + entity);
     }
 

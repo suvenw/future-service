@@ -3,7 +3,12 @@ package com.suven.framework.sys.facade;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.suven.framework.common.enums.SysResultCodeEnum;
+import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.sys.utils.JwtUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.databene.commons.CollectionUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import com.suven.framework.common.data.BasePage;
 import com.suven.framework.common.util.Constant;
 import com.suven.framework.core.redis.RedisClusterServer;
@@ -11,12 +16,6 @@ import com.suven.framework.core.redis.RedisKeys;
 import com.suven.framework.core.redis.RedisUtil;
 import com.suven.framework.http.data.vo.HttpRequestByIdListVo;
 import com.suven.framework.http.data.vo.ResponseResultList;
-import com.suven.framework.util.crypt.CryptUtil;
-import com.suven.framework.util.random.RandomUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.databene.commons.CollectionUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import com.suven.framework.sys.dto.request.SysUserDepartRequestDto;
 import com.suven.framework.sys.dto.request.SysUserRequestDto;
 import com.suven.framework.sys.dto.response.SysDepartResponseDto;
@@ -36,10 +35,13 @@ import com.suven.framework.sys.vo.response.LoginCodeResponseVo;
 import com.suven.framework.sys.vo.response.SysDepartResponseVo;
 import com.suven.framework.sys.vo.response.SysLoginResponseVo;
 import com.suven.framework.sys.vo.response.SysUserResponseVo;
+import com.suven.framework.util.crypt.CryptUtil;
+import com.suven.framework.util.random.RandomUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 /**   
@@ -64,7 +66,7 @@ public class SysUserFacade {
 	private SysDepartService sysDepartService;
 
 	@Autowired
-	private RedisClusterServer redisClusterServer;
+	private RedisClusterServer  redisClusterServer;
 
 	@Autowired
 	private SysUserDepartService sysUserDepartService;
@@ -149,7 +151,7 @@ public class SysUserFacade {
 		String code = RandomUtils.randomString(4);
 		String key = CryptUtil.md5(code+System.currentTimeMillis());
 		key = RedisUtil.formatKey(RedisKeys.USER_LOGIN_CHECK, key);
-		redisClusterServer.setNx(key,code, Constant.CHECK_CODE_SECOND);
+		redisClusterServer.setNx(key,code,Constant.CHECK_CODE_SECOND);
 		return LoginCodeResponseVo.build().setKey(key).setCode(code);
 	}
 
@@ -193,9 +195,9 @@ public class SysUserFacade {
 		if (null == dto) {
 			return SysResultCodeEnum.SYS_USER_FAIL;
 		}
-		String passwordEncode = CryptUtil.encryptPassword(dto.getPassword());
-		passwordEncode = coverPassword(passwordEncode);
-		if (!dto.getPassword().equals(passwordEncode)) {
+		String passwordEncode = CryptUtil.encryptPassword(userUpdatePwdRequestVo.getOldpassword());
+		String md5OldPassword = coverPassword(passwordEncode);
+		if (!dto.getPassword().equals(md5OldPassword)) {
 			return SysResultCodeEnum.SYS_USER_OLD_PWD_FAIL;
 		}
 		if (StringUtils.isEmpty(userUpdatePwdRequestVo.getPassword())) {

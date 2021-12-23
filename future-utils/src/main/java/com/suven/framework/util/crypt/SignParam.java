@@ -1,9 +1,8 @@
 package com.suven.framework.util.crypt;
 
-import com.suven.framework.common.constants.GlobalConfigConstants;
-import com.suven.framework.util.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.suven.framework.util.json.JsonUtils;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -24,13 +23,14 @@ import java.util.Map.Entry;
  */
 public class SignParam {
 
-	
+
 	public static Logger logger =LoggerFactory.getLogger(SignParam.class);
-	
+
+	public static final String TOP_SERVER_APPKEY = "H@s0zSix!fiNger8";
 	/**
-	 * 获取签名 客户端
-	 * @param head
-	 * @param body
+	 * 获取签名 客户端,用于传输公共参数,作用是参数改篡改,用于前端的方法
+	 * @param head 为公共参数对象属性
+	 * @param body 为接口个性参数对象属性
 	 * @return
 	 */
 	public static String getClientSign(Object head,Object body)  {
@@ -41,8 +41,8 @@ public class SignParam {
 	}
 	
 	/**
-	 * 获取签名 服务端
-	 * @param param
+	 * 获取签名 服务端,用于传输公共参数,作用是参数改篡改,用于前端的方法
+	 * @param param Map 服务端收到前端所有参数的k-v值;
 	 * @return
 	 */
 	public static String getServerSign(Map param)  {
@@ -54,9 +54,10 @@ public class SignParam {
 	
 
 	/**
+	 * 获取签名 服务端,用于传输公共参数,作用是参数改篡改,用于前端的方法,notContains集合,为排除参与加密字段
 	 * 获取签名的参数 格式a=1&b=1
-	 * @param param
-	 * @param notContains
+	 * @param param 为所有请求参数
+	 * @param notContains 排除参与加密字段
 	 * @return
 	 */
 	public static String getServerSignParam(Map<String, Object> param,List<String> notContains){
@@ -89,34 +90,6 @@ public class SignParam {
 		}
 		return strBody;
 	}
-
-//    /**
-//     * 将getParameterMap转成可读的map
-//     * @param properties
-//     * @return
-//     */
-//    private static Map<String, Object> getParameterMap(Map<String, Object> properties) {
-//        Map<String, Object> returnMap = new TreeMap<>();
-//        Iterator<?> entries = properties.entrySet().iterator();
-//        Map.Entry<String, Object> entry;
-//        String name = "";
-//        String value = "";
-//        while (entries.hasNext()) {
-//            entry = (Map.Entry) entries.next();
-//            name = entry.getKey();
-//            Object valueObj = entry.getValue();
-//            if(null == valueObj){
-//                value = "";
-//            }else if(valueObj instanceof String[]){
-//                String[] values = (String[])valueObj;
-//                value = values[values.length-1];
-//            }else{
-//                value = valueObj.toString();
-//            }
-//            returnMap.put(name, value);
-//        }
-//        return returnMap;
-//    }
 
 
     private static Map<String, Object> getClientSignMap(Object head,Object body){
@@ -165,7 +138,7 @@ public class SignParam {
 	private  static String paramMd5(String param) {
 		String pass = "";
 		try {
-			pass = CryptUtil.md5(param + GlobalConfigConstants.TOP_SERVER_APPKEY).toLowerCase();
+			pass = CryptUtil.md5(param + TOP_SERVER_APPKEY).toLowerCase();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}

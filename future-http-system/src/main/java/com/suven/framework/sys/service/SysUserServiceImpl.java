@@ -6,6 +6,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.commons.lang3.StringUtils;
+import org.databene.commons.CollectionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import com.suven.framework.common.data.BasePage;
 import com.suven.framework.common.enums.ResultEnum;
 import com.suven.framework.common.enums.TbStatusEnum;
@@ -16,20 +22,13 @@ import com.suven.framework.sys.dao.SysPermissionDao;
 import com.suven.framework.sys.dao.SysUserDao;
 import com.suven.framework.sys.dao.SysUserDepartDao;
 import com.suven.framework.sys.dao.SysUserRoleDao;
+import com.suven.framework.sys.dto.request.SysUserRequestDto;
+import com.suven.framework.sys.dto.response.SysUserResponseDto;
 import com.suven.framework.sys.entity.SysUser;
 import com.suven.framework.sys.entity.SysUserDepart;
 import com.suven.framework.sys.entity.SysUserRole;
-import com.suven.framework.sys.entity.UserInfo;
-import com.suven.framework.util.PageUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.databene.commons.CollectionUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.suven.framework.sys.dto.request.SysUserRequestDto;
-import com.suven.framework.sys.dto.response.SysUserResponseDto;
 import com.suven.framework.sys.vo.request.AllStatusRequestVo;
+import com.suven.framework.util.PageUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -160,7 +159,7 @@ public class SysUserServiceImpl implements SysUserService {
         sysUser.setModifyDate(new Date());
         boolean result = sysUserDao.updateById(sysUser);
         //添加查询缓存 和app缓存key 一致
-        UserInfo userInfo = UserInfo.build().clone(sysUser);
+        SysUser userInfo = SysUser.build().clone(sysUser);
         String cacheKey = "user_info:" + sysUser.getId();
         logger.info("redisKey{}", cacheKey);
         if (result) {
@@ -376,7 +375,7 @@ public class SysUserServiceImpl implements SysUserService {
         sysUser.setModifyDate(new Date());
         boolean result = sysUserDao.updateById(sysUser);
         //添加查询缓存 和app缓存key 一致
-        UserInfo userInfo = UserInfo.build().clone(sysUser);
+        SysUser userInfo = SysUser.build().clone(sysUser);
         String cacheKey = "user_info:" + sysUser.getId();
         logger.info("redisKey{}", cacheKey);
         if (result) {
@@ -402,7 +401,7 @@ public class SysUserServiceImpl implements SysUserService {
         sysUser.setModifyDate(new Date());
         boolean result = sysUserDao.updateById(sysUser);
         //添加查询缓存 和app缓存key 一致
-        UserInfo userInfo = UserInfo.build().clone(sysUser);
+        SysUser userInfo = SysUser.build().clone(sysUser);
         String cacheKey = "user_info:" + sysUser.getId();
         logger.info("redisKey{}", cacheKey);
         if (result) {
@@ -448,11 +447,10 @@ public class SysUserServiceImpl implements SysUserService {
         boolean result = sysUserDao.updateById(sysUser);
 
         //添加查询缓存 和app缓存key 一致 和app 类保持一致
-        UserInfo userInfo = UserInfo.build().clone(sysUser);
-        String cacheKey = "user_info:" + userInfo.getId();
+        String cacheKey = "user_info:" + sysUser.getId();
         logger.info("redisKey{}", cacheKey);
         if (result) {
-            myBatisRedisClient.addCacheByKey(cacheKey, userInfo);
+            myBatisRedisClient.addCacheByKey(cacheKey, sysUser);
         }
         return result;
     }
@@ -474,7 +472,7 @@ public class SysUserServiceImpl implements SysUserService {
 
         boolean result = sysUserDao.updateById(sysUser);
         //添加查询缓存 和app缓存key 一致
-        UserInfo userInfo = UserInfo.build().clone(sysUser);
+        SysUser userInfo = SysUser.build().clone(sysUser);
         String cacheKey = "user_info:" + sysUser.getId();
         logger.info("redisKey{}", cacheKey);
         if (result) {

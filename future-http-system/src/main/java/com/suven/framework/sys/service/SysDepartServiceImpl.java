@@ -5,22 +5,22 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.databene.commons.CollectionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import com.suven.framework.common.data.BasePage;
 import com.suven.framework.common.enums.ResultEnum;
 import com.suven.framework.common.enums.TbStatusEnum;
 import com.suven.framework.core.db.ext.Query;
 import com.suven.framework.http.data.vo.ResponseResultList;
 import com.suven.framework.sys.dao.SysDepartDao;
+import com.suven.framework.sys.dto.request.SysDepartRequestDto;
+import com.suven.framework.sys.dto.response.SysDepartResponseDto;
 import com.suven.framework.sys.entity.SysDepart;
 import com.suven.framework.util.PageUtils;
 import com.suven.framework.util.YouBianCodeUtil;
-import org.databene.commons.CollectionUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.suven.framework.sys.dto.request.SysDepartRequestDto;
-import com.suven.framework.sys.dto.response.SysDepartResponseDto;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class SysDepartServiceImpl  implements SysDepartService {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private SysDepartDao sysDepartDao;
+    private SysDepartDao  sysDepartDao;
 
 
 

@@ -9,6 +9,7 @@ public class ProjectPathConfig implements IProjectPathConfig{
     private String baseProjectPath;
     private String rpcProjectPath;
     private String httpProjectPath;
+    private String sysProjectPath;
     private String apiProjectPath;
 
     private String templatesPath;
@@ -28,14 +29,27 @@ public class ProjectPathConfig implements IProjectPathConfig{
     public String getProjectPath(int createCodeEnumIndex){
         switch (createCodeEnumIndex){
             case 1:
-                return getRpcProjectPath();
+                return getRpcProjectPath().trim();
             case 2:
-               return getApiProjectPath();
+               return getApiProjectPath().trim();
             case 3:
-               return getHttpProjectPath();
+               return getHttpProjectPath().trim();
+            case 4:
+                return getSysProjectPath().trim();
             default:
                 throw new RuntimeException("项目的ProjectRoot根目录无法找到,请检查模板CreateCodeEnum的实现类 ");
         }
+    }
+
+    public String getSysProjectPath() {
+        if(sysProjectPath == null){
+            this.sysProjectPath = getHttpProjectPath();
+        }
+        return sysProjectPath;
+    }
+
+    public void setSysProjectPath(String sysProjectPath) {
+        this.sysProjectPath = sysProjectPath;
     }
 
     public String getRpcProjectPath() {
@@ -142,19 +156,19 @@ public class ProjectPathConfig implements IProjectPathConfig{
 
     }
     public static ProjectPathConfig init4(){
-        return build().setId(4).setUserNme("Suven").setIsUse(0)
-                .setBaseProjectPath("/home/suven/workspace/suven/suven-im")
-                .setApiProjectPath("rpc-red-web")
-                .setHttpProjectPath("http-red-web")
-                .setRpcProjectPath("rpc-red-web")
+        return build().setId(4).setUserNme("Suven").setIsUse(1)
+                .setBaseProjectPath("/Users/sixeco/suven/workspace/sixeco/sixeco_framework/")
+                .setApiProjectPath("future-http-system")
+                .setHttpProjectPath("future-http-system")
+                .setRpcProjectPath("future-http-system")
                 .setHtmlPath("future-vue")
                 .setTemplatesPath("");
 
     }
     public static ProjectPathConfig init5(){
-        return build().setId(5).setUserNme("Suven").setIsUse(1)
-                .setBaseProjectPath("/Users/suven/suven/workspace/suven/suven-im/")
-                .setApiProjectPath("rpc-assets-service")
+        return build().setId(5).setUserNme("Suven").setIsUse(0)
+                .setBaseProjectPath("/Users/sixeco/suven/workspace/sixeco/sixeco-im/")
+                .setApiProjectPath("rpc-api-oauth")
                 .setHttpProjectPath("http-assets-service")
                 .setRpcProjectPath("rpc-assets-service")
                 .setHtmlPath("future-vue")

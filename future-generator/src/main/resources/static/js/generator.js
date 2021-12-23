@@ -65,11 +65,11 @@ var vm = new Vue({
     el:'#rrapp',
     data:{
         q:{
-            mainPath: 'top.suven.future',
-            packageName: 'top.suven.test',
+            mainPath: 'com.sixeco.framework',
+            packageName: 'com.sixeco.car',
             moduleName:'user',
             author: 'suven',
-            email:'suvenw@gmail.com',
+            email:'suvenw@163.com',
             tablePrefix:''
         }
     },

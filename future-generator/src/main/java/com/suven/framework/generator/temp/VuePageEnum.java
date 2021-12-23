@@ -17,15 +17,15 @@ package com.suven.framework.generator.temp;
 
 public enum VuePageEnum implements CreateCodeEnum{
 
-    MENU_SQL_VM(13,"code_menu.sql.vm","db/menu/","_menu.sql"),
+    MENU_SQL_VM(13,"code_menu.sql.vm","db/menu/","_menu.sql",0),
 
     //JEECG AntDesign vue项目
-    PAGE_LIST_VUE(11,"code_page_list.vue.vm","/","List.vue"),
-    PAGE_MODAL_VUE(11,"code_page_modal.vue.vm","/modules/","Modal.vue"),
+    PAGE_LIST_VUE(11,"code_page_list.vue.vm","/","List.vue",0),
+    PAGE_MODAL_VUE(11,"code_page_modal.vue.vm","/modules/","Modal.vue",0),
 
     //renren Element vue项目
-    RR_ADD_VUE(12,"code_add-or-update.vue.vm","/","-add-or-update.vue"),
-    RR_INDEX_VUE(12,"code_index.vue.vm","/",".vue"),
+    RR_ADD_VUE(12,"code_add-or-update.vue.vm","/","-add-or-update.vue",0),
+    RR_INDEX_VUE(12,"code_index.vue.vm","/",".vue",0),
 
     ;
 
@@ -33,15 +33,17 @@ public enum VuePageEnum implements CreateCodeEnum{
     private String temp;
     private String path;
     private String ext;
+    private int isWrite;
 
 
 
 
-    VuePageEnum(int index,String temp, String path, String ext){
+    VuePageEnum(int index,String temp, String path, String ext, int isWrite){
         this.index = index;
         this.temp = temp;
         this.path = path;
         this.ext = ext;
+        this.isWrite = isWrite;
     }
 
     public String getTemp() {
@@ -55,6 +57,8 @@ public enum VuePageEnum implements CreateCodeEnum{
     public String getExt() {
         return ext;
     }
+
+    public  int isWrite(){ return isWrite;}
 
     public int getIndex(){
         return index;

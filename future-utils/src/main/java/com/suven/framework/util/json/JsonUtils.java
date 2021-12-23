@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializeFilter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.Descriptors;
@@ -462,7 +463,7 @@ public abstract class JsonUtils{
      * @return
      */
     public static Map<String, Object> objectToMap(Object object) {
-        Field[] fields = FieldUtils.getAllFields(object.getClass());// klass.getFields();
+        List<Field> fields = FieldUtils.getAllFieldsList(object.getClass());// klass.getFields();
         Map<String, Object> map = new HashMap<>();
         if(null == fields){
             return map;

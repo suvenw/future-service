@@ -19,7 +19,6 @@ import java.util.Date;
  * @date 2019-10-18 12:35:25
  */
 @DS("sys")
-@TableName("user_info")
 public class SysUser extends BaseStatusEntity {
 
     private static final long serialVersionUID = 1L;

@@ -447,13 +447,6 @@ public class ${className}ServiceImpl  implements ${className}Service {
     }
  #end
 
-    @Override
-    public PageUtils queryPage(Map<String, Object> params) {
-        IPage iPage =  new Query<${className}>().getPage(params);
-        QueryWrapper<${className}> queryWrapper = new QueryWrapper<>();
-        IPage<${className}> page = ${paramName}Dao.page(iPage,queryWrapper);
-        return new PageUtils(page);
-    }
 
 
     /**

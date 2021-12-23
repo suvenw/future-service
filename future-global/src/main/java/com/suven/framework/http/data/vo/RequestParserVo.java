@@ -2,14 +2,15 @@ package com.suven.framework.http.data.vo;
 
 import com.alibaba.fastjson.JSON;
 import com.suven.framework.common.api.IRequestVo;
-import com.suven.framework.http.JsonParse;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import com.suven.framework.http.JsonParse;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Map;
 
-public class RequestParserVo implements IRequestVo {
+public class RequestParserVo implements IRequestVo, Serializable {
 
 
     public static RequestParserVo build(){

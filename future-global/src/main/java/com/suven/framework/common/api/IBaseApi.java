@@ -12,6 +12,8 @@ public interface IBaseApi extends IBeanClone {
 
     public void setId(long id);
 
-
+    public default long groupId(){
+        return 0L;
+    };
 
 }

@@ -52,6 +52,9 @@ public class MyBatisBaseEntityDao<M extends BaseMapper<T>, T extends IBaseApi> i
     protected Log log = LogFactory.getLog(getClass());
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
+
+    private final int LISTS_PARTITON_SIZE = 100;//Lists.partition
+
     @Autowired
     protected M baseMapper;
 
@@ -59,6 +62,7 @@ public class MyBatisBaseEntityDao<M extends BaseMapper<T>, T extends IBaseApi> i
     public M getBaseMapper() {
         return baseMapper;
     }
+
 
 
     protected   void slaveDataSource(){
@@ -82,6 +86,13 @@ public class MyBatisBaseEntityDao<M extends BaseMapper<T>, T extends IBaseApi> i
         DataSourceHolder.putDataSource(dataSourceGroup);
     }
 
+    public boolean returnBool(Long result) {
+        return null != result && result >= 0;
+    }
+
+    public Class<T> getEntityClass(){
+        return  currentModelClass();
+    }
     /**
      * 判断数据库操作是否成功
      *
@@ -147,6 +158,12 @@ public class MyBatisBaseEntityDao<M extends BaseMapper<T>, T extends IBaseApi> i
     public boolean saveBatch(Collection<T> entityList, int batchSize) {
         masterDataSource();
        return saveBatchTr(entityList,batchSize);
+    }
+
+    @Override
+    @CatDBSign
+    public boolean saveBatch(Collection<T> entityList) {
+        return saveBatchTr(entityList, 1000);
     }
 
     @Transactional(rollbackFor = Exception.class)

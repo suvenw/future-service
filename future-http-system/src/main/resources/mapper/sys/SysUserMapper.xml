@@ -23,6 +23,7 @@
         <result property="followUserId" column="follow_user_id"/>
         <result property="qrCode" column="qr_code"/>
         <result property="remarks" column="remarks"/>
+
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -32,21 +33,21 @@
 
     <!-- 根据用户名查询 -->
     <select id="getUserByName" resultType="com.suven.framework.sys.entity.SysUser">
-        select * from  user_info  where username = #{username}
+        select * from  sys_user  where user_code = #{username}
     </select>
 
     <!-- 根据部门Id查询 -->
     <select id="getUserByDepId" resultType="com.suven.framework.sys.entity.SysUser">
-        select * from user_info where  id in (select user_id from sys_user_depart where dep_id=#{departId})
+        select * from sys_user where  id in (select user_id from sys_user_depart where dep_id=#{departId})
         <if test="username!=null and username!=''">
-            and username = #{username}
+            and user_code = #{username}
         </if>
     </select>
 
 
     <!-- 根据部门Id查询 -->
     <select id="getUserByUserIds" resultType="com.suven.framework.sys.entity.SysUser">
-        select * from user_info where  id in
+        select * from sys_user where  id in
         <foreach collection="userIds" index="index" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
@@ -57,20 +58,20 @@
 
     <!-- 根据角色Id查询  select * from sys_user where del_flag = '0' and id in (select user_id from sys_user_role where role_id=#{roleId}) -->
     <select id="getUserByRoleId" resultType="com.suven.framework.sys.entity.SysUser">
-        select * from user_info where id in (select user_id from sys_user_role where role_id=#{roleId})
+        select * from sys_user where id in (select user_id from sys_user_role where role_id=#{roleId})
         <if test="username!=null and username!=''">
-            and username = #{username}
+            and user_code = #{username}
         </if>
     </select>
 
     <!--  修改用户部门code -->
     <update id="updateUserDepart">
-        UPDATE user_info SET org_code = #{orgCode} where username = #{username}
+        UPDATE sys_user SET org_code = #{orgCode} where user_code = #{username}
     </update>
 
     <!-- 根据手机号查询 -->
     <select id="getUserByPhone"  resultType="com.suven.framework.sys.entity.SysUser">
-        select * from  user_info  where phone = #{phone}
+        select * from  sys_user  where phone = #{phone}
     </select>
 
     <!-- 根据邮箱查询用户信息 -->
@@ -82,7 +83,7 @@
     <select id="getPageList" resultType="com.suven.framework.sys.dto.response.SysUserResponseDto">
         select
         <include refid="Base_Column_List" />
-        from user_info where 1 = 1
+        from sys_user where 1 = 1
         <if test="userReqDto.nickname !=null ">
             and nickname LIKE concat('%',#{userReqDto.nickname},'%')
         </if>

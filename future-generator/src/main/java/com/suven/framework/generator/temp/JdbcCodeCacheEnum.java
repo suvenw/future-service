@@ -46,6 +46,7 @@ public enum JdbcCodeCacheEnum implements CreateCodeEnum{
     private String temp;
     private String path;
     private String ext;
+    private int isWrite;
 
 //    private static Map<String, JdbcCodeCacheEnum> typeMap = new HashMap<>();
 //    static {
@@ -67,6 +68,14 @@ public enum JdbcCodeCacheEnum implements CreateCodeEnum{
         this.ext = ext;
     }
 
+    JdbcCodeCacheEnum(int index,String temp, String path, String ext,int isWrite){
+        this.index = index;
+        this.temp = temp;
+        this.path = path;
+        this.ext = ext;
+        this.isWrite = isWrite;
+    }
+
     public String getTemp() {
         return temp;
     }
@@ -82,5 +91,7 @@ public enum JdbcCodeCacheEnum implements CreateCodeEnum{
     public int getIndex(){
        return index;
     }
+
+    public  int isWrite(){ return isWrite;}
 
 }

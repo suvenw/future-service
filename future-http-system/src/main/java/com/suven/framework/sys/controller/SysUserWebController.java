@@ -3,22 +3,7 @@ package com.suven.framework.sys.controller;
 
 import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.sys.vo.DocumentConst;
-import com.suven.framework.sys.vo.request.*;
 import com.suven.framework.sys.vo.response.SysUserResponseVo;
-import com.suven.framework.common.api.ApiDoc;
-import com.suven.framework.common.data.BasePage;
-import com.suven.framework.common.enums.SysResultCodeEnum;
-import com.suven.framework.http.data.vo.HttpRequestByIdListVo;
-import com.suven.framework.http.data.vo.HttpRequestByIdVo;
-import com.suven.framework.http.data.vo.ResponseResultList;
-import com.suven.framework.http.handler.OutputResponse;
-import com.suven.framework.http.processor.url.SysURLCommand;
-import com.suven.framework.sys.entity.SysUserRole;
-import com.suven.framework.sys.facade.SysUserFacade;
-import com.suven.framework.sys.service.RoleService;
-import com.suven.framework.sys.service.SysUserRoleService;
-import com.suven.framework.sys.service.SysUserService;
-import com.suven.framework.util.crypt.CryptUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.databene.commons.CollectionUtil;
@@ -29,13 +14,27 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.suven.framework.common.api.ApiDoc;
+import com.suven.framework.common.data.BasePage;
+import com.suven.framework.common.enums.SysResultCodeEnum;
+import com.suven.framework.http.data.vo.HttpRequestByIdListVo;
+import com.suven.framework.http.data.vo.HttpRequestByIdVo;
+import com.suven.framework.http.data.vo.ResponseResultList;
+import com.suven.framework.http.handler.OutputResponse;
+import com.suven.framework.http.processor.url.SysURLCommand;
 import com.suven.framework.sys.dto.request.SysUserDepartRequestDto;
 import com.suven.framework.sys.dto.request.SysUserRequestDto;
 import com.suven.framework.sys.dto.response.RoleResponseDto;
 import com.suven.framework.sys.dto.response.SysUserResponseDto;
+import com.suven.framework.sys.entity.SysUserRole;
+import com.suven.framework.sys.facade.SysUserFacade;
+import com.suven.framework.sys.service.RoleService;
 import com.suven.framework.sys.service.SysUserDepartService;
+import com.suven.framework.sys.service.SysUserRoleService;
+import com.suven.framework.sys.service.SysUserService;
 import com.suven.framework.sys.vo.request.*;
 import com.suven.framework.sys.vo.response.SysDepartResponseVo;
+import com.suven.framework.util.crypt.CryptUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,6 +96,22 @@ public class SysUserWebController {
         ResponseResultList result = userFacade.getSysUserList(page);
         out.write(result);
     }
+
+    @ApiDoc(
+            value = "按条件查找用户表分页信息",
+            request = SysUserRequestVo.class,
+            response = SysUserResponseVo.class
+    )
+    @RequestMapping(value = SysURLCommand.sys_user_queryByUserName, method = RequestMethod.GET)
+    @RequiresPermissions("sys:user:list")
+    public void queryByUserNameList(OutputResponse out, SysUserRequestVo userRequestVo) {
+        SysUserRequestDto userRequestDto = SysUserRequestDto.build().clone(userRequestVo);
+        BasePage page = BasePage.build().toPageSize(userRequestVo.getPageSize()).toPageNo(userRequestVo.getPageNo());
+        page.toParamObject(userRequestDto);
+        ResponseResultList result = userFacade.getSysUserList(page);
+        out.write(result);
+    }
+
 //    @ApiDoc(
 //            value = "获取用户表分页信息",
 //            request = SysUserRequestVo.class,

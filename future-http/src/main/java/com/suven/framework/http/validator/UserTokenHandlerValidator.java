@@ -4,13 +4,13 @@
 package com.suven.framework.http.validator;
 
 import com.suven.framework.http.interceptor.IHandlerValidator;
-import com.suven.framework.http.message.ParamMessage;
 import org.apache.commons.lang3.StringUtils;
 import com.suven.framework.common.enums.TokenMsgCodeEnum;
 import com.suven.framework.core.redis.RedisClusterServer;
 import com.suven.framework.core.redis.RedisKeys;
 import com.suven.framework.core.redis.RedisUtil;
 import com.suven.framework.http.exception.SystemRuntimeException;
+import com.suven.framework.http.message.ParamMessage;
 import com.suven.framework.http.message.HttpRequestPostMessage;
 import com.suven.framework.util.tool.TopStringUtils;
 import org.slf4j.Logger;
@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+
+import java.util.Map;
 
 import static com.suven.framework.common.enums.SysResultCodeEnum.*;
 
@@ -68,9 +70,11 @@ public class UserTokenHandlerValidator extends ValidatorCache<Boolean> implement
         try {
             HttpRequestPostMessage message = ParamMessage.getRequestMessage();
             String codeKey = RedisUtil.formatKey(RedisKeys.OAUTH_USER_ID_TOKEN_MAP,message.getUserId());
-            String result = redisClusterServer.get(codeKey);
+            long expire = System.currentTimeMillis();
+            Map<String, String> result = redisClusterServer.getMapCacheAndDelExpire(codeKey, expire);
+//            String result = redisClusterServer.get(codeKey);
             logger.info("------validatorCache from redis ,codeKey:[{}], result:[{}] , message.getAccessToken[{}]",codeKey,result,message.getAccessToken());
-            if(StringUtils.isNotBlank(result) && result.equals(message.getAccessToken()) ){
+            if (null != result && result.containsKey(message.getAccessToken())) {
                 return true;
             }
         }catch (Exception e){

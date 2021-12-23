@@ -1,6 +1,7 @@
 package com.suven.framework.http.message;
 
 
+import com.suven.framework.common.api.ApiDesc;
 
 /**
  * @Title: HttpRequestGetMessage.java
@@ -16,17 +17,24 @@ package com.suven.framework.http.message;
 
 public class HttpRequestPostMessage extends HttpRequestGetMessage {
 
+	@ApiDesc(value= "客户端申请的appId( 100000001)",required=1 )
 	private int appId;     //客户端 XXX登录申请的appid
+	@ApiDesc(value= "客户端申请的appId( 100000001)",required=0 )
 	private long userId;       //用户Id，pid
+	@ApiDesc(value= "令牌,需登录的接口必传,有效期7天,通过refreshToken 更新",required=0 )
 	private String accessToken;     //令牌
+	@ApiDesc(value= "设备标识",required=1 )
 	private String device;   //设备标识
+	@ApiDesc(value= "客户端操作系统版本号",required=0 )
 	private String sysVersion;//客户端手机系统版本号
+	@ApiDesc(value= "时间戳13位1387614995111",required=1 )
 	private long times;      //时间戳13位 1387614995111
+	@ApiDesc(value= "客户端推广发部渠道编码,见渠道表",required=0 )
 	private int channel;      //app第三方渠道号
+	@ApiDesc(value= "用户登陆ip",required=0 )
 	private String ip;
 	private String uri;
 	private String brand;
-
 
 	public HttpRequestPostMessage(){}
 	

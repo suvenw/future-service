@@ -1,7 +1,10 @@
 package com.suven.framework.common.enums;
 
 
+import com.suven.framework.common.constants.ReflectionsScan;
 import com.suven.framework.http.inters.IResultCodeEnum;
+
+import java.util.*;
 
 /**
  * @Title: MsgEnumType.java
@@ -52,23 +55,23 @@ public enum SysResultCodeEnum implements IResultCodeEnum {
 	SYS_AUTH_REFRES_TOKEN_FAIL(1100032,"REFRES_TOKEN校验过期,请重新登陆!"),
 	SYS_AUTH_RESET_PASSWORD_FAIL(1100033,"该账号已被重置密码!"),
 	SYS_AUTH_DEVICE_LOGIN_FAIL(1100034,"账号在其他设备登录，请重新登录!"),
-	SYS_CUID_FORMAT_ERROR(11000035,"cuid不合法！"),
-	SYS_USER_FIND_FAIL(11000036,"未找到角色信息"),
-	SYS_USER_ROLE_FIND_FAIL(11000037,"未找到用户相关角色信息"),
-	SYS_USER_DEPART_FIND_FAIL(11000038,"未找到用户相关部门信息"),
+	SYS_CUID_FORMAT_ERROR(1100035,"cuid不合法！"),
+	SYS_USER_FIND_FAIL(1100036,"未找到角色信息"),
+	SYS_USER_ROLE_FIND_FAIL(1100037,"未找到用户相关角色信息"),
+	SYS_USER_DEPART_FIND_FAIL(1100038,"未找到用户相关部门信息"),
 
-	SYS_USER_PWD_FAIL(11000040, "用户名或密码错误。"),
-	SYS_LOGOUT_FAIL(11000041, "退出登录失败。"),
-	SYS_USER_SAVE_FAIL(11000042,"用户添加失败"),
-	SYS_USER_FOUND_FAIL(11000043,"未找到角色信息"),
-	SYS_USER_ROLE_FOUND_FAIL(11000044,"未找到用户相关角色信息"),
-	SYS_USER_OLD_PWD_FAIL(11000045,"旧密码输入错误!"),
-	SYS_USER_NEW_PWD_FAIL(11000046,"新密码不允许为空!"),
-	SYS_USER_TWO_PWD_FAIL(11000047,"两次输入密码不一致!"),
-	SYS_USER_NEW_PWD_LENGTH(11000048,"新密码长度至少6位"),
-	SYS_USER_BAND_FAIL(11000049, "用户已被封禁。"),
-	SYS_USER_FAIL(11000050, "用户不存在。"),
-	SYS_TOKEN_FAIL(11000051, "Token已经失效。"),
+	SYS_USER_PWD_FAIL(1100040, "用户名或密码错误。"),
+	SYS_LOGOUT_FAIL(1100041, "退出登录失败。"),
+	SYS_USER_SAVE_FAIL(1100042,"用户添加失败"),
+	SYS_USER_FOUND_FAIL(1100043,"未找到角色信息"),
+	SYS_USER_ROLE_FOUND_FAIL(1100044,"未找到用户相关角色信息"),
+	SYS_USER_OLD_PWD_FAIL(1100045,"旧密码输入错误!"),
+	SYS_USER_NEW_PWD_FAIL(1100046,"新密码不允许为空!"),
+	SYS_USER_TWO_PWD_FAIL(1100047,"两次输入密码不一致!"),
+	SYS_USER_NEW_PWD_LENGTH(1100048,"新密码长度至少6位"),
+	SYS_USER_BAND_FAIL(1100049, "用户已被封禁。"),
+	SYS_USER_FAIL(1100050, "用户不存在。"),
+	SYS_TOKEN_FAIL(1100051, "Token已经失效。"),
 
 
 	MQ_ROCKET_CONFIG_IS_NULL(1100081,"系统引入ROCKET_MQ但未配置相关信息"),

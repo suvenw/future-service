@@ -4,20 +4,20 @@ package com.suven.framework.sys.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.suven.framework.common.data.BasePage;
-import com.suven.framework.common.enums.ResultEnum;
-import com.suven.framework.core.db.ext.Query;
-import com.suven.framework.http.data.vo.ResponseResultList;
-import com.suven.framework.sys.dao.SysPermissionDataRuleDao;
-import com.suven.framework.sys.entity.SysPermissionDataRule;
-import com.suven.framework.util.PageUtils;
 import org.databene.commons.CollectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.suven.framework.common.data.BasePage;
+import com.suven.framework.common.enums.ResultEnum;
+import com.suven.framework.core.db.ext.Query;
+import com.suven.framework.http.data.vo.ResponseResultList;
+import com.suven.framework.sys.dao.SysPermissionDataRuleDao;
 import com.suven.framework.sys.dto.request.SysPermissionDataRuleRequestDto;
 import com.suven.framework.sys.dto.response.SysPermissionDataRuleResponseDto;
+import com.suven.framework.sys.entity.SysPermissionDataRule;
+import com.suven.framework.util.PageUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,7 +44,7 @@ public class SysPermissionDataRuleServiceImpl  implements SysPermissionDataRuleS
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private SysPermissionDataRuleDao sysPermissionDataRuleDao;
+    private SysPermissionDataRuleDao  sysPermissionDataRuleDao;
 
 
 

@@ -7,7 +7,6 @@ import com.suven.framework.generator.entity.*;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.StringUtils;
 import com.suven.framework.generator.config.SysDataConfig;
-import com.suven.framework.generator.entity.*;
 import com.suven.framework.generator.utils.GeneratorUtils;
 import com.suven.framework.generator.utils.PageUtils;
 import com.suven.framework.generator.utils.Query;

@@ -10,7 +10,7 @@ public interface GlobalConfigConstants {
 
 	public static final String SERVICE_NAME= "future-service";
 	public static final String POJECT_PATH = "top/suven/";
-	public static final String COMPONENT_SCAN_BASE_PACKAGES=  "com.suven";
+	public static final String COMPONENT_SCAN_BASE_PACKAGES=  "com.sixeco";
 	public static final String MAPPER_SCAN_BASE_PACKAGES=  "com.suven.framework.*.mapper";
 
 
@@ -121,7 +121,7 @@ public interface GlobalConfigConstants {
 	/**  ================ 5. password key info start param   ================ **/
 	public static final String POST = "POST";
 	/** 密码后缀 */
-	public static final String TOP_SERVER_APPKEY = "H@s0zRed!fiNger8";
+	public static final String TOP_SERVER_APPKEY = "H@s0zSix!fiNger8";
 
 	String TOP_SERVER_ERROR_URL = "/error";
 

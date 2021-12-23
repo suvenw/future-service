@@ -6,7 +6,7 @@ CLASSPATH=./etc
 
 JVM_PARAM='-Xms128m -Xmx512m -Xmn64m -Xss1m'
 
-RUN_MAIN=com.suven.framework.FileMain
+RUN_MAIN=com.sixeco.framework.FileMain
 
 SERVER_NAME=FileMain
 

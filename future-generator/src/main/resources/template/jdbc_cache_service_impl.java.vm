@@ -40,7 +40,6 @@ import ${mainPath}.core.db.IterableConverter;
  * @Copyright: (c) 2021 gc by https://www.suven.top
  **/
 
-
 @Service
 public class ${className}ServiceImpl  implements ${className}Service {
 

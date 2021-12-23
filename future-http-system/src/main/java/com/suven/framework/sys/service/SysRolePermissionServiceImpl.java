@@ -5,22 +5,21 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.suven.framework.common.enums.SysResultCodeEnum;
-import com.suven.framework.core.db.ext.DSClassAnnoExplain;
 import com.suven.framework.http.inters.IResultCodeEnum;
-import com.suven.framework.common.data.BasePage;
-import com.suven.framework.common.enums.ResultEnum;
-import com.suven.framework.core.db.ext.Query;
-import com.suven.framework.http.data.vo.ResponseResultList;
-import com.suven.framework.sys.dao.SysRolePermissionDao;
-import com.suven.framework.sys.entity.SysRolePermission;
-import com.suven.framework.util.PageUtils;
 import org.databene.commons.CollectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.suven.framework.common.data.BasePage;
+import com.suven.framework.common.enums.ResultEnum;
+import com.suven.framework.core.db.ext.Query;
+import com.suven.framework.http.data.vo.ResponseResultList;
+import com.suven.framework.sys.dao.SysRolePermissionDao;
 import com.suven.framework.sys.dto.request.SysRolePermissionRequestDto;
 import com.suven.framework.sys.dto.response.SysRolePermissionResponseDto;
+import com.suven.framework.sys.entity.SysRolePermission;
+import com.suven.framework.util.PageUtils;
 
 import java.util.*;
 
@@ -44,7 +43,7 @@ public class SysRolePermissionServiceImpl  implements SysRolePermissionService {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private SysRolePermissionDao sysRolePermissionDao;
+    private SysRolePermissionDao  sysRolePermissionDao;
 
 
 
@@ -112,7 +111,7 @@ public class SysRolePermissionServiceImpl  implements SysRolePermissionService {
           if(null ==  sysRolePermissionRequestDto){
               return false;
           }
-        DSClassAnnoExplain.getDatasourceTransactional(SysRolePermission.class);
+
         SysRolePermission sysRolePermission = SysRolePermission.build().clone(sysRolePermissionRequestDto);
 
         return sysRolePermissionDao.updateById(sysRolePermission);
@@ -137,7 +136,6 @@ public class SysRolePermissionServiceImpl  implements SysRolePermissionService {
         if(null == idList){
             return ResultEnum.FAIL.id();
         }
-        DSClassAnnoExplain.getDatasourceTransactional(SysRolePermission.class);
         if( idList.size() == 1) {
             result = sysRolePermissionDao.removeById(idList.get(0));
         }else {
@@ -244,7 +242,6 @@ public class SysRolePermissionServiceImpl  implements SysRolePermissionService {
     @Override
     public IResultCodeEnum saveRolePermission(long roleId, List<Long> permissionIds, List<Long> lastPermissionIds) {
         List<Long> add = getDiff(lastPermissionIds,permissionIds);
-        DSClassAnnoExplain.getDatasourceTransactional(SysRolePermission.class);
         if(add!=null && add.size()>0) {
             List<SysRolePermission> list = new ArrayList<>();
             for (long p : add) {
@@ -253,7 +250,7 @@ public class SysRolePermissionServiceImpl  implements SysRolePermissionService {
                     list.add(rolepms);
                 }
             }
-            sysRolePermissionDao.saveBatch(list);
+            sysRolePermissionDao.saveBatch(list,list.size());
         }
 
         List<Long> delete = getDiff(permissionIds,lastPermissionIds);

@@ -6,10 +6,15 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.suven.framework.core.mybatis.MyBatisBaseCacheDao;
 import com.suven.framework.sys.entity.SysUserDepart;
 import com.suven.framework.sys.mapper.SysUserDepartMapper;
-import com.suven.framework.core.db.ext.Query;
-import com.suven.framework.util.PageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.suven.framework.core.db.ext.Query;
+import com.suven.framework.core.mybatis.MyBatisBaseEntityDao;
+import com.suven.framework.sys.entity.SysDepart;
+import com.suven.framework.sys.mapper.SysDepartMapper;
+import com.suven.framework.util.PageUtils;
 
 import java.util.ArrayList;
 import java.util.List;

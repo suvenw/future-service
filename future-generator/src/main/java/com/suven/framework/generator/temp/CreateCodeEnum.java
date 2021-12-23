@@ -27,11 +27,11 @@ public interface CreateCodeEnum {
     public String getExt();
 
     /**
-     * 1.为rpc项目, 2.api 项目; 3.http 项目
+     * 1.为rpc项目, 2.api 项目; 3.http 项目 4.sys
      * @return
      */
     public int getIndex();
 
-
+    public default int isWrite(){ return 0;}
 
 }

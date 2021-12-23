@@ -19,15 +19,10 @@ import ${mainPath}.common.api.DocumentConst;
 
 import ${packageName}.${moduleName}.facade.${className}Facade;
 import ${packageName}.${moduleName}.service.${className}Service;
-import ${packageName}.${moduleName}.vo.request.${className}QueryRequestVo;
-import ${packageName}.${moduleName}.vo.response.${className}ShowResponseVo;
 import ${packageName}.${moduleName}.dto.request.${className}RequestDto;
 import ${packageName}.${moduleName}.dto.response.${className}ResponseDto;
 import ${packageName}.${moduleName}.dto.enums.${className}QueryEnum;
 import ${packageName}.${moduleName}.vo.request.${className}RequestVo;
-import ${packageName}.${moduleName}.vo.response.${className}ResponseVo;
-
-import ${packageName}.${moduleName}.vo.request.${className}AddRequestVo;
 import ${packageName}.${moduleName}.vo.response.${className}ResponseVo;
 
 /**
@@ -85,23 +80,23 @@ public class ${className}Controller {
     */
     @ApiDoc(
             value = "分页获取${description}信息",
-            request = ${className}QueryRequestVo.class,
-            response = ${className}ShowResponseVo.class
+            request = ${className}RequestVo.class,
+            response = ${className}ResponseVo.class
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_pageList, method = RequestMethod.GET)
-    public void list( OutputResponse out, ${className}QueryRequestVo ${paramName}QueryRequestVo){
-            ${className}RequestDto ${paramName}RequestDto = ${className}RequestDto.build( ).clone(${paramName}QueryRequestVo);
+    public void list( OutputResponse out, ${className}RequestVo ${paramName}RequestVo){
+            ${className}RequestDto ${paramName}RequestDto = ${className}RequestDto.build( ).clone(${paramName}RequestVo);
 
-        BasePage page =  BasePage.build().toPageSize(${paramName}QueryRequestVo.getPageSize()).toPageNo(${paramName}QueryRequestVo.getPageNo());
+        BasePage page =  BasePage.build().toPageSize(${paramName}RequestVo.getPageSize()).toPageNo(${paramName}RequestVo.getPageNo());
         page.toParamObject(${paramName}RequestDto );
-        ResponseResultList<${className}ResponseDto> resultList = ${paramName}Service.get${className}ByNextPage(page,null);
+        ResponseResultList<${className}ResponseDto> resultList = ${paramName}Service.get${className}ByNextPage(page,${className}QueryEnum.DESC_ID);
 
         if(null == resultList || resultList.getList().isEmpty() ){
             out.writeSuccess();
             return;
         }
-        List<${className}ShowResponseVo> listVo = new ArrayList<>();
-        resultList.getList().forEach(e -> listVo.add(${className}ShowResponseVo.build().clone(e)));
+        List<${className}ResponseVo> listVo = new ArrayList<>();
+        resultList.getList().forEach(e -> listVo.add(${className}ResponseVo.build().clone(e)));
 
         ResponseResultList list =  ResponseResultList.build(listVo,page.getSize());
 
@@ -127,13 +122,13 @@ public class ${className}Controller {
     @ApiDoc(
             value = "查看${description}信息",
             request = HttpRequestByIdVo.class,
-            response = ${className}ShowResponseVo.class
+            response = ${className}ResponseVo.class
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_info ,method = RequestMethod.GET)
     public void detail(OutputResponse out, HttpRequestByIdVo idRequestVo){
 
             ${className}ResponseDto ${paramName}ResponseDto = ${paramName}Service.get${className}ById(idRequestVo.getId());
-            ${className}ShowResponseVo vo =  ${className}ShowResponseVo.build().clone(${paramName}ResponseDto);
+            ${className}ResponseVo vo =  ${className}ResponseVo.build().clone(${paramName}ResponseDto);
         out.write(vo);
     }
 

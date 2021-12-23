@@ -9,7 +9,8 @@ $(function () {
             { label: '基础Bean是否状态和排序', name: 'entity', width: 80 },
             { label: '只生成界面Val', name: 'pageVal', width: 80 },
             { label: '是否使用Dubbo', name: 'dubbo', width: 80 },
-            { label: '是否使用SpringMVC', name: 'mvc', width: 80 }
+            { label: '是否使用SpringMVC', name: 'mvc', width: 80 },
+             { label: '是否强制覆盖Bean:', name: 'isOverrideWrite', width: 80 }
 
         ],
 		viewrecords: true,
@@ -46,6 +47,7 @@ var vm = new Vue({
             databaseType: '',
             dubbo: '',
             mvc:'',
+            isOverrideWrite:'',
             pageVal:'',
             tempEnum : '',
             entity : '',
@@ -71,6 +73,11 @@ var vm = new Vue({
                 params.mvc = this.q.mvc
             } else {
                 delete params.mvc
+            }
+             if (this.q.isOverrideWrite) {
+                params.isOverrideWrite = this.q.isOverrideWrite
+            } else {
+                delete params.isOverrideWrite
             }
             if (this.q.pageVal) {
                 params.pageVal = this.q.pageVal

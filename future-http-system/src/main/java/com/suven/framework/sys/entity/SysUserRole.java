@@ -2,6 +2,7 @@ package com.suven.framework.sys.entity;
 
 import com.suven.framework.common.api.ApiDesc;
 import com.suven.framework.common.data.BaseEntity;
+import com.suven.framework.common.data.BaseStatusEntity;
 import com.suven.framework.core.db.ext.DS;
 
 /**

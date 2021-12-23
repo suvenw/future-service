@@ -20,10 +20,10 @@ public class SwaggerApiController {
 
 
     @RequestMapping(value = url_test_add, method = RequestMethod.GET)
-    @ApiDoc(value = "测试例子增加数据接口",request = SwaggerRequestVo.class, response = SwaggerResponseVo.class)
+    @ApiDoc(value = "测试例子增加数据接口",request = {SwaggerRequestVo.class,SwaggerResultVo.class}, response = SwaggerResponseVo.class)
     @ResponseBody
     public SwaggerResultVo add(SwaggerRequestVo  vo){
-        logger.info("[{}]  recepet : [{}] " ,url_test_add, JsonUtils.toJson(vo));
+        logger.info("[{}]  recepet : [{}] " ,url_test_add,JsonUtils.toJson(vo));
         SwaggerResponseVo sr =  SwaggerResponseVo.init().setRequestVo(vo).setBaseVoList(SwaggerBaseVo.build());
         return  SwaggerResultVo.build().setData(sr);
     }

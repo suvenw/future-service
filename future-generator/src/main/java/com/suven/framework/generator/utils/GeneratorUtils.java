@@ -10,7 +10,6 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 import org.apache.velocity.app.Velocity;
-import com.suven.framework.generator.entity.*;
 import com.suven.framework.generator.enums.BaseEntityEnum;
 import com.suven.framework.generator.enums.PageShowTypeEnum;
 import com.suven.framework.generator.enums.QueryTypeEnum;
@@ -71,10 +70,17 @@ public class GeneratorUtils {
         tableBean .setInsertDbList("").setUpdateDbList("");
         //过滤列信息
         Set<String>excludeFieldList  = new HashSet<>(excludeFieldNameList);
-        if(BaseEntityEnum.BASE_STATUS_ENTITY.equals(sysDataConfig.getBaseEntityNo())){
-            excludeFieldList.add("sort");
-            excludeFieldList.add("status");
-        }
+        BaseEntityEnum entityEnum = sysDataConfig.getBaseEntityNo();
+        excludeFieldList.addAll( Arrays.asList(entityEnum.getExcValue().split(",")));
+//        if(BaseEntityEnum.BASE_STATUS_ENTITY.equals(sysDataConfig.getBaseEntityNo())){
+//            excludeFieldList.add("sort");
+//            excludeFieldList.add("status");
+//        }
+//        if(BaseEntityEnum.BASE_TIME_ENTITY.equals(sysDataConfig.getBaseEntityNo())){
+//            excludeFieldList.add("createTime");
+//            excludeFieldList.add("updateTime");
+//        }
+
         TableEntity tableEntity =  generatorInfo.getTableEntity();
         ClassConfigEntity classEntity = generatorInfo.getClassEntity();
 
@@ -324,6 +330,18 @@ public class GeneratorUtils {
         }return false;
     }
 
+    /**
+     * 判断是否为创建时间类型列字段,用于修改时排除创建时间
+     * @param columnEntity
+     * @return
+     */
+    public static boolean isUpdateDateColumnName(ColumnClassEntity columnEntity){
+        if( "update_time".equals(columnEntity.getColumnName()) || "update_date".equals(columnEntity.getColumnName())
+                || "modify_date".equals(columnEntity.getColumnName()
+        )){
+            return true;
+        }return false;
+    }
 
     /**
      * 生成 java 属性对应的 get方法的字符串

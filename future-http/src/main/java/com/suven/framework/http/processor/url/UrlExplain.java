@@ -77,7 +77,7 @@ public class UrlExplain implements AnnotationListener {
     public static boolean isParamSign(String url) {
         UrlRemote urlex = map.get(url);
         if (urlex == null) {
-            return false;
+            return true;
         }
         return urlex.isParamSign();
     }

@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -210,7 +211,7 @@ public class SwaggerReflectionsDoc {
                     }
 
                     methodBean.setRequestInfo(apiDoc.value())
-                            .setRequestName(apiDoc.request().getName())
+                            .setRequestName(apiDoc.request()[0].getName())
                             .setResponseName(apiDocResponseName)
                             .setRequestAuthor(apiDoc.author())
                     ;
@@ -221,7 +222,9 @@ public class SwaggerReflectionsDoc {
                     }
                     methodClass.put(path,methodBean);
                     requestClass.put(classes.getName(),methodClass);
-                    converterParameterBean(apiDoc.request());
+
+                    converterParameterBean(apiDoc.request()[0]);
+
 
 
                     converterResponseVo(apiDocResponse);
@@ -318,24 +321,112 @@ public class SwaggerReflectionsDoc {
     }
 
     private  void converterParameterBean(Class entityClazz){
+//        List<Field> fieldList = FieldUtils.getAllFieldsList(entityClazz);
+        List<SwaggerParameterBean>  list = new ArrayList();
+        Map<Class,String> compoundMap = new LinkedHashMap<>();
+
+        List<SwaggerParameterBean>  beanList = converterParameterClassParameterBean(entityClazz,compoundMap);
+        list.addAll(beanList);
+
+        if(compoundMap.size() > 0){
+            for (Class classKey : compoundMap.keySet()) {
+                String fieldType = compoundMap.get(classKey);
+                //如果是复合类组,增加分隔线说明
+                List<SwaggerParameterBean> separate =  addSeparateInfo(classKey.getSimpleName(),fieldType);
+                List<SwaggerParameterBean>  beanList2 =  converterParameterClassParameterBean(classKey, null);
+                list.addAll(separate);
+                list.addAll(beanList2);
+            }
+
+        }
+        requestVoMap.put(entityClazz.getName(),list);
+    }
+
+    private List<SwaggerParameterBean>  converterParameterClassParameterBean(Class entityClazz, Map<Class,String> compoundMap){
         List<Field> fieldList = FieldUtils.getAllFieldsList(entityClazz);
         List list = new ArrayList();
+
         for (Field field : fieldList) {
             ApiDesc apiDesc = field.getAnnotation(ApiDesc.class);
             if(null == apiDesc){
                 continue;
             }
+
             String type =  "".equals(apiDesc.type()) ?  field.getType().getSimpleName() : apiDesc.type();
             SwaggerParameterBean parameterBean = SwaggerParameterBean.build()
                     .setName(field.getName())
                     .setType(type)
                     .setDescription( apiDesc.value())
                     .setRequired(apiDesc.required() == 1);
-            list.add(parameterBean);
+            if(0 == apiDesc.isHide()){
+                list.add(parameterBean);
+            }
+           converterParameterizedType(entityClazz,field,compoundMap,type);
+
 
         }
-        requestVoMap.put(entityClazz.getName(),list);
+       return list;
+
     }
+
+    /** 文档对象间的说明分隔描述 **/
+    private List<SwaggerParameterBean> addSeparateInfo(String className,String fieldType){
+        SwaggerParameterBean parameterBean1 = SwaggerParameterBean.build();
+        SwaggerParameterBean parameterBean2 = SwaggerParameterBean.build();
+        SwaggerParameterBean parameterBean3 = SwaggerParameterBean.build();
+        parameterBean1.setName("")
+                .setType("")
+                .setIn("")
+                .setDescription( "")
+                .setRequired(false);
+        parameterBean2.setName("<b>Parameter  «"+className+"» :</b>")
+                .setType("<b>"+fieldType+":</b>")
+                .setIn("")
+                .setDescription( "<b>该属性参数如下:</b>")
+                .setRequired(false);
+        parameterBean3.setName("<b>Name</b>")
+                .setType("<b>Type	Data</b>")
+                .setIn("<b>Parameter Type</b>")
+                .setDescription( "<b>Description</b>")
+                .setRequired(false);
+
+        return Arrays.asList(parameterBean1,parameterBean2,parameterBean3);
+    }
+
+    /**
+     * 判断类属性 是objet 对象或聚合,如果是则添加到compoundList聚合中
+     * @param entityClazz
+     * @param field
+     * @param compoundList
+     * @return
+     */
+    private boolean converterParameterizedType(Class entityClazz,Field field,Map<Class,String> compoundList,String paramType){
+        Class fieldType = field.getType();
+        if (isPrimitiveType(fieldType) || compoundList == null ) {
+            return false;
+        }
+        if (!isIterable(fieldType)) {
+            compoundList.put(fieldType,paramType);
+            return true;
+        }
+        Type genericType = field.getGenericType();
+        if (genericType != null && genericType instanceof ParameterizedType) {
+            //得到泛型里的class类型对象。
+            Class<?> genericClazz = getRawType(genericType);
+            if(genericClazz == null){
+                return false;
+            }
+            //过滤 类自己本身，如果出现迭归类，会出现死循环
+            if(isOneselfClass(genericClazz,entityClazz)){
+                return false;
+            }
+            compoundList.put(genericClazz,paramType);
+            return true;
+        }
+        return false;
+    }
+
+
     private  void converterResponseVo(Class entityClazz){
         if(entityClazz == null){
             entityClazz = Long.class;
@@ -416,7 +507,6 @@ public class SwaggerReflectionsDoc {
                 if (isIterable(fieldType)) {
                     Type genericType = field.getGenericType();
                     if (genericType != null && genericType instanceof ParameterizedType) {
-                        ParameterizedType parameterizedType = (ParameterizedType) genericType;
                         //得到泛型里的class类型对象。
                         Class<?> genericClazz = getRawType(genericType);
                         if(genericClazz == null){

@@ -7,6 +7,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.suven.framework.common.enums.SysResultCodeEnum;
 import com.suven.framework.http.inters.IResultCodeEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import com.suven.framework.common.constants.CommonConstant;
 import com.suven.framework.common.data.BasePage;
 import com.suven.framework.common.enums.ResultEnum;
@@ -15,14 +19,10 @@ import com.suven.framework.core.db.ext.Query;
 import com.suven.framework.http.data.vo.ResponseResultList;
 import com.suven.framework.sys.dao.SysPermissionDao;
 import com.suven.framework.sys.dao.SysUserDao;
-import com.suven.framework.sys.entity.SysPermission;
-import com.suven.framework.util.PageUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import com.suven.framework.sys.dto.request.SysPermissionRequestDto;
 import com.suven.framework.sys.dto.response.SysPermissionResponseDto;
+import com.suven.framework.sys.entity.SysPermission;
+import com.suven.framework.util.PageUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,7 +52,7 @@ public class SysPermissionServiceImpl  implements SysPermissionService {
     private SysUserDao sysUserDao;
 
     @Autowired
-    private SysPermissionDao sysPermissionDao;
+    private SysPermissionDao  sysPermissionDao;
 
 
 

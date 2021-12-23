@@ -1,5 +1,6 @@
 package com.suven.framework.sys.controller;
 
+import com.suven.framework.common.enums.SysResultCodeEnum;
 import com.suven.framework.http.handler.OutputResponse;
 import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.http.processor.url.SysURLCommand;

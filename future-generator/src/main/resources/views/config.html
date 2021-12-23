@@ -30,6 +30,7 @@
                     <option value="JdbcCodeCacheEnum">JDBC缓存模板JdbcCodeCacheEnum</option>
                     <option value="JdbcCodeStatusEnum">JDBC排序模板JdbcCodeStatusEnum</option>
                     <option value="MybatisCodeEnum">MYBATIS排序模板MybatisCodeEnum</option>
+                    <option value="MvcCodeEnum">MVC排序模板MvcCodeEnum</option>
                 </select>
                 <label class="label">基础Dao类名称:</label>
                 <select class="form-select" v-model="q.entityDao" @keyup.enter="query"  name="entityDao"  >
@@ -57,6 +58,7 @@
                     <option value="" selected="selected">请选择基础Bean类</option>
                     <option value="BaseEntity">BaseEntity</option>
                     <option value="BaseStatusEntity">BaseStatusEntity</option>
+                    <option value="BaseTimeEntity">BaseTimeEntity</option>
                 </select>
 
             </div>
@@ -67,6 +69,7 @@
                 -->
                 <label class="label">生成界面类型:</label><input type="text" class="form-control" v-model="q.pageVal"      @keyup.enter="query"   name="pageVal"         placeholder="0.不生成界面,1.生成AntDesign界面,2.生成Element界面">
                 <label class="label">是否使用Dubbo:</label><input type="text" class="form-control" v-model="q.dubbo"   @keyup.enter="query"   name="dubbo"   placeholder="eg: 1.Dubbo,默认为0,以spring生成">
+                <label class="label">是否强制覆盖Bean:</label><input type="text" class="form-control" v-model="q.isOverrideWrite"   @keyup.enter="query"   name="isOverrideWrite"   placeholder="eg:0.不覆盖,默认0, 1.是强制覆盖Bean">
             </div>
 			<div class="grid-btn">
 				<a class="btn btn-primary" @click="config"><i class="fa fa-file-code-o"></i>&nbsp;修改生成环境</a>

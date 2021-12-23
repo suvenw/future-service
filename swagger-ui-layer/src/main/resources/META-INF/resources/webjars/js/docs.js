@@ -193,6 +193,7 @@ function getData(operationId) {
 
     //header参数
     var headerJson = {};
+
     $("[p_operationId='" + operationId + "'][in='header']").each(function (index, domEle) {
         var k = $(domEle).attr("name");
         var v = $(domEle).val();
@@ -200,7 +201,7 @@ function getData(operationId) {
             headerJson[k] = v;
         }
     });
-
+    headerJson["content-type"]="application/x-www-form-urlencoded;charset=utf-8";
     //请求方式
     var parameterType = $("#content_type_" + operationId).val();
 

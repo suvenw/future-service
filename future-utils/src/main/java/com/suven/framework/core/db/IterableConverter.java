@@ -1,13 +1,15 @@
 package com.suven.framework.core.db;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.suven.framework.common.api.IBeanClone;
+import com.suven.framework.common.data.BaseBeanClone;
+import com.suven.framework.common.data.BaseEntity;
 import org.apache.commons.collections.CollectionUtils;
 import com.suven.framework.common.api.IBaseApi;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -111,5 +113,45 @@ public class IterableConverter {
 
     }
 
+    public  static <K extends IBaseApi,V extends IBeanClone> Map<Long, V> converterLinkedHashMap(List<K> list,Class<V> claxx){
+        if(CollectionUtils.isEmpty(list)){
+            return Collections.emptyMap();
+        }
+        Map<Long,V > map =   new LinkedHashMap<>();
+        list.forEach(entity ->{
+            try {
+                V vo =  claxx.newInstance().clone(entity);
+                map.put(entity.getId(),vo);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return map;
+    }
+
+
+    /**
+     * List 以IBaseApi接口类重写 getGroupId 为分组 Map<Long,Collection<T>>
+     * Map<Integer, List<T>> groupBy = appleList.stream().collect(Collectors.groupingBy(T::getId));
+     * @param list
+     * @return
+     */
+    public  static <K extends IBaseApi,V extends IBeanClone>   Map<Long, Collection<V>> converterGroupMap(List<K> list,Class<V> claxx){
+        if(CollectionUtils.isEmpty(list)){
+            return Collections.emptyMap();
+        }
+        Multimap<Long,V > map =   ArrayListMultimap.create();
+        list.forEach(entity ->{
+            try {
+                V vo =  claxx.newInstance().clone(entity);
+                map.put(entity.groupId() ,vo);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        Map<Long,Collection<V>> mapList =  map.asMap();
+        return mapList;
+
+    }
 
 }

@@ -42,6 +42,7 @@ public enum JdbcCodeStatusEnum implements CreateCodeEnum{
     private String temp;
     private String path;
     private String ext;
+    private int isWrite;
 
 
 
@@ -51,6 +52,15 @@ public enum JdbcCodeStatusEnum implements CreateCodeEnum{
         this.path = path;
         this.ext = extName;
     }
+
+    JdbcCodeStatusEnum(int index, String temp, String path, String extName,int isWrite){
+        this.index = index;
+        this.temp = temp;
+        this.path = path;
+        this.ext = extName;
+        this.isWrite =isWrite;
+    }
+
 
 //    private static Map<String, CreateCodeEnum> typeMap = new HashMap<>();
 //    static {

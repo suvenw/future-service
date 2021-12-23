@@ -1,0 +1,350 @@
+package ${packageName}.${moduleName}.controller;
+
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.io.*;
+
+import org.springframework.ui.ModelMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
+
+
+
+
+
+
+
+${importAutowiredPackage}
+
+import com.sixeco.framework.core.db.IterableConverter;
+import ${mainPath}.http.data.vo.ResponseResultList;
+import ${mainPath}.http.data.vo.ResponseResultVo;
+import ${mainPath}.http.handler.OutputResponse;
+import ${mainPath}.http.data.vo.HttpRequestByIdVo;
+import ${mainPath}.http.data.vo.HttpRequestByIdListVo;
+import ${mainPath}.http.data.vo.HttpRequestSortByIdListVo;
+import ${mainPath}.util.date.DateUtil;
+import ${mainPath}.util.excel.ExcelUtils;
+import ${mainPath}.common.data.BasePage;
+import ${mainPath}.common.api.ApiDoc;
+import ${mainPath}.common.api.DocumentConst;
+import ${mainPath}.common.enums.SysResultCodeEnum;
+import ${mainPath}.common.enums.TbStatusEnum;
+import ${mainPath}.core.db.IterableConverter;
+
+
+import ${packageName}.${moduleName}.service.${className}Service;
+import ${packageName}.${moduleName}.vo.request.${className}AddRequestVo;
+import ${packageName}.${moduleName}.vo.request.${className}RequestVo;
+import ${packageName}.${moduleName}.vo.response.${className}ResponseVo;
+
+import ${packageName}.${moduleName}.dto.enums.${className}QueryEnum;
+
+
+/**
+ * @ClassName: ${className}WebController.java
+ *
+ * @Author 作者 : ${author}
+ * @CreateDate 创建时间: ${datetime}
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: ${description} 的控制服务类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * @RequestMapping("/${moduleName}/${paramName}")
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+
+@Controller
+@ApiDoc(
+        group = DocumentConst.Sys.SYS_DOC_GROUP,
+        groupDesc= DocumentConst.Sys.SYS_DOC_DES,
+        module = "${description}模块"
+)
+public class ${className}WebController {
+
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    public static interface UrlCommand{
+        public static final String ${moduleName}_${paramName}_index      =   "/${moduleName}/${pathName}/index";
+        public static final String ${moduleName}_${paramName}_list       =   "/${moduleName}/${pathName}/list";
+        public static final String ${moduleName}_${paramName}_queryList  =   "/${moduleName}/${pathName}/querylist";
+        public static final String ${moduleName}_${paramName}_add        =   "/${moduleName}/${pathName}/add";
+        public static final String ${moduleName}_${paramName}_modify     =   "/${moduleName}/${pathName}/modify";
+        public static final String ${moduleName}_${paramName}_detail     =   "/${moduleName}/${pathName}/detail";
+        public static final String ${moduleName}_${paramName}_edit       =   "/${moduleName}/${pathName}/edit";
+        public static final String ${moduleName}_${paramName}_newInfo    =   "/${moduleName}/${pathName}/newInfo";
+        public static final String ${moduleName}_${paramName}_del        =   "/${moduleName}/${pathName}/delete";
+        public static final String ${moduleName}_${paramName}_sort       =   "/${moduleName}/${pathName}/sort";
+        public static final String ${moduleName}_${paramName}_turnOn     =   "/${moduleName}/${pathName}/turnOn";
+        public static final String ${moduleName}_${paramName}_turnOff    =   "/${moduleName}/${pathName}/turnOff";
+        public static final String ${moduleName}_${paramName}_export     =   "/${moduleName}/${pathName}/export";
+        public static final String ${moduleName}_${paramName}_import     =   "/${moduleName}/${pathName}/import";
+    }
+
+
+
+
+    ${importAutowired}
+    private ${className}Service  ${paramName}Service;
+
+    /**
+     * @Title: 跳转到${description}主界面
+     * @return 字符串url
+     * @author ${author}
+     * @date ${datetime}
+     *  --------------------------------------------------------
+     *  modifier    modifyTime                 comment
+     *
+     *  --------------------------------------------------------
+     */
+    @RequestMapping(value =  UrlCommand.${moduleName}_${paramName}_index,method = RequestMethod.GET)
+    @RequiresPermissions("${moduleName}:${pathName}:list")
+    public String index(){
+        return "${moduleName}/${paramName}_index";
+    }
+
+
+    /**
+     * @Title: 获取${description}分页信息
+     * @Description:${paramName}RequestVo @{Link ${className}RequestVo}
+     * @param
+     * @return  ResponseResultList 对象 List<${className}ResponseVo>
+     * @throw
+     * @author ${author}
+     * @date ${datetime}
+     *  --------------------------------------------------------
+     *  modifier    modifyTime                 comment
+     *
+     *  --------------------------------------------------------
+     */
+    @ApiDoc(
+            value = "获取${description}分页信息",
+            request = ${className}RequestVo.class,
+            response = ${className}ResponseVo.class
+    )
+    @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_list,method = RequestMethod.GET)
+    public   void   list( OutputResponse out, ${className}RequestVo ${paramName}RequestVo){
+
+        BasePage page =  BasePage.build().toPageSize(${paramName}RequestVo.getPageSize()).toPageNo(${paramName}RequestVo.getPageNo());
+        page.toParamObject(${paramName}RequestVo );
+         ${className}QueryEnum queryEnum =  ${className}QueryEnum.DESC_ID;
+        ResponseResultList<${className}ResponseVo> resultList = ${paramName}Service.get${className}ByNextPage(page,queryEnum);
+        if(null == resultList || resultList.getList().isEmpty() ){
+            out.write( ResponseResultList.build());
+            return ;
+        }
+        out.write( resultList);
+    }
+
+/**
+     * @Title: 根据条件查谒${description}分页信息
+     * @Description:${paramName}RequestVo @{Link ${className}RequestVo}
+     * @param
+     * @return   ResponseResultList 对象 List<${className}ResponseVo>
+     * @author ${author}
+     * @date ${datetime}
+     *  --------------------------------------------------------
+     *  modifier    modifyTime                 comment
+     *
+     *  --------------------------------------------------------
+     */
+    @ApiDoc(
+            value = "获取${description}分页信息",
+            request = ${className}RequestVo.class,
+            response = ${className}ResponseVo.class
+    )
+    @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_queryList,method = RequestMethod.GET)
+    public   void   queryList( OutputResponse out, ${className}RequestVo ${paramName}RequestVo){
+
+        ${className}QueryEnum queryEnum =  ${className}QueryEnum.DESC_ID;
+        List<${className}ResponseVo> resultList = ${paramName}Service.get${className}ListByQuery(${paramName}RequestVo,queryEnum);
+        if(null == resultList || resultList.isEmpty() ){
+            out.write( new ArrayList());
+            return ;
+        }
+        out.write( resultList);
+    }
+
+
+
+    /**
+     * @Title: 新增${description}信息
+     * @Description:${paramName}AddRequestVo @{Link ${className}AddRequestVo}
+     * @param ${paramName}AddRequestVo 对象
+     * @return long类型id
+     * @author ${author}
+     * @date ${datetime}
+     *  --------------------------------------------------------
+     *  modifier    modifyTime                 comment
+     *
+     *  --------------------------------------------------------
+     */
+    @ApiDoc(
+            value = "新增${description}信息",
+            request = ${className}RequestVo.class,
+            response = Long.class
+    )
+    @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_add,method = RequestMethod.POST)
+    public  void  add(OutputResponse out, ${className}AddRequestVo ${paramName}AddRequestVo){
+
+
+            ${className}ResponseVo ${paramName}ResponseVo =  ${paramName}Service.save${className}(${paramName}AddRequestVo);
+        if(${paramName}ResponseVo == null){
+            out.write(SysResultCodeEnum.SYS_UNKOWNN_FAIL);
+            return;
+        }
+        out.write( ${paramName}ResponseVo.getId());
+    }
+    /**
+     * @Title: 修改${description}信息
+     * @Description:${paramName}AddRequestVo @{Link ${className}AddRequestVo}
+     * @param  ${paramName}AddRequestVo 对象
+     * @return  boolean 类型1或0;
+     * @author ${author}
+     * @date ${datetime}
+     *  --------------------------------------------------------
+     *  modifier    modifyTime                 comment
+     *
+     *  --------------------------------------------------------
+     */
+    @ApiDoc(
+            value = "修改${description}信息",
+            request = ${className}AddRequestVo.class,
+            response = boolean.class
+    )
+    @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_modify , method = RequestMethod.POST)
+    public  void  modify(OutputResponse out,${className}AddRequestVo ${paramName}AddRequestVo){
+
+
+        if(${paramName}AddRequestVo.getId() == 0){
+            out.write(SysResultCodeEnum.SYS_WEB_ID_INFO_NO_EXIST);
+            return;
+        }
+        boolean result =  ${paramName}Service.update${className}(${paramName}AddRequestVo);
+        out.write(result);
+    }
+
+    /**
+     * @Title: 查看${description}信息
+     * @Description:${paramName}RequestVo @{Link ${className}RequestVo}
+     * @param
+     * @return  ${className}ResponseVo  对象
+     * @author ${author}
+     * @date ${datetime}
+     *  --------------------------------------------------------
+     *  modifier    modifyTime                 comment
+     *
+     *  --------------------------------------------------------
+     */
+
+    @ApiDoc(
+            value = "查看${description}信息",
+            request = HttpRequestByIdVo.class,
+            response = ${className}ResponseVo.class
+    )
+    @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_detail,method = RequestMethod.GET)
+    public void detail(OutputResponse out, HttpRequestByIdVo idRequestVo){
+
+            ${className}ResponseVo vo = ${paramName}Service.get${className}ById(idRequestVo.getId());
+        out.write(vo);
+    }
+
+
+
+    /**
+     * @Title: 跳转${description}编辑界面
+     * @Description:id @{Link Long}
+     * @param
+     * @return ${className}ShowResponseVo 对象
+     * @author ${author}
+     * @date ${datetime}
+     *  --------------------------------------------------------
+     *  modifier    modifyTime                 comment
+     *
+     *  --------------------------------------------------------
+     */
+    @ApiDoc(
+            value = "查看${description}信息",
+            request = HttpRequestByIdVo.class,
+            response = ${className}ResponseVo.class
+    )
+    @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_edit , method = RequestMethod.GET)
+    public void edit(OutputResponse out, HttpRequestByIdVo idRequestVo){
+
+            ${className}ResponseVo vo = ${paramName}Service.get${className}ById(idRequestVo.getId());
+        out.write(vo);
+
+    }
+
+
+
+
+    /**
+     * @Title: 跳转${description}新增编辑界面
+     * @Description:id @{Link Long}
+     * @param
+     * @return  返回新增加的url
+     * @author ${author}
+     * @date ${datetime}
+     *  --------------------------------------------------------
+     *  modifyer    modifyTime                 comment
+     *
+     *  --------------------------------------------------------
+     */
+    @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_newInfo , method = RequestMethod.GET)
+    public String newInfo(ModelMap modelMap){
+        return "${moduleName}/${paramName}_edit";
+    }
+
+    /**
+     * @Title: 删除${description}信息
+     * @Description:id @{Link Long}
+     * @param
+     * @return   boolean 类型1或0;
+     * @author ${author}
+     * @date ${datetime}
+     *  --------------------------------------------------------
+     *  modifier    modifyTime                 comment
+     *
+     *  --------------------------------------------------------
+     */
+    @ApiDoc(
+            value = "删除${description}信息",
+            request = HttpRequestByIdListVo.class,
+            response = Integer.class
+    )
+    @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_del,method = RequestMethod.POST)
+    public  void  del(OutputResponse out, HttpRequestByIdListVo idRequestVo){
+        if (idRequestVo.getIdList() == null || idRequestVo.getIdList().isEmpty()) {
+            out.write(SysResultCodeEnum.SYS_WEB_ID_INFO_NO_EXIST);
+            return ;
+        }
+        int result = ${paramName}Service.del${className}ByIds(idRequestVo.getIdList());
+        out.write(result);
+    }
+
+
+
+
+}

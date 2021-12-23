@@ -91,14 +91,15 @@ public abstract class ValidatorCache<V> {
     public   boolean validatorCache(){
         String cacheKey = cacheKey();
        V validatorValue =  validatorCache.getUnchecked(cacheKey);
-       if(null == validatorValue || validatorValue.equals(false) ){
-           invalidateCache();
-           return false;
-        }
-       if(validatorValue instanceof Boolean){
+//       if(null == validatorValue || validatorValue.equals(false) ){wo1
+//           invalidateCache();
+//           return false;
+//        }
+       if(null != validatorValue && validatorValue instanceof Boolean){
            return (Boolean)validatorValue;
 
        }
+       logger.warn("----------- validatorCache data is null! ");
        return cacheValidatorValue(validatorValue);
     }
 

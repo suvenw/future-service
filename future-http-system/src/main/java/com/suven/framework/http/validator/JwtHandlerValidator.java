@@ -56,7 +56,7 @@ public class JwtHandlerValidator extends ValidatorCache implements IHandlerValid
                 return true;
             }
         }catch (Exception e){
-            logger.error("",e);
+            logger.error("JwtHandlerValidator validator ",e);
         }
         return false;
     }

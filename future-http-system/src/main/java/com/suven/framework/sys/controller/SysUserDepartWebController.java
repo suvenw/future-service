@@ -2,6 +2,13 @@ package com.suven.framework.sys.controller;
 
 
 import com.suven.framework.sys.vo.DocumentConst;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import com.suven.framework.common.api.ApiDoc;
 import com.suven.framework.common.data.BasePage;
 import com.suven.framework.common.enums.SysResultCodeEnum;
@@ -11,13 +18,6 @@ import com.suven.framework.http.data.vo.HttpRequestByIdVo;
 import com.suven.framework.http.data.vo.ResponseResultList;
 import com.suven.framework.http.handler.OutputResponse;
 import com.suven.framework.http.processor.url.SysURLCommand;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import com.suven.framework.sys.dto.request.SysUserDepartRequestDto;
 import com.suven.framework.sys.dto.response.SysUserDepartResponseDto;
 import com.suven.framework.sys.service.SysUserDepartService;

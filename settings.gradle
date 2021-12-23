@@ -1,8 +1,9 @@
 rootProject.name = 'future-service'
 
+
 include 'future-http' ,'future-utils','future-global','future-generator','future-plus'
 
-include 'future-http-file','future-http-system','swagger-ui-layer'
+include 'future-http-file','future-http-system','swagger-ui-layer','future-doc'
 
 
 

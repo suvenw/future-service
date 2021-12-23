@@ -12,6 +12,7 @@ public class SysConfig {
     private int pageVal = 1;
     private int dubbo = 0;
     private int mvc = 1;
+    private int isOverrideWrite = 0;
 
 
 
@@ -61,7 +62,13 @@ public class SysConfig {
         this.dataSourceName = dataSourceName;
     }
 
+    public int getIsOverrideWrite() {
+        return isOverrideWrite;
+    }
 
+    public void setIsOverrideWrite(int isOverrideWrite) {
+        this.isOverrideWrite = isOverrideWrite;
+    }
 
     public String getTempEnum() {
         return tempEnum;

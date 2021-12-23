@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSS;
+import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.OSSException;
 import com.aliyun.oss.model.*;
 import com.suven.framework.file.config.FileConfigSetting;

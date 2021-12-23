@@ -1,0 +1,8 @@
+
+#配置mybatis 日志打印
+logging:
+  level:
+    root: info
+    com.sixeco.framework.sys.dao: trace
+  pattern:
+    console: '%p%m%n'

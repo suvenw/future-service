@@ -3,6 +3,8 @@ package com.suven.framework.util.createcode.doc;
 import com.suven.framework.common.api.ApiDesc;
 import com.suven.framework.http.data.vo.RequestParserVo;
 
+import java.util.List;
+
 public class SwaggerRequestVo extends RequestParserVo {
 
 
@@ -17,6 +19,27 @@ public class SwaggerRequestVo extends RequestParserVo {
     @ApiDesc(value = "字段介绍说明, 请求参数类型")
     private String type;
 
+
+
+
+    @ApiDesc(value = "字段介绍说明, 请求参数类型",isHide = 1)
+    private SwaggerResultVo swaggerResultVo;
+    @ApiDesc(value = "聚合对象 请求参数类型",isHide = 1)
+    private List<SwaggerBaseVo> swaggerBaseVo;
+
+    @ApiDesc(value = "为SwaggerResultVo对象json 字符串")
+    private String swaggerResultJson;
+
+    @ApiDesc(value = "为 SwaggerBaseVo 对象json 字符串")
+    private String swaggerBaseJson;
+
+
+    public SwaggerRequestVo() {
+    }
+
+    public SwaggerRequestVo(SwaggerResultVo swaggerResultVo) {
+        this.swaggerResultVo = swaggerResultVo;
+    }
 
     public static SwaggerRequestVo build(){
         return  new SwaggerRequestVo();
@@ -74,5 +97,35 @@ public class SwaggerRequestVo extends RequestParserVo {
         return this;
     }
 
+    public SwaggerResultVo getSwaggerResultVo() {
+        return swaggerResultVo;
+    }
 
+    public void setSwaggerResultVo(SwaggerResultVo swaggerResultVo) {
+        this.swaggerResultVo = swaggerResultVo;
+    }
+
+    public String getSwaggerResultJson() {
+        return swaggerResultJson;
+    }
+
+    public void setSwaggerResultJson(String swaggerResultJson) {
+        this.swaggerResultJson = swaggerResultJson;
+    }
+
+    public List<SwaggerBaseVo> getSwaggerBaseVo() {
+        return swaggerBaseVo;
+    }
+
+    public void setSwaggerBaseVo(List<SwaggerBaseVo> swaggerBaseVo) {
+        this.swaggerBaseVo = swaggerBaseVo;
+    }
+
+    public String getSwaggerBaseJson() {
+        return swaggerBaseJson;
+    }
+
+    public void setSwaggerBaseJson(String swaggerBaseJson) {
+        this.swaggerBaseJson = swaggerBaseJson;
+    }
 }

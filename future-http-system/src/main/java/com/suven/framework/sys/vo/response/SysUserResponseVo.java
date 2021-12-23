@@ -31,9 +31,9 @@ public class SysUserResponseVo extends BaseStatusEntity implements Serializable 
 
     @ApiDesc(value = "手机号码")
     private String phone;
-
-    @ApiDesc(value = "账号密码")
-    private String password;
+//
+//    @ApiDesc(value = "账号密码")
+//    private String password;
 
     @ApiDesc(value = "头像")
     private String headImage;
@@ -136,13 +136,13 @@ public class SysUserResponseVo extends BaseStatusEntity implements Serializable 
         this.phone = phone;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+//    public String getPassword() {
+//        return password;
+//    }
+//
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
 
     public String getHeadImage() {
         return headImage;

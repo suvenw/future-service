@@ -44,6 +44,11 @@ public class SysURLCommand implements IURLCommand {
 
     public static final String sys_get_error_no = "/sys/errorNo";
 
+    public static final String sys_get_post_param = "/sys/postParam";
+    public static final String sys_get_get_param = "/sys/getParam";
+
+    public static final String sys_get_framework = "";
+
     public static final String sys_get_config = "/sys/config";
 
     public static final String sys_get_test = "/sys/test";
@@ -74,6 +79,7 @@ public class SysURLCommand implements IURLCommand {
 
 
     public static final String sys_user_list = "/sys/user/list";
+    public static final String sys_user_queryByUserName = "/sys/sysUserAgent/queryByUserName";
 
     public static final String sys_user_add = "/sys/user/add";
 
@@ -210,6 +216,8 @@ public class SysURLCommand implements IURLCommand {
     public static final String sys_user_userRoleList = "/sys/user/userRoleList";
     public static final String sys_user_addSysUserRole = "/sys/user/addSysUserRole";
     public static final String sys_user_deleteUserRoleBatch = "/sys/user/deleteUserRoleBatch";
+
+
 
 
 }

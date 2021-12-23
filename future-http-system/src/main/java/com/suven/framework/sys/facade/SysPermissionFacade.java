@@ -5,13 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.suven.framework.common.enums.SysResultCodeEnum;
 import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.sys.utils.JwtUtil;
-import com.suven.framework.common.constants.CommonConstant;
-import com.suven.framework.http.data.vo.HttpRequestByIdListVo;
-import com.suven.framework.util.crypt.CryptUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.suven.framework.common.constants.CommonConstant;
 
+import com.suven.framework.http.data.vo.HttpRequestByIdListVo;
 import com.suven.framework.sys.dto.request.SysPermissionRequestDto;
 import com.suven.framework.sys.dto.response.SysPermissionResponseDto;
 import com.suven.framework.sys.dto.response.SysUserResponseDto;
@@ -21,6 +20,7 @@ import com.suven.framework.sys.vo.request.SysPermissionRequestVo;
 import com.suven.framework.sys.vo.request.TokenRequestVo;
 import com.suven.framework.sys.vo.response.SysPermissionTreeResponseVo;
 import com.suven.framework.sys.vo.response.TreeModelResponseVo;
+import com.suven.framework.util.crypt.CryptUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;

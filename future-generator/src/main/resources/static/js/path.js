@@ -10,6 +10,7 @@ $(function () {
             { label: 'HTTP项目路径', name: 'httpProjectPath', width: 80 },
             { label: 'RPC项目路径', name: 'rpcProjectPath', width: 80 },
             { label: 'API项目路径', name: 'apiProjectPath', width:80 },
+            { label: 'SYS项目路径', name: 'sysProjectPath', width:80 },
             { label: '模板项目路径', name: 'templatesPath', width: 80 },
             { label: '是否使用', name: 'isUse', width: 80 }
 
@@ -52,6 +53,7 @@ var vm = new Vue({
             httpProjectPath:'',
             rpcProjectPath:'',
             apiProjectPath : '',
+            sysProjectPath : '',
             templatesPath: '',
             isUse: ''
 		}
@@ -95,6 +97,11 @@ var vm = new Vue({
                 params.apiProjectPath = this.q.apiProjectPath
             } else {
                 delete params.apiProjectPath
+            }
+            if (this.q.sysProjectPath) {
+                params.sysProjectPath = this.q.sysProjectPath
+            } else {
+                delete params.sysProjectPath
             }
             if (this.q.templatesPath) {
                 params.templatesPath = this.q.templatesPath

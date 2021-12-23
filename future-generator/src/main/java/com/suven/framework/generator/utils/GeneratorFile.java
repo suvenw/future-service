@@ -57,7 +57,7 @@ public class GeneratorFile {
                 int pageVauType = sysDataConfig.getSysConfig().getPageVal();
                 String filePath = null;
                 //生成界面实现
-                if (codeEnum instanceof VuePageEnum){
+                if (codeEnum instanceof  VuePageEnum){
                     filePath = getViewsFilePath(codeEnum, tableEntity.getClassName(), classEntity.getModuleName(),htmlPath,pageVauType);
                     if(filePath == null){
                         continue;
@@ -93,9 +93,15 @@ public class GeneratorFile {
                 if(!outFile.getParentFile().exists()){
                     outFile.getParentFile().mkdirs();
                 }
-                if(outFile.exists()){
-                    System.err.println("java Constant is exists >>: " + outfile + "<<----------" );
-                    continue ;
+                if(outFile.exists() ){
+                    if(sysDataConfig.getSysConfig().getIsOverrideWrite()==1 && codeEnum.isWrite() == 1){
+                        System.err.println("java Constant is exists and delete path >>: " + outfile + "<<----------"  );
+                        outFile.delete();
+                    }else {
+                        System.err.println("java Constant is exists >>: " + outfile + "<<----------"  );
+                        continue ;
+                    }
+
                 }
                 //渲染模板
                 StringWriter sw = new StringWriter();

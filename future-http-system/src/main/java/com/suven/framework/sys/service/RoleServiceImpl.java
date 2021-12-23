@@ -4,21 +4,21 @@ package com.suven.framework.sys.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.suven.framework.common.data.BasePage;
-import com.suven.framework.common.enums.ResultEnum;
-import com.suven.framework.core.db.ext.Query;
-import com.suven.framework.http.data.vo.ResponseResultList;
-import com.suven.framework.sys.dao.RoleDao;
-import com.suven.framework.sys.entity.Role;
-import com.suven.framework.util.PageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.databene.commons.CollectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.suven.framework.common.data.BasePage;
+import com.suven.framework.common.enums.ResultEnum;
+import com.suven.framework.core.db.ext.Query;
+import com.suven.framework.http.data.vo.ResponseResultList;
+import com.suven.framework.sys.dao.RoleDao;
 import com.suven.framework.sys.dto.request.RoleRequestDto;
 import com.suven.framework.sys.dto.response.RoleResponseDto;
+import com.suven.framework.sys.entity.Role;
+import com.suven.framework.util.PageUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -177,7 +177,7 @@ public class RoleServiceImpl implements RoleService {
      * @author xinye
      * @date 2019-11-21 15:22:59
      */
-    public List<RoleResponseDto> getRoleByPage(ResponseResultList<RoleResponseDto> responseResultList, BasePage basePage) {
+    public List<RoleResponseDto> getRoleByPage( ResponseResultList<RoleResponseDto> responseResultList,BasePage basePage) {
 
 
         List<RoleResponseDto> resDtoList = new ArrayList<>();

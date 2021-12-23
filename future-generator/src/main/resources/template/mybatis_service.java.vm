@@ -210,7 +210,7 @@ public interface ${className}Service {
     public boolean updateSortByIds(List<Long> idList,List<Integer> sortList);
 #end
 
-    public PageUtils queryPage(Map<String, Object> params);
+
 
 
     /**
