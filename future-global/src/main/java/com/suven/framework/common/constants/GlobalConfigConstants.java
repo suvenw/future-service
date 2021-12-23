@@ -10,7 +10,7 @@ public interface GlobalConfigConstants {
 
 	public static final String SERVICE_NAME= "future-service";
 	public static final String POJECT_PATH = "top/suven/";
-	public static final String COMPONENT_SCAN_BASE_PACKAGES=  "com.sixeco";
+	public static final String COMPONENT_SCAN_BASE_PACKAGES=  "com.suven";
 	public static final String MAPPER_SCAN_BASE_PACKAGES=  "com.suven.framework.*.mapper";
 
 

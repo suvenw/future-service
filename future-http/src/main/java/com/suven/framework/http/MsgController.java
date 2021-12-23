@@ -13,6 +13,8 @@ import com.suven.framework.http.message.HttpRequestPostMessage;
 import com.suven.framework.http.processor.url.SysURLCommand;
 import com.suven.framework.util.createcode.swagger.SwaggerReflectionsDoc;
 import com.suven.framework.util.createcode.swagger.SwaggerResultBean;
+import com.suven.framework.util.crypt.CryptUtil;
+import com.suven.framework.util.crypt.SignParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -69,11 +71,11 @@ public class MsgController {
 
     @ApiDoc(
             value = "接口服务基本响应",
-            request = HttpMsgEnumError.class,
+            request = RequestParserVo.class,
             response = long.class
     )
     @RequestMapping(value = SysURLCommand.sys_get_framework, method = RequestMethod.GET)
-    public void getFrameworkApi(OutputMessage out,ApiDocJsonParse jsonParse)  {
+    public void getFrameworkApi(OutputMessage out,RequestParserVo jsonParse)  {
         out.writeSuccess();
     }
 
@@ -97,6 +99,25 @@ public class MsgController {
         out.writeSuccess();
     }
 
+
+    @ApiDoc(
+            value = "请求参数加密例子",
+            request = SystemParamSignParse.class,
+            response = long.class
+    )
+    @RequestMapping(value = SysURLCommand.sys_get_get_param, method = RequestMethod.GET)
+    public void getSystemParamSign(OutputMessage out,SystemParamSignParse signParse)  {
+        String param = "";
+        if(signParse.getSalt() == 1){
+            param = CryptUtil.md5(param + GlobalConfigConstants.TOP_SERVER_APPKEY).toLowerCase();
+        }else{
+            param  = CryptUtil.md5(signParse.getCliSign()).toLowerCase();
+        }
+
+        String result =  "原始参数:["+signParse.getCliSign()+"]\n + md5 加密后的结果:[" + param +"]";
+        out.write(result);
+    }
+
     public static class ApiDocJsonParse extends RequestParserVo {
         @ApiDesc(value= "模糊搜索中文描述或url " )
         private String search;
@@ -110,5 +131,27 @@ public class MsgController {
         }
     }
 
+    public static class SystemParamSignParse extends RequestParserVo {
+        @ApiDesc(value= "参与加密的字符串:eg: appId=10000&accessToken=abcedeeee&device=abcdeee123 " )
+        private String cliSign;
+        @ApiDesc(value= "是否拼接盐,1.后台拼接,0.直接md5,不拼接盐信息" )
+        private int salt;
+
+        public String getCliSign() {
+            return cliSign;
+        }
+
+        public void setCliSign(String cliSign) {
+            this.cliSign = cliSign;
+        }
+
+        public int getSalt() {
+            return salt;
+        }
+
+        public void setSalt(int salt) {
+            this.salt = salt;
+        }
+    }
 
 }
