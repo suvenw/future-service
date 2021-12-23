@@ -431,6 +431,7 @@ project(':future-http') {
     dependencies{
         compile fileTree( dir: "lib", include: '*.jar' )
         compile project(':future-utils')
+        compile project(':future-doc')
 
         compile("org.springframework.boot:spring-boot-starter-jetty:${spring_boot_version}")
         compile("org.springframework.boot:spring-boot-starter-websocket:${spring_boot_version}")
@@ -521,7 +522,8 @@ project(':future-http-system') {
         compile project(':future-utils')
         compile project(':future-http')
         compile project(':future-global')
-        //compile project(':future-plus')
+        compile project(':future-doc')
+
         compile 'com.suven.framework:swagger-ui-layer:0.0.01'
 
         compile 'io.jsonwebtoken:jjwt-api:0.10.7'
@@ -545,7 +547,7 @@ project(':future-http-file') {
         compile project(':future-utils')
         compile project(':future-http')
         compile project(':future-global')
-//        compile project(':swagger-ui-layer')
+        compile project(':future-doc')
 
         compile 'com.github.tobato:fastdfs-client:1.26.5'
         compile 'com.aliyun.oss:aliyun-sdk-oss:3.7.0'

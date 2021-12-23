@@ -459,7 +459,7 @@ public class FileFastDFSController {
 			return;
 		}
 		saveCache(userId,fileMd5,curPosition,storePath.getPath());
-		
+
 		vo.setPath(storePath.getFullPath());
 		vo.setFullPath(fileConfigSetting.getDomain()+"/"+vo.getPath());
 		vo.setDomain(fileConfigSetting.getDomain());

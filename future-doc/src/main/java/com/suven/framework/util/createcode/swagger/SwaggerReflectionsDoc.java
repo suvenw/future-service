@@ -9,24 +9,22 @@ import com.suven.framework.common.api.DocConstants;
 import com.suven.framework.util.createcode.doc.SwaggerRequestVo;
 import com.suven.framework.util.createcode.doc.SwaggerResponseVo;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-
 import org.reflections.Reflections;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.*;
-import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -38,7 +36,7 @@ public class SwaggerReflectionsDoc {
 
     private static  Logger logger = LoggerFactory.getLogger(SwaggerReflectionsDoc.class);
 
-    private String packages = "com";
+
 
     private static Set<String> urlSet = new HashSet<>();
     private static List<Class> controllerClass = new ArrayList<>();
@@ -56,8 +54,9 @@ public class SwaggerReflectionsDoc {
     private String spance = "&nbsp&nbsp&nbsp&nbsp";
     private static Map<String,SwaggerResultBean> apiDoc = new TreeMap<>();
 
+
     @Autowired
-    private ApplicationContext applicationContext;
+    private SwaggerReflection swaggerReflection;
 
     public static SwaggerResultBean getApiDoc(String search){
         SwaggerResultBean resultBean =  apiDoc.get("api");
@@ -150,21 +149,16 @@ public class SwaggerReflectionsDoc {
      */
     @PostConstruct
     public void init() {
-        List<String> packageList  = new ArrayList(16);
-        packageList.add("com");
-        if(packages != null && !"".equals(packages)){
-            packageList.addAll(Arrays.asList(packages));
-        }
-        Reflections reflections = new Reflections(packageList);
+        //初始化扫描包;
+        Reflections reflections = swaggerReflection.getReflections();
         Set<Class<?>> classesList = reflections.getTypesAnnotatedWith(Controller.class);
         Set<Class<?>> restList = reflections.getTypesAnnotatedWith(RestController.class);
-
         Set<Class<?>> apiDocList = reflections.getTypesAnnotatedWith(ApiDoc.class);
-
         TreeMap<String,Class> controllerTreeClass = new TreeMap<>();
         controllerTreeClass.putAll( classesList.stream().collect(Collectors.toMap(Class::getSimpleName, clazz -> clazz)));
         controllerTreeClass.putAll(restList.stream().collect(Collectors.toMap(Class::getSimpleName, clazz -> clazz)));
         controllerTreeClass.putAll(apiDocList.stream().collect(Collectors.toMap(Class::getSimpleName, clazz -> clazz)));
+
         controllerClass.addAll(controllerTreeClass.values());
         // 存放url和   RequestMapping 的对应关系
         for (Class classes : controllerClass) {
@@ -665,21 +659,12 @@ public class SwaggerReflectionsDoc {
     public void out(){
         try {
 
-            SwaggerInfo swaggerInfo = applicationContext.getBean(SwaggerInfo.class);
-            Environment env = applicationContext.getEnvironment();
-            String ip = InetAddress.getLocalHost().getHostAddress();
-            String port = env.getProperty("server.port");
-            String path = env.getProperty("server.servlet.context-path");
-            if(swaggerInfo == null){
-                swaggerInfo =   SwaggerInfo.init();
-                swaggerInfo.setTermsOfService(ip+":"+port+path);
-            }
+
+
             SwaggerResultBean bean = new SwaggerResultBean();
-            bean.setInfo(swaggerInfo);
-
-            bean.setBasePath(path).setHost(ip+":"+port).setSwagger(swaggerInfo.getVersion());
-
+            swaggerReflection.initSwaggerInfo(bean);
             bean.setPaths(SwaggerPathsMap.build()).setDefinitionsAll(responseVoMap.values());
+
             for(Class classes : controllerClass){
 //            SwaggerRequestMethodBean methodBean = SwaggerRequestMethodBean.init();
                 try {
@@ -752,6 +737,7 @@ public class SwaggerReflectionsDoc {
             e.printStackTrace();
         }
     }
+
 
     private void cleanAllParam(){
         urlSet = null;
