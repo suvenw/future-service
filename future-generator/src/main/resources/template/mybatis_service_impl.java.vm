@@ -405,7 +405,7 @@ public class ${className}ServiceImpl  implements ${className}Service {
         }
         ${className} ${paramName} = ${className}.build().toStatus(TbStatusEnum.DISABLE.index());
 
-        //修改条件s
+        //修改条件
         UpdateWrapper<${className}> updateWrapper = new UpdateWrapper<>();
         updateWrapper.in( "id",idList);
 
@@ -425,7 +425,7 @@ public class ${className}ServiceImpl  implements ${className}Service {
             return false;
         }
         ${className} ${paramName} = ${className}.build().toSort(sort);
-        //修改条件s
+        //修改条件
         UpdateWrapper<${className}> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id",id);
         boolean result = ${paramName}Dao.update( ${paramName},updateWrapper);
@@ -449,7 +449,7 @@ public class ${className}ServiceImpl  implements ${className}Service {
             ${className}  ${paramName} = ${className} .build().toSort(sortList.get(i));
             ${paramName}.toId(idList.get(i));
             ${paramName}List.add(${paramName});
-            //修改条件s
+            //修改条件
 //            UpdateWrapper< ${className}> updateWrapper = new UpdateWrapper<>();
 //           updateWrapper.eq("id",idList.get(i));
 //            ${paramName}Dao.update(${paramName},updateWrapper);
