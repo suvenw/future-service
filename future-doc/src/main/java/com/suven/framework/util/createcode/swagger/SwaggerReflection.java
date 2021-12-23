@@ -58,8 +58,10 @@ public class SwaggerReflection {
         packageList.add("com");
         if(apiPackagesMap != null && !apiPackagesMap.isEmpty()){
             apiPackagesMap.values().forEach(com ->{
-               String[] packages =  com.getPackages().split(";|,");
-                packageList.addAll(Arrays.asList(packages));
+                if(null != com.getPackages()) {
+                    String[] packages = com.getPackages().split(";|,");
+                    packageList.addAll(Arrays.asList(packages));
+                }
             });
 
         }
@@ -110,13 +112,5 @@ public class SwaggerReflection {
         return this.reflections;
     }
 
-    /**
-     * 获取指定文件下面的RequestMapping方法保存在mapp中
-     * T extends Annotation
-     * @return
-     */
-    @PostConstruct
-    public void init() {
 
-    }
 }
