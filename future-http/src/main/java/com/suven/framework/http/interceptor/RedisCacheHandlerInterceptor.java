@@ -1,5 +1,6 @@
 package com.suven.framework.http.interceptor;
 
+import com.suven.framework.http.handler.OutputCacheResponse;
 import com.suven.framework.http.handler.OutputResponse;
 import com.suven.framework.http.message.HttpRequestRemote;
 import com.suven.framework.http.message.ParamMessage;
@@ -41,7 +42,7 @@ public class RedisCacheHandlerInterceptor extends BaseHandlerInterceptorAdapter 
 
 
         HttpRequestRemote remote =  ParamMessage.getRequestRemote();
-        if(redisClusterServer == null || remote.isPostReq()){
+        if(redisClusterServer == null || remote.isPostRequest()){
             return true;
         }
         try {
@@ -50,7 +51,7 @@ public class RedisCacheHandlerInterceptor extends BaseHandlerInterceptorAdapter 
             String resultResponse = redisClusterServer.get(sb.toString());
             if(null != resultResponse){
                 Object result =  JsonUtils.parseObject(resultResponse, Object.class);
-                OutputResponse.getInstance(request,response).write(result);
+                OutputCacheResponse.getInstance(request,response).write(result);
                 cdn.set(false);
                 return false;
             }
@@ -70,7 +71,7 @@ public class RedisCacheHandlerInterceptor extends BaseHandlerInterceptorAdapter 
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)throws SystemRuntimeException {
        try {
            if(cdn.get()){
-               ResponseResultVo resultResponse =  OutputResponse.getResponseResultVo();
+               ResponseResultVo resultResponse = OutputCacheResponse.getResponseResultVo();
                if(resultResponse == null){
                    return;
                }

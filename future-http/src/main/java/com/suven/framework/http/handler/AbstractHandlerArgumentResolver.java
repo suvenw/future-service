@@ -54,9 +54,9 @@ public abstract class AbstractHandlerArgumentResolver<T> implements HandlerMetho
      * @param webRequest HttpServletRequest 网络请求对象
      * @return  boolean   如果是json返回ture;否则为false;
      * **/
-    protected boolean requestContentTypeIsJson(NativeWebRequest webRequest){
+    protected boolean isJsonRequestContentType(NativeWebRequest webRequest){
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-        boolean requestJson = this.requestIsJsonFromContentType(request);
+        boolean requestJson = this.isJsonRequestFromContentType(request);
         return requestJson;
     }
 

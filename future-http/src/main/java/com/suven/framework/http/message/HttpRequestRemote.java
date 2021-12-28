@@ -46,12 +46,12 @@ public class HttpRequestRemote implements IRequestRemote {
 	/** 
 	 * 是否需要检测token
 	 */
-	private boolean isPostReq;
+	private boolean isPostRequest;
 
 	/**
 	 * 是否Json请求
 	 */
-	private boolean isJsonReq;
+	private boolean isJsonRequest;
 	/**
 	 * 是否要进行版本升级检测。
 	 */
@@ -155,7 +155,7 @@ public class HttpRequestRemote implements IRequestRemote {
 	 *  ignoreLogin 设置 ignoreLogin。
 	 */
 	public void setIgnoreLogin() {
-		if(!isCdn && !isWhite && isPostReq){
+		if(!isCdn && !isWhite && isPostRequest){
 			this.ignoreLogin = true;
 		}
 
@@ -191,15 +191,15 @@ public class HttpRequestRemote implements IRequestRemote {
 	/**
 	 * @return 返回 isPostReq。
 	 */
-	public boolean isPostReq() {
-		return isPostReq;
+	public boolean isPostRequest() {
+		return isPostRequest;
 	}
 
 	/**
-	 * @param isPostReq 设置 isPostReq。
+	 * @param isPostRequest 设置 isPostRequest。
 	 */
-	public void setPostReq(boolean isPostReq) {
-		this.isPostReq = isPostReq;
+	public void setPostRequest(boolean isPostRequest) {
+		this.isPostRequest = isPostRequest;
 	}
 
 	public boolean isCdn() {
@@ -229,12 +229,12 @@ public class HttpRequestRemote implements IRequestRemote {
 		return module;
 	}
 
-	public boolean isJsonReq() {
-		return isJsonReq;
+	public boolean isJsonRequest() {
+		return isJsonRequest;
 	}
 
-	public void setJsonReq(boolean jsonReq) {
-		isJsonReq = jsonReq;
+	public void setJsonRequest(boolean jsonRequest) {
+		isJsonRequest = jsonRequest;
 	}
 
 	public boolean isAesData() {

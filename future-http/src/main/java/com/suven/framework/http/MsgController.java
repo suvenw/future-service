@@ -5,7 +5,7 @@ import com.suven.framework.common.api.ApiDoc;
 import com.suven.framework.common.api.DocumentConst;
 import com.suven.framework.common.constants.GlobalConfigConstants;
 import com.suven.framework.http.data.vo.RequestParserVo;
-import com.suven.framework.http.handler.OutputMessage;
+import com.suven.framework.http.handler.OutputResponse;
 import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.http.message.HttpMsgEnumError;
 import com.suven.framework.http.message.HttpRequestGetMessage;
@@ -14,7 +14,6 @@ import com.suven.framework.http.processor.url.SysURLCommand;
 import com.suven.framework.util.createcode.swagger.SwaggerReflectionsDoc;
 import com.suven.framework.util.createcode.swagger.SwaggerResultBean;
 import com.suven.framework.util.crypt.CryptUtil;
-import com.suven.framework.util.crypt.SignParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,7 +37,7 @@ public class MsgController {
             response = HttpMsgEnumError.class
     )
     @RequestMapping(value = SysURLCommand.sys_get_error_no, method = RequestMethod.GET)
-    public void getSysMsgEnumError(OutputMessage out, RequestParserVo jsonParse)  {
+    public void getSysMsgEnumError(OutputResponse out, RequestParserVo jsonParse)  {
        Map<Integer, IResultCodeEnum> error =  IResultCodeEnum.MsgEnumType.getMsgTypeMap();
        Collection<IResultCodeEnum> list =   error.values();
         List<HttpMsgEnumError>  voList = new ArrayList<>();
@@ -55,7 +54,7 @@ public class MsgController {
             response = String.class
     )
     @RequestMapping(value = SysURLCommand.sys_get_service_api_doc, method = RequestMethod.GET)
-    public void getServiceApiDoc(OutputMessage out,ApiDocJsonParse jsonParse)  {
+    public void getServiceApiDoc(OutputResponse out, ApiDocJsonParse jsonParse)  {
         SwaggerResultBean api =  SwaggerReflectionsDoc.getApiDoc(jsonParse.getSearch());
         if(null != api){
             out.writeApi(api);
@@ -75,7 +74,7 @@ public class MsgController {
             response = long.class
     )
     @RequestMapping(value = SysURLCommand.sys_get_framework, method = RequestMethod.GET)
-    public void getFrameworkApi(OutputMessage out,RequestParserVo jsonParse)  {
+    public void getFrameworkApi(OutputResponse out, RequestParserVo jsonParse)  {
         out.writeSuccess();
     }
 
@@ -85,7 +84,7 @@ public class MsgController {
             response = long.class
     )
     @RequestMapping(value = SysURLCommand.sys_get_post_param, method = RequestMethod.GET)
-    public void getSystemPostParam(OutputMessage out,ApiDocJsonParse jsonParse)  {
+    public void getSystemPostParam(OutputResponse out, ApiDocJsonParse jsonParse)  {
         out.writeSuccess();
     }
 
@@ -95,7 +94,7 @@ public class MsgController {
             response = long.class
     )
     @RequestMapping(value = SysURLCommand.sys_get_get_param, method = RequestMethod.GET)
-    public void getSystemGetParam(OutputMessage out,ApiDocJsonParse jsonParse)  {
+    public void getSystemGetParam(OutputResponse out, ApiDocJsonParse jsonParse)  {
         out.writeSuccess();
     }
 
@@ -106,7 +105,7 @@ public class MsgController {
             response = long.class
     )
     @RequestMapping(value = SysURLCommand.sys_get_sign_param, method = RequestMethod.GET)
-    public void getSystemParamSign(OutputMessage out,SystemParamSignParse signParse)  {
+    public void getSystemParamSign(OutputResponse out, SystemParamSignParse signParse)  {
         String param = "";
         if(signParse.getSalt() == 1){
             param = CryptUtil.md5(param + GlobalConfigConstants.TOP_SERVER_APPKEY).toLowerCase();

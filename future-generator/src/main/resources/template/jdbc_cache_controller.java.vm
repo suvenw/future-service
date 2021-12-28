@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ${mainPath}.http.data.vo.ResponseResultList;
 import ${mainPath}.http.data.vo.ResponseResultVo;
-import ${mainPath}.http.handler.OutputMessage;
+import ${mainPath}.http.handler.OutputResponse;
 import ${mainPath}.http.data.vo.HttpRequestByIdVo;
 import ${mainPath}.common.enums.SysResultCodeEnum;
 import ${mainPath}.common.enums.TbStatusEnum;
@@ -103,7 +103,7 @@ public class ${className}Controller {
             response = ${className}ShowResponseVo.class
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_pageList ,method = RequestMethod.GET)
-    public void list( OutputMessage out, ${className}QueryRequestVo ${paramName}QueryRequestVo){
+    public void list( OutputResponse out, ${className}QueryRequestVo ${paramName}QueryRequestVo){
             ${className}RequestDto ${paramName}RequestDto = ${className}RequestDto.build( ).clone(${paramName}QueryRequestVo);
 
         BasePage page =  BasePage.build().toPageSize(${paramName}QueryRequestVo.getPageSize()).toPageNo(${paramName}QueryRequestVo.getPageNo());
@@ -146,7 +146,7 @@ public class ${className}Controller {
             response = ${className}ShowResponseVo.class
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_info  ,method = RequestMethod.GET)
-    public void detail(OutputMessage out, HttpRequestByIdVo idRequestVo){
+    public void detail(OutputResponse out, HttpRequestByIdVo idRequestVo){
 
             ${className}ResponseDto ${paramName}ResponseDto = ${paramName}Service.get${className}ById(idRequestVo.getId());
             ${className}ShowResponseVo ${paramName}ShowResponseVo =  ${className}ShowResponseVo.build().clone(${paramName}ResponseDto);

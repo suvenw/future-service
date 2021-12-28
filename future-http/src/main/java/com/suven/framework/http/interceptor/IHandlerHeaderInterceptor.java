@@ -4,6 +4,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.Charset;
 
 public interface IHandlerHeaderInterceptor {
 
@@ -13,16 +14,21 @@ public interface IHandlerHeaderInterceptor {
     final String CONTENT_JSON_HEADER = "Content-Json";
     final String CONTENT_PARAMETER_HEADER = "Content-Parameter";
 
+    final String CHARSET_CONTENT_UTF8 = "UTF-8";
+
 
 
     /**
+     *  在请求头添加参数:
+     *  1. Content-Type=application/json
+     *  2. Content-Json=true
      * 通过获取请求头的Content-Type类型,值是包含 "application/json" 字符串信息
      * 用于判断请求过来的参数格式,如果包含则认为是json格式,
      * 如果是json返回ture;
      * @param request HttpServletRequest 网络请求对象
      * @return  boolean   如果是json返回ture;否则为false;
      * **/
-    default boolean requestIsJsonFromContentType(HttpServletRequest request){
+    default boolean isJsonRequestFromContentType(HttpServletRequest request){
         if(null == request){
             return false;
         }
@@ -40,7 +46,7 @@ public interface IHandlerHeaderInterceptor {
      * request Method 如果为post 返回true, 否则返回false
      * @return
      */
-    default boolean requestIsPost(HttpServletRequest request){
+    default boolean isPostRequestMethod(HttpServletRequest request){
         if(null == request){
             return false;
         }

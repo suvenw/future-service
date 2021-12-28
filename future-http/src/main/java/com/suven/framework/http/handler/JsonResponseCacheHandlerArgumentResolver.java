@@ -5,11 +5,12 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * @Title: JsonReturnHandlerArgumentResolver.java
+ * @Title: JsonResponseHandlerArgumentResolver.java
  * @author Joven.wang
  * @date   2019-10-18 12:35:25
  * @version V1.0
@@ -17,10 +18,10 @@ import javax.servlet.http.HttpServletResponse;
  * 修改记录
  *    修改后版本:     修改人：  修改日期:     修改内容:
  * </pre>
- * @Description: (说明) http 接口统一请求返回结果,返回结果实现写到redis 缓存中,逻辑实现业务类;
+ * @Description: (说明) http 接口统一请求返回结果逻辑实现业务类;
  */
 
-public class JsonReturnHandlerArgumentResolver extends AbstractHandlerArgumentResolver<OutputMessage> {
+public class JsonResponseCacheHandlerArgumentResolver extends AbstractHandlerArgumentResolver<OutputCacheResponse> {
 
 
 
@@ -31,8 +32,9 @@ public class JsonReturnHandlerArgumentResolver extends AbstractHandlerArgumentRe
                                WebDataBinderFactory binderFactory) throws Exception{
 
         mavContainer.setRequestHandled(true);
+        HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
         HttpServletResponse response = webRequest.getNativeResponse(HttpServletResponse.class);
-        return OutputMessage.getInstance(response);
+        return OutputCacheResponse.getInstance(request,response);
     }
 
 }

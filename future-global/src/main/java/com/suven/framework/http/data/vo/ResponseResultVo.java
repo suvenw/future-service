@@ -33,18 +33,7 @@ public class ResponseResultVo implements IResponseResult{
 	}
 
 
-	@Override
-	public IResponseResult buildResponseResultVo(ResponseResultVo resultVo) {
-		return  resultVo;
-	}
-
-	@Override
-	public IResponseResult buildResponseResultVo(int code, String msg, Object data) {
-		this.setCode(code);
-		this.setMsg(msg);
-		if(null != data) {
-			this.setData(data);
-		}
+	public ResponseResultVo buildResponseResultVo() {
 		return  this;
 	}
 	public static ResponseResultVo error(IResultCodeEnum enumType){

@@ -2,11 +2,9 @@ package com.suven.framework.file.controller;
 
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSException;
-import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.exception.FdfsUnsupportStorePathException;
 import com.suven.framework.core.redis.RedisClusterServer;
 import com.suven.framework.file.common.UpLoadConstant;
@@ -15,7 +13,6 @@ import com.suven.framework.file.util.OSSUploadUtil;
 import com.suven.framework.file.vo.response.FileHistoryResponseVo;
 import com.suven.framework.util.date.DateUtil;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +28,7 @@ import com.suven.framework.file.vo.UploadFileErrorEnum;
 import com.suven.framework.file.vo.request.*;
 import com.suven.framework.file.vo.response.FileUploadResponseVo;
 import com.suven.framework.http.exception.SystemRuntimeException;
-import com.suven.framework.http.handler.OutputMessage;
+import com.suven.framework.http.handler.OutputResponse;
 import com.suven.framework.http.message.ParamMessage;
 
 import java.io.*;
@@ -79,7 +76,7 @@ public class FileAliyunOssController {
 			request = FileUploadRequestVo.class,
 			response = FileUploadResponseVo.class)
     @RequestMapping(value = URLFileCommand.oss_file_post_file, method = RequestMethod.POST )
-	public void uploadFileToOss(OutputMessage output, FileUploadRequestVo uploadFileVo, @PathVariable("files") MultipartFile files) throws IOException {
+	public void uploadFileToOss(OutputResponse output, FileUploadRequestVo uploadFileVo, @PathVariable("files") MultipartFile files) throws IOException {
 		if(null == files ){
 			throw new SystemRuntimeException(FileMsgEnum.UPLOAD_FILE_IS_NULL_FAIL);
 		}
@@ -175,7 +172,7 @@ public class FileAliyunOssController {
 	 */
 	@ApiDoc(value = "阿里云oss存储--批量上传文件功能",author = "suven", request = FileBathUploadRequestVo.class, response = FileUploadResponseVo.class)
 	@RequestMapping(value = URLFileCommand.oss_file_post_m_file, method = RequestMethod.POST )
-	public void uploadMultipartFileToOss(OutputMessage output, FileBathUploadRequestVo uploadFileVo, @PathVariable("files") MultipartFile[] files) throws IOException {
+	public void uploadMultipartFileToOss(OutputResponse output, FileBathUploadRequestVo uploadFileVo, @PathVariable("files") MultipartFile[] files) throws IOException {
 
 		if (null == files || files.length < 0) {
 			throw new SystemRuntimeException(FileMsgEnum.UPLOAD_FILE_IS_NULL_FAIL);
@@ -259,7 +256,7 @@ public class FileAliyunOssController {
 
 	@ApiDoc(value = "阿里云oss存储-- 单个文件按字节数组上传文件功能",author = "suven", request = FileUploadBytesRequestVo.class, response = FileUploadResponseVo.class)
 	@RequestMapping(value = URLFileCommand.oss_file_post_file_byte, method = RequestMethod.POST)
-	public void uploadFileBytes(OutputMessage output, FileUploadBytesRequestVo uploadFileVo)  throws Exception{
+	public void uploadFileBytes(OutputResponse output, FileUploadBytesRequestVo uploadFileVo)  throws Exception{
 		//登录验证
 		long userId = ParamMessage.getRequestMessage().getUserId();
 		FileUploadResponseVo vo = FileUploadResponseVo.build().setStatus(0).setErrorMsg("OK");
@@ -355,7 +352,7 @@ public class FileAliyunOssController {
 	 */
 	@ApiDoc(value = "阿里云oss存储-- 根据url删除文件功能",author = "suven", request = FileDeleteRequestVo.class, response = boolean.class)
 	@RequestMapping(value = URLFileCommand.oss_file_post_file_delete, method = RequestMethod.POST)
-	public void deleteFile(OutputMessage output, FileDeleteRequestVo uploadFile) throws FdfsUnsupportStorePathException {
+	public void deleteFile(OutputResponse output, FileDeleteRequestVo uploadFile) throws FdfsUnsupportStorePathException {
 		if (isEmpty(uploadFile.getFileUrl())) {
 			output.write(DELETE_FILE_PATH_IS_NULL);
 			return;
@@ -370,7 +367,7 @@ public class FileAliyunOssController {
 	 */
 	@ApiDoc(value = "阿里云oss存储-- 根据url删除文件功能",author = "suven", request = FileDeleteRequestVo.class, response = boolean.class)
 	@RequestMapping(value = URLFileCommand.oss_file_post_delete_list, method = RequestMethod.POST)
-	public void batchDeleteFiles(OutputMessage output, FileDeleteRequestVo uploadFile) throws FdfsUnsupportStorePathException {
+	public void batchDeleteFiles(OutputResponse output, FileDeleteRequestVo uploadFile) throws FdfsUnsupportStorePathException {
 		if (isEmpty(uploadFile.getFileUrl())) {
 			output.write(DELETE_FILE_PATH_IS_NULL);
 			return;
@@ -389,7 +386,7 @@ public class FileAliyunOssController {
 
 //	@ApiDoc(value = "阿里云oss存储-- 视频分块转m3u8文件功能",author = "suven", request = FileUploadBytesRequestVo.class, response = FileUploadResponseVo.class)
 //	@RequestMapping(value = URLFileCommand.file_post_byte_m3u8, method = RequestMethod.POST)
-//	public void uploadFileM3u8(OutputMessage output, FileUploadBytesRequestVo uploadFile)  throws Exception{
+//	public void uploadFileM3u8(OutputResponse output, FileUploadBytesRequestVo uploadFile)  throws Exception{
 //
 //		//登录验证
 //		long userId = ParamMessage.getRequestMessage().getUserId();

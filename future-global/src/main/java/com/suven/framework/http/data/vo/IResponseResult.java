@@ -20,10 +20,15 @@ package com.suven.framework.http.data.vo;
 public interface IResponseResult {
 
 
-    /*** 返回指定规范对象 **/
-    IResponseResult buildResponseResultVo(ResponseResultVo responseResultVo );
+//    /**获取错误码 **/
+//    int getCode();
+//    /**获取错误码对应描述 **/
+//    String getMsg();
+//    /**接口返回数据对象 **/
+//    Object getData();
+
 
     /** 返回自定义对象**/
-    IResponseResult buildResponseResultVo(int code, String msg, Object data);
+    ResponseResultVo buildResponseResultVo();
 
 }

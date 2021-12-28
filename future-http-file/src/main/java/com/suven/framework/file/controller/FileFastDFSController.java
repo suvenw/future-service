@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +29,7 @@ import com.suven.framework.file.vo.response.FileDownBytesResponseVo;
 import com.suven.framework.file.vo.response.FileHistoryResponseVo;
 import com.suven.framework.file.vo.response.FileUploadResponseVo;
 import com.suven.framework.http.exception.SystemRuntimeException;
-import com.suven.framework.http.handler.OutputMessage;
+import com.suven.framework.http.handler.OutputResponse;
 import com.suven.framework.http.message.ParamMessage;
 import com.suven.framework.util.crypt.Base64Util;
 
@@ -74,7 +73,7 @@ public class FileFastDFSController {
 	 */
 	@ApiDoc(value = "FastDFS单个文件上传功能",author = "suven", request = FileUploadRequestVo.class, response = FileUploadResponseVo.class)
     @RequestMapping(value = URLFileCommand.file_post_file, method = RequestMethod.POST )
-	public void uploadFile(OutputMessage output, FileUploadRequestVo uploadFileVo, @PathVariable("files") MultipartFile files) throws IOException {
+	public void uploadFile(OutputResponse output, FileUploadRequestVo uploadFileVo, @PathVariable("files") MultipartFile files) throws IOException {
 		if(null == files ){
 			throw new SystemRuntimeException(FileMsgEnum.UPLOAD_FILE_IS_NULL_FAIL);
 		}
@@ -133,7 +132,7 @@ public class FileFastDFSController {
 	 */
 	@ApiDoc(value = "FastDFS批量上传文件功能",author = "suven", request = FileBathUploadRequestVo.class, response = FileUploadResponseVo.class)
 	@RequestMapping(value = URLFileCommand.file_post_m_file, method = RequestMethod.POST )
-	public void uploadMultipartFile(OutputMessage output, FileBathUploadRequestVo uploadFileVo, @PathVariable("files") MultipartFile[] files) throws IOException {
+	public void uploadMultipartFile(OutputResponse output, FileBathUploadRequestVo uploadFileVo, @PathVariable("files") MultipartFile[] files) throws IOException {
 
 		if(null == files || files.length < 0){
 			throw new SystemRuntimeException(FileMsgEnum.UPLOAD_FILE_IS_NULL_FAIL);
@@ -199,7 +198,7 @@ public class FileFastDFSController {
 
 	@ApiDoc(value = "FastDFS 单个文件按字节数组上传文件功能",author = "suven", request = FileBathUploadRequestVo.class, response = FileUploadResponseVo.class)
 	@RequestMapping(value = URLFileCommand.file_post_file_byte, method = RequestMethod.POST)
-	public void uploadFileBytes(OutputMessage output, FileUploadBytesRequestVo uploadFile)  throws Exception{
+	public void uploadFileBytes(OutputResponse output, FileUploadBytesRequestVo uploadFile)  throws Exception{
 		//登录验证
 		long userId = ParamMessage.getRequestMessage().getUserId();
 		FileUploadResponseVo vo = FileUploadResponseVo.build().setStatus(0).setErrorMsg("OK");
@@ -243,7 +242,7 @@ public class FileFastDFSController {
 	 */
 	@ApiDoc(value = "FastDFS 单个文件按字节数组上传扩张缩放类型文件功能",author = "suven", request = FileBathUploadRequestVo.class, response = FileUploadResponseVo.class)
     @RequestMapping(value = URLFileCommand.file_post_file_slave_byte, method = RequestMethod.POST)
-    public void uploadFileSlaveBytes(OutputMessage output, FileSlaveUploadRequestVo uploadFile)  throws Exception{
+    public void uploadFileSlaveBytes(OutputResponse output, FileSlaveUploadRequestVo uploadFile)  throws Exception{
         //登录验证
         long userId = ParamMessage.getRequestMessage().getUserId();
         FileUploadResponseVo vo = FileUploadResponseVo.build().setStatus(0).setErrorMsg("OK");
@@ -328,7 +327,7 @@ public class FileFastDFSController {
 	 */
 	@ApiDoc(value = "FastDFS 单个文件按字节串上传文件功能",author = "suven", request = FileUploadStringRequestVo.class, response = FileUploadResponseVo.class)
 	@RequestMapping(value = URLFileCommand.file_post_string_block, method = RequestMethod.POST)
-	public void uploadFileBlockByString(OutputMessage output, FileUploadStringRequestVo uploadFile)  throws Exception{
+	public void uploadFileBlockByString(OutputResponse output, FileUploadStringRequestVo uploadFile)  throws Exception{
 		byte[] data = Base64Util.decode(uploadFile.getBlockSize());
 		FileUploadBytesRequestVo fileReqVo = FileUploadBytesRequestVo.build()
 				.setFileMd5(uploadFile.getFileMd5())
@@ -347,7 +346,7 @@ public class FileFastDFSController {
 	 */
     @RequestMapping(value = URLFileCommand.file_post_slave_string_block, method = RequestMethod.POST)
 	@ApiDoc(value = "FastDFS 单个文件按字节串上传文件功能",author = "suven", request = FileUploadStringRequestVo.class, response = FileUploadResponseVo.class)
-    public void uploadFileSlaveBlockByString(OutputMessage output, FileUploadStringRequestVo uploadFile)  throws Exception{
+    public void uploadFileSlaveBlockByString(OutputResponse output, FileUploadStringRequestVo uploadFile)  throws Exception{
         byte[] data = Base64Util.decode(uploadFile.getBlockSize());
         FileSlaveUploadRequestVo fileReqVo = FileSlaveUploadRequestVo.build();
 
@@ -364,7 +363,7 @@ public class FileFastDFSController {
 
 
 	@RequestMapping(value = URLFileCommand.file_post_file_block, method = RequestMethod.POST)
-	public void uploadFileBlock(OutputMessage output, FileUploadBytesRequestVo uploadFile, @PathVariable("files") MultipartFile files)  throws Exception{
+	public void uploadFileBlock(OutputResponse output, FileUploadBytesRequestVo uploadFile, @PathVariable("files") MultipartFile files)  throws Exception{
 		uploadFile.setFileInputStream(files.getInputStream());
 		this.uploadFileBlock(output,uploadFile);
 	}
@@ -373,7 +372,7 @@ public class FileFastDFSController {
 
 	@ApiDoc(value = "FastDFS 单个按字节分块上传文件功能",author = "suven", request = FileUploadBytesRequestVo.class, response = FileUploadResponseVo.class)
 	@RequestMapping(value = URLFileCommand.file_post_byte_block, method = RequestMethod.POST)
-	public void uploadFileBlock(OutputMessage output, FileUploadBytesRequestVo uploadFile)  throws Exception{
+	public void uploadFileBlock(OutputResponse output, FileUploadBytesRequestVo uploadFile)  throws Exception{
 
 		//登录验证
 		long userId = ParamMessage.getRequestMessage().getUserId();
@@ -493,7 +492,7 @@ public class FileFastDFSController {
 	 */
 	@ApiDoc(value = "FastDFS 根据url删除文件功能",author = "suven", request = FileDeleteRequestVo.class, response = boolean.class)
 	@RequestMapping(value = URLFileCommand.file_post_file_delete, method = RequestMethod.POST)
-	public void deleteFile(OutputMessage output, FileDeleteRequestVo uploadFile) throws FdfsUnsupportStorePathException {
+	public void deleteFile(OutputResponse output, FileDeleteRequestVo uploadFile) throws FdfsUnsupportStorePathException {
 		if (isEmpty(uploadFile.getFileUrl())) {
 
 			return;
@@ -510,7 +509,7 @@ public class FileFastDFSController {
      */
 	@ApiDoc(value = "FastDFS 根据url下载文件功能",author = "suven", request = FileDownloadRequestVo.class, response = Byte[].class)
     @RequestMapping(value = URLFileCommand.file_post_file_download, method = RequestMethod.POST)
-    public void downloadFile(OutputMessage output, FileDownloadRequestVo uploadFile ) {
+    public void downloadFile(OutputResponse output, FileDownloadRequestVo uploadFile ) {
         if (StringUtils.isEmpty(uploadFile.getUrlPath())) {
             throw new SystemRuntimeException(FileMsgEnum.UPLOAD_FILE_PATH_NULL);
         }
@@ -532,7 +531,7 @@ public class FileFastDFSController {
      */
 	@ApiDoc(value = "FastDFS 根据url分块下载文件",author = "suven", request = FileDownloadRequestVo.class, response = FileDownBytesResponseVo.class)
     @RequestMapping(value = URLFileCommand.file_post_file_download_block, method = RequestMethod.POST)
-    public void downloadFileBlock(OutputMessage output, FileDownloadRequestVo downloadFile ) {
+    public void downloadFileBlock(OutputResponse output, FileDownloadRequestVo downloadFile ) {
         if (StringUtils.isEmpty(downloadFile.getUrlPath())) {
             throw new SystemRuntimeException(FileMsgEnum.UPLOAD_FILE_PATH_NULL);
         }

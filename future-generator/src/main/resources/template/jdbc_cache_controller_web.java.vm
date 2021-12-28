@@ -33,7 +33,7 @@ import ${mainPath}.http.data.vo.HttpRequestByIdListVo;
 import ${mainPath}.http.data.vo.HttpRequestByIdVo;
 import ${mainPath}.http.data.vo.ResponseResultList;
 import ${mainPath}.http.exception.SystemRuntimeException;
-import ${mainPath}.http.handler.OutputMessage;
+import ${mainPath}.http.handler.OutputResponse;
 
 
 
@@ -138,7 +138,7 @@ public class ${className}WebController {
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_list  ,method = RequestMethod.GET)
     @RequiresPermissions("${moduleName}:${pathName}:list")
-    public void list( OutputMessage out, ${className}QueryRequestVo ${paramName}QueryRequestVo){
+    public void list( OutputResponse out, ${className}QueryRequestVo ${paramName}QueryRequestVo){
         ${className}RequestDto ${paramName}RequestDto = ${className}RequestDto.build().clone(${paramName}QueryRequestVo);
     
         BasePage page =  BasePage.build().toPageSize(${paramName}QueryRequestVo.getPageSize()).toPageNo(${paramName}QueryRequestVo.getPageNo());
@@ -182,7 +182,7 @@ public class ${className}WebController {
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_add  ,method = RequestMethod.POST)
     @RequiresPermissions("${moduleName}:${pathName}:add")
-    public void add(OutputMessage out, ${className}AddRequestVo ${paramName}AddRequestVo){
+    public void add(OutputResponse out, ${className}AddRequestVo ${paramName}AddRequestVo){
     
         ${className}RequestDto ${paramName}RequestDto =  ${className}RequestDto.build().clone(${paramName}AddRequestVo);
     
@@ -214,7 +214,7 @@ public class ${className}WebController {
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_modify  ,method = RequestMethod.POST)
     @RequiresPermissions("${moduleName}:${pathName}:modify")
-    public void modify(OutputMessage out,${className}AddRequestVo ${paramName}AddRequestVo){
+    public void modify(OutputResponse out,${className}AddRequestVo ${paramName}AddRequestVo){
 
         if(${paramName}AddRequestVo.getId() == 0){
             throw new SystemRuntimeException(SysResultCodeEnum.SYS_WEB_ID_INFO_NO_EXIST);
@@ -250,7 +250,7 @@ public class ${className}WebController {
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_detail  ,method = RequestMethod.GET)
     @RequiresPermissions("${moduleName}:${pathName}:list")
-    public void detail(OutputMessage out, HttpRequestByIdVo idRequestVo){
+    public void detail(OutputResponse out, HttpRequestByIdVo idRequestVo){
     
         ${className}ResponseDto ${paramName}ResponseDto = ${paramName}Service.get${className}ById(idRequestVo.getId());
         ${className}ResponseVo ${paramName}ResponseVo =  ${className}ResponseVo.build().clone(${paramName}ResponseDto);
@@ -280,7 +280,7 @@ public class ${className}WebController {
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_edit  ,method = RequestMethod.POST)
     @RequiresPermissions("${moduleName}:${pathName}:modify")
-    public void edit(OutputMessage out, HttpRequestByIdVo idRequestVo){
+    public void edit(OutputResponse out, HttpRequestByIdVo idRequestVo){
     
         ${className}ResponseDto ${paramName}ResponseDto = ${paramName}Service.get${className}ById(idRequestVo.getId());
         ${className}ResponseVo ${paramName}ResponseVo =  ${className}ResponseVo.build().clone(${paramName}ResponseDto);
@@ -330,7 +330,7 @@ public class ${className}WebController {
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_del  ,method = RequestMethod.POST)
     @RequiresPermissions("${moduleName}:${pathName}:del")
-    public void del(OutputMessage out, HttpRequestByIdListVo idRequestVo){
+    public void del(OutputResponse out, HttpRequestByIdListVo idRequestVo){
         if (idRequestVo.getIdList()== null || idRequestVo.getIdList().isEmpty()) {
             throw new SystemRuntimeException(SysResultCodeEnum.SYS_WEB_ID_INFO_NO_EXIST);
         }

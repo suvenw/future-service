@@ -6,7 +6,7 @@ import com.suven.framework.http.JsonParse;
 import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.http.validator.ParamValidatorConstant;
 import com.suven.framework.http.exception.SystemRuntimeException;
-import com.suven.framework.http.handler.OutputMessage;
+import com.suven.framework.http.handler.OutputResponse;
 import com.suven.framework.http.message.ParamMessage;
 import com.suven.framework.http.message.HttpRequestPostMessage;
 import com.suven.framework.http.message.HttpRequestRemote;
@@ -84,7 +84,7 @@ public class ParameterHandlerInterceptor extends BaseHandlerInterceptorAdapter i
             }
         }
         this.checkRequestParam(message);//基本请求参数验证
-        if(remote.isPostReq()){ //post或get 基础参数验证;
+        if(remote.isPostRequest()){ //post或get 基础参数验证;
             checkPostParam(message,remote);
         }else{
             checkGetParam(message);
@@ -188,7 +188,7 @@ public class ParameterHandlerInterceptor extends BaseHandlerInterceptorAdapter i
             return;
         }
         for (Type parameterType : parameterTypes){
-            if(parameterType == OutputMessage.class || parameterType == HttpServletRequest.class
+            if(parameterType == OutputResponse.class || parameterType == HttpServletRequest.class
                     || parameterType == HttpServletResponse.class || parameterType == HttpSession.class){
                 continue;
             }

@@ -6,6 +6,7 @@ package com.suven.framework.http.handler;
 
 import com.suven.framework.common.enums.SysResultCodeEnum;
 import com.suven.framework.http.data.vo.IResponseResult;
+import com.suven.framework.http.data.vo.ResponseResultVo;
 import com.suven.framework.http.message.HttpRequestPostMessage;
 import com.suven.framework.http.message.ParamMessage;
 import com.suven.framework.http.processor.url.Cdn;
@@ -63,28 +64,28 @@ public abstract class BaseHttpMessageHandlerConverter {
 	}
 
 
-    /**
-     * 写入客户端结果/消息。以错误返回结果实现
-     * @param enumType
-     */
-    protected void writeResponseData(IResponseResult iResponseResult,IResultCodeEnum enumType, Object errorToData)  {
-        setCodeMsgByEnum(enumType);
-		iResponseResult.buildResponseResultVo(getCode(),getMsg(),errorToData);
-    }
+//    /**
+//     * 写入客户端结果/消息。以错误返回结果实现
+//     * @param enumType
+//     */
+//    protected void writeResponseData(IResultCodeEnum enumType, Object errorToData)  {
+//        setCodeMsgByEnum(enumType);
+//    }
 
 	/**
 	 * 写入客户端结果/消息。
 	 * @param responseData
 	 */
-    protected void writeResponseData(IResponseResult iResponseResult,Object responseData, String... errParam)  {
+    protected void writeResponseData(ResponseResultVo responseResultVo, Object responseData, String... errParam)  {
         //返回转换后的规范的错误码信息;
 		if(responseData != null && (responseData instanceof IResultCodeEnum)){//如果是消息类型
-            setCodeMsgByEnum(responseData);
-            returnErrorBeforeConverter(errParam);
-			iResponseResult.buildResponseResultVo(getCode(),getMsg(),responseData);
+            this.setCodeMsgByEnum(responseData);
+            this.returnErrorBeforeConverter(errParam);
+			responseResultVo.setCodeMsg(this.getCode(),this.getMsg());
 		}else{//为数据,成功结果数据
-            setCodeMsgByEnum(SysResultCodeEnum.SYS_SUCCESS);
-			iResponseResult.buildResponseResultVo(getCode(),getMsg(),responseData);
+			this.setCodeMsgByEnum(SysResultCodeEnum.SYS_SUCCESS);
+			responseResultVo.setCodeMsg(this.getCode(),this.getMsg());
+			responseResultVo.setData(responseData);
 		}
 	}
 
@@ -127,6 +128,28 @@ public abstract class BaseHttpMessageHandlerConverter {
 		}
 		return false;
 	}
+
+	/**
+	 * 设备data数据结果使用AES加密,解密的密匙key,缓存到返回头;
+	 * @param response
+	 * @return
+	 */
+	protected boolean setAesHeader(HttpServletResponse response) {
+		response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+		response.setHeader("Access-Control-Allow-Origin","*");
+		int cdnTime = Cdn.get(ParamMessage.getRequestRemote().getUrl());
+		if (cdnTime == 0) {
+			response.addHeader("Cache-Control", "no-cache");
+		} else {
+			response.setHeader("Cache-Control", "max-age=" + cdnTime);
+			response.addDateHeader("Last-Modified", System.currentTimeMillis());
+			response.addDateHeader("Date", System.currentTimeMillis());
+			response.addDateHeader("Expires", System.currentTimeMillis() + (cdnTime*1000));
+			return true;
+		}
+		return false;
+	}
+
 
 //    /**
 //     * 统一出口
