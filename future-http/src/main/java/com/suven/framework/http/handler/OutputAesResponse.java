@@ -8,9 +8,9 @@ import com.suven.framework.common.enums.SysResultCodeEnum;
 import com.suven.framework.http.data.vo.IResponseResult;
 import com.suven.framework.http.data.vo.IResponseResultList;
 import com.suven.framework.http.data.vo.ResponseResultList;
-import com.suven.framework.http.message.ParamMessage;
 import com.suven.framework.http.data.vo.ResponseResultVo;
 import com.suven.framework.http.inters.IResultCodeEnum;
+import com.suven.framework.http.message.ParamMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,29 +28,30 @@ import java.util.List;
  * </pre>
  * @Description: (说明) http 接口统一请求返回结果,返回结果实现写到redis 缓存中,逻辑实现业务类;
  */
-public class OutputResponse extends BaseHttpResponseWriteHandlerConverter {
+public class OutputAesResponse extends BaseHttpResponseWriteHandlerConverter {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
 
 
-    public static OutputResponse getInstance(HttpServletResponse response) {
-        OutputResponse OutputResponse = new OutputResponse();
+    public static OutputAesResponse getInstance(HttpServletResponse response) {
+        OutputAesResponse OutputResponse = new OutputAesResponse();
         OutputResponse.response = response;
         return OutputResponse ;
     }
 
 
-    /**
-     * 走错误code提示逻辑,但业务处理逻辑写到data对象,返回到客户端结果/消息。以错误返回结果实现
-     * 兼容历史版本,不建议使用
-     * @param enumType
-     */
-    @Deprecated
-    public void writeAuth(IResultCodeEnum enumType, Object errorToData)  {
-        this.writeErrorData(enumType,errorToData);
-    }
 
+
+
+
+    /**
+     * 统一出口,写流和cdn信息
+     */
+    @Override
+    protected void writeStream(Object responseResultVo) {
+       this.writeAesStream(responseResultVo);
+    }
 
 
 
@@ -58,7 +59,7 @@ public class OutputResponse extends BaseHttpResponseWriteHandlerConverter {
     @Override
     public String toString() {
         long exeTime = System.currentTimeMillis() - ParamMessage.getRequestMessage().getTimes();
-        String outLogger =  "OutputResponse{" +
+        String outLogger =  "OutputAesResponse{" +
                 "" + ParamMessage.getRequestMessage().toString() +
                 " [ code = "+code +
                 ", msg = " +msg +

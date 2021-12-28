@@ -5,12 +5,15 @@ package com.suven.framework.http.handler;
 
 
 import com.suven.framework.common.enums.SysResultCodeEnum;
+import com.suven.framework.core.db.IterableConverter;
 import com.suven.framework.http.data.vo.IResponseResult;
 import com.suven.framework.http.data.vo.ResponseResultVo;
 import com.suven.framework.http.message.HttpRequestPostMessage;
 import com.suven.framework.http.message.ParamMessage;
 import com.suven.framework.http.processor.url.Cdn;
 import com.suven.framework.util.constants.Env;
+import com.suven.framework.util.crypt.CryptUtil;
+import com.suven.framework.util.random.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -64,13 +67,6 @@ public abstract class BaseHttpMessageHandlerConverter {
 	}
 
 
-//    /**
-//     * 写入客户端结果/消息。以错误返回结果实现
-//     * @param enumType
-//     */
-//    protected void writeResponseData(IResultCodeEnum enumType, Object errorToData)  {
-//        setCodeMsgByEnum(enumType);
-//    }
 
 	/**
 	 * 写入客户端结果/消息。
@@ -130,36 +126,47 @@ public abstract class BaseHttpMessageHandlerConverter {
 	}
 
 	/**
-	 * 设备data数据结果使用AES加密,解密的密匙key,缓存到返回头;
+	 * 设置data数据结果使用AES加密,解密的密匙key,加密的结果sign 缓存到返回头;
+	 * Access-Control-sign:sign sign 为由随机数据加密的结果值;
+	 * Access-Control-sign:key  key为随机16位大小写+数字的值;
 	 * @param response
-	 * @return
+	 * @return String 返回参与加密的字符串值;
 	 */
-	protected boolean setAesHeader(HttpServletResponse response) {
+	protected String  initAesHeader(HttpServletResponse response) {
 		response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-		response.setHeader("Access-Control-Allow-Origin","*");
-		int cdnTime = Cdn.get(ParamMessage.getRequestRemote().getUrl());
-		if (cdnTime == 0) {
-			response.addHeader("Cache-Control", "no-cache");
-		} else {
-			response.setHeader("Cache-Control", "max-age=" + cdnTime);
-			response.addDateHeader("Last-Modified", System.currentTimeMillis());
-			response.addDateHeader("Date", System.currentTimeMillis());
-			response.addDateHeader("Expires", System.currentTimeMillis() + (cdnTime*1000));
-			return true;
-		}
-		return false;
+		String key =  RandomUtils.verifyCode(16,-1);
+		String value = RandomUtils.verifyCode(16,0);
+		String sign = CryptUtil.aesPassEncrypt( value,key);
+		response.setHeader("Access-Control-sign",sign);
+		response.setHeader("Access-Control-key",key);
+		logger.info("initAesHeader Parameter key:[{}], value:[{}],sign:[{}]",key,value,sign);
+		return value;
 	}
 
+	/**
+	 * 设置将返回data数据结果使用AES加密,再返回去;
+	 * Access-Control-sign:sign sign 为由随机数据加密的结果值;
+	 * Access-Control-sign:key  key为随机16位大小写+数字的值;
+	 * @data 为原始返回用户的结果数据,将参与aes加密后,返回给用户 data 值,
+	 * @aesEncryptKey 由initAesHeader方法实现的value值,
+	 * @return String 返回参与加密的字符串值;
+	 */
+	protected String  converterAesDate(Object data, String aesEncryptKey) {
+		String jsonData = JsonUtils.toJson(data);
+		String signDate = CryptUtil.aesPassEncrypt( jsonData,aesEncryptKey);
+		return signDate;
+	}
 
-//    /**
-//     * 统一出口
-//     * @param responseData json对象
-//     * @param code 状态码
-//     * @param msg 状态码的描述
-//     */
-//    protected void buildResponseBody(IResponseResult iResponseResult,Object responseData, int code, String msg) {
-//        iResponseResult.buildResponseResultVo(code,msg,responseData);
-//    }
+	protected void aesDateStream(Object responseResultVo){
+		if(null != responseResultVo && responseResultVo instanceof ResponseResultVo){
+			ResponseResultVo vo = (ResponseResultVo)responseResultVo;
+			if(vo.getCode() == SysResultCodeEnum.SYS_SUCCESS.getCode() && null != vo.getData()){
+				String aesEncryptKey = this.initAesHeader(response);
+				String aesData = this.converterAesDate(vo.getData(),aesEncryptKey);
+				vo.setData(aesData);
+			}
+		}
+	}
 
 
 
@@ -194,6 +201,42 @@ public abstract class BaseHttpMessageHandlerConverter {
         }
 
     }
+
+	/**
+	 * 统一出口,写流和cdn信息
+	 */
+	protected void writeAesStream(Object responseResultVo) {
+
+		String smJson = "";
+		try {
+			ServletOutputStream output = response.getOutputStream();
+			if(null == output){
+				return ;
+			}
+			/*** ----------将返回结果进行aes加密处理---------- ***/
+			this.aesDateStream(responseResultVo);
+			/*** ----------将返回结果进行aes加密处理---------- ***/
+			smJson = JsonUtils.toJson(responseResultVo);
+			this.setCdnCache(response);
+			byte[] jsonBytes = smJson.getBytes();
+			output.write(jsonBytes);
+			output.flush();
+			output.close();
+
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e1) {
+			logger.error("type=Exception,  ResponseError=[{}]", e1);
+		}finally {
+			if(!Env.isProd()){
+				logger.warn("type=Success, ResponseMessage=[{}]", JsonFormatTool.formatJson(smJson));
+			}
+
+		}
+
+	}
+
 
 
 	/**

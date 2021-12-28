@@ -1,6 +1,6 @@
 package com.suven.framework.sys.controller;
 
-import com.suven.framework.common.enums.SysResultCodeEnum;
+import com.suven.framework.http.handler.OutputAesResponse;
 import com.suven.framework.http.handler.OutputResponse;
 import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.http.processor.url.SysURLCommand;
@@ -54,6 +54,16 @@ public class LoginWebController {
         SysUserResponseVo vo = SysUserResponseVo.build().clone(dto);
         SysLoginResponseVo responseVo = sysUserFacade.userInfo(vo);
         out.write(responseVo);
+    }
+
+    @RequestMapping(value = "test/vo", method = RequestMethod.POST)
+    @RequiresPermissions("sys:user:login")
+    public void loginVo(OutputAesResponse out, SysUserRequestVo sysUserRequestVo) {
+
+        SysUserResponseVo vo = SysUserResponseVo.build();
+        vo.setAddress("22222222");
+
+        out.write(vo);
     }
 
     /**
