@@ -56,15 +56,6 @@ public class LoginWebController {
         out.write(responseVo);
     }
 
-    @RequestMapping(value = "test/vo", method = RequestMethod.POST)
-    @RequiresPermissions("sys:user:login")
-    public void loginVo(OutputAesResponse out, SysUserRequestVo sysUserRequestVo) {
-
-        SysUserResponseVo vo = SysUserResponseVo.build();
-        vo.setAddress("22222222");
-
-        out.write(vo);
-    }
 
     /**
      * 退出登录
