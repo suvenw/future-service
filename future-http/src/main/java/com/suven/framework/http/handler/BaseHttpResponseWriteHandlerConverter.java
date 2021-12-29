@@ -9,6 +9,7 @@ import com.suven.framework.http.data.vo.IResponseResult;
 import com.suven.framework.http.data.vo.IResponseResultList;
 import com.suven.framework.http.data.vo.ResponseResultList;
 import com.suven.framework.http.data.vo.ResponseResultVo;
+import com.suven.framework.http.exception.SystemRuntimeException;
 import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.util.constants.Env;
 import org.slf4j.Logger;
@@ -111,6 +112,9 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 	 * }]
 	 */
 	public void writeResult(Object responseResultVo) {
+		if(responseResultVo == null){
+			throw new SystemRuntimeException(SysResultCodeEnum.SYS_RESPONSE_RESULT_IS_NULL);
+		}
 		this.printSuccessLog(logger);
 		this.writeStream(responseResultVo);
 	}
@@ -120,11 +124,14 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 	 * 兼容错误协议封装处理逻辑实现,再将对象转换成json字符串再按字节流返回用户端
 	 * @param responseData
 	 */
-	public void writeResult(IResponseResult iResponseResult, Object responseData, String... errParam)  {
+	public void writeResult(IResponseResult responseResultVo, Object responseData, String... errParam)  {
 		//组合错误信息
-		ResponseResultVo vo = iResponseResult.buildResponseResultVo();
+		if(responseResultVo == null){
+			throw new SystemRuntimeException(SysResultCodeEnum.SYS_RESPONSE_RESULT_IS_NULL);
+		}
+		ResponseResultVo vo = responseResultVo.buildResponseResultVo();
 		this.writeResponseData(vo,responseData,errParam);
-		this.writeStream(iResponseResult);
+		this.writeStream(responseResultVo);
 		if(vo.getCode() == SysResultCodeEnum.SYS_SUCCESS.getCode()){
 			this.printSuccessLog(logger);
 		}else {
