@@ -3,6 +3,7 @@ package com.suven.framework.http.interceptor;
 import com.suven.framework.common.api.IRequestVo;
 import com.suven.framework.core.jetty.settings.SystemParamSettings;
 import com.suven.framework.http.JsonParse;
+import com.suven.framework.http.handler.BaseHttpResponseHandlerConverter;
 import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.http.validator.ParamValidatorConstant;
 import com.suven.framework.http.exception.SystemRuntimeException;
@@ -192,6 +193,9 @@ public class ParameterHandlerInterceptor extends BaseHandlerInterceptorAdapter i
                     || parameterType == HttpServletResponse.class || parameterType == HttpSession.class){
                 continue;
             }
+            if(parameterType instanceof BaseHttpResponseHandlerConverter){
+                continue;
+            }
             Class genericClazz = null;
             if (parameterType instanceof ParameterizedType) {
                 ParameterizedType pt = (ParameterizedType) parameterType;
@@ -215,7 +219,7 @@ public class ParameterHandlerInterceptor extends BaseHandlerInterceptorAdapter i
                 return;
             }
             if(IRequestVo.class.isAssignableFrom(genericClazz) |  JsonParse.class.isAssignableFrom(genericClazz)){
-                checkValidatoParameter(genericClazz);
+                checkValidatorParameter(genericClazz);
             }
 
         }
@@ -224,7 +228,7 @@ public class ParameterHandlerInterceptor extends BaseHandlerInterceptorAdapter i
     //换行符
     private static String lineSeparator = System.lineSeparator();
 
-    public void checkValidatoParameter( Class  clazz ) throws Exception{
+    public void checkValidatorParameter( Class  clazz ) throws Exception{
         Map body =  ParamMessage.getJsonParseMap();
         Method method = clazz.getMethod("parseFrom", Map.class, Class.class);
         Object  object =  method.invoke(clazz.newInstance(), body, clazz);

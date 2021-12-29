@@ -36,7 +36,7 @@ import java.util.Arrays;
  *    修改后版本:  v1.0.0    修改人： suven  修改日期:  20160110   修改内容: 添加异常信息参数化 
  * </pre>
  */
-public abstract class BaseHttpMessageHandlerConverter {
+public abstract class BaseHttpResponseHandlerConverter {
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -69,7 +69,7 @@ public abstract class BaseHttpMessageHandlerConverter {
 
 
 	/**
-	 * 写入客户端结果/消息。
+	 * 将返回结果数据,或错误信息,组合成统一规范的实现类,返回到前端的实现逻辑
 	 * @param responseData
 	 */
     protected void writeResponseData(ResponseResultVo responseResultVo, Object responseData, String... errParam)  {
@@ -157,14 +157,19 @@ public abstract class BaseHttpMessageHandlerConverter {
 		return signDate;
 	}
 
+	/**
+	 * 将用户返回ResponseResultVo对象中data属性对象进行加密入里,错误协议时不参与加密
+	 * @param responseResultVo
+	 */
 	protected void aesDateStream(Object responseResultVo){
-		if(null != responseResultVo && responseResultVo instanceof ResponseResultVo){
-			ResponseResultVo vo = (ResponseResultVo)responseResultVo;
-			if(vo.getCode() == SysResultCodeEnum.SYS_SUCCESS.getCode() && null != vo.getData()){
-				String aesEncryptKey = this.initAesHeader(response);
-				String aesData = this.converterAesDate(vo.getData(),aesEncryptKey);
-				vo.setData(aesData);
-			}
+		if(null == responseResultVo || !(responseResultVo instanceof ResponseResultVo)){
+			return;
+		}
+		ResponseResultVo vo = (ResponseResultVo)responseResultVo;
+		if(vo.getCode() == SysResultCodeEnum.SYS_SUCCESS.getCode() && null != vo.getData()){
+			String aesEncryptKey = this.initAesHeader(response);
+			String aesData = this.converterAesDate(vo.getData(),aesEncryptKey);
+			vo.setData(aesData);
 		}
 	}
 

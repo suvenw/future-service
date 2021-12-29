@@ -10,21 +10,9 @@ import com.suven.framework.http.data.vo.IResponseResultList;
 import com.suven.framework.http.data.vo.ResponseResultList;
 import com.suven.framework.http.data.vo.ResponseResultVo;
 import com.suven.framework.http.inters.IResultCodeEnum;
-import com.suven.framework.http.message.HttpRequestPostMessage;
-import com.suven.framework.http.message.ParamMessage;
-import com.suven.framework.http.processor.url.Cdn;
-import com.suven.framework.util.constants.Env;
-import com.suven.framework.util.crypt.CryptUtil;
-import com.suven.framework.util.json.JsonFormatTool;
-import com.suven.framework.util.json.JsonUtils;
-import com.suven.framework.util.random.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.MediaType;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,7 +26,7 @@ import java.util.List;
  *    修改后版本:  v1.0.0    修改人： suven  修改日期:  20160110   修改内容: 添加异常信息参数化 
  * </pre>
  */
-public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpMessageHandlerConverter {
+public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResponseHandlerConverter {
 
 
 	private	Logger logger = LoggerFactory.getLogger(BaseHttpResponseWriteHandlerConverter.class);
@@ -62,6 +50,14 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpMess
 		}
 	}
 
+	/**
+	 * 按默认格式返回data数据;返回客户端结果/消息。
+	 * ResponseMessage=[{
+	 *    "code":0,
+	 *    "data":"{}",
+	 *    "msg":"成功"
+	 * }]
+	 */
 	public void writeSuccess(){
 		write(null);
 	}
@@ -91,13 +87,7 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpMess
 		this.write(list);
 	}
 
-	/**
-	 * 统一出口,写流和cdn信息,
-	 */
-	public void writeApi(Object responseResultVo) {
-		this.printSuccessLog(logger);
-		this.writeStream(responseResultVo);
-	}
+
 	/**
 	 * 走错误code提示逻辑,但业务处理逻辑写到data对象,返回到客户端结果/消息。以错误返回结果实现
 	 * @param enumType
@@ -109,7 +99,23 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpMess
 	}
 
 	/**
+	 * 按默认格式返回data数据;返回客户端结果/消息。
+	 * Object 为返回的完整的结构responseResultVo对象
+	 * 直接将参数对象转换成json字符串再按字节流返回用户端
+	 * ResponseMessage=[{
+	 *    "code":0,
+	 *    "data":"{}",
+	 *    "msg":"成功"
+	 * }]
+	 */
+	public void writeResult(Object responseResultVo) {
+		this.printSuccessLog(logger);
+		this.writeStream(responseResultVo);
+	}
+	/**
+	 *
 	 * 自定义返回结果格式对象,取代或重写ResponseResultVo,按自定义格式返回对象转换成指定对象实现逻辑方法
+	 * 兼容错误协议封装处理逻辑实现,再将对象转换成json字符串再按字节流返回用户端
 	 * @param responseData
 	 */
 	public void writeResult(IResponseResult iResponseResult, Object responseData, String... errParam)  {
@@ -124,21 +130,6 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpMess
 		}
 	}
 
-//	/**
-//	 * 自定义返回结果格式对象,取代或重写ResponseResultVo,按自定义格式返回对象转换成指定对象实现逻辑方法
-//	 * @param responseData
-//	 */
-//	public void writeAesResult(IResponseResult iResponseResult, Object responseData, String... errParam)  {
-//		//组合错误信息
-//		ResponseResultVo vo = iResponseResult.buildResponseResultVo();
-//		this.writeResponseData(vo,responseData,errParam);
-//		this.writeStream(iResponseResult);
-//		if(vo.getCode() == SysResultCodeEnum.SYS_SUCCESS.getCode()){
-//			this.printSuccessLog(logger);
-//		}else {
-//			this.printErrorLogForRequestMessage(logger,vo.getCode(),vo.getMsg());
-//		}
-//	}
 
 
 

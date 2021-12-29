@@ -25,7 +25,6 @@ public class OssUtils {
 	/**
 	 * 上传文件
 	 * 
-	 * @param key 上传到OSS起的名
 	 * @param fileName 本地文件名
 	 * 
 	 * @throws OSSException
@@ -56,7 +55,7 @@ public class OssUtils {
 	/**
 	 * 根据文件流上传文件
 	 * 
-	 * @param key 上传到OSS起的名
+	 * @param fileTypeName 上传到OSS起的名
 	 * @param input 文件流
 	 * 
 	 * @throws OSSException
@@ -83,7 +82,7 @@ public class OssUtils {
 	/**
 	 * 列出所有Object
 	 * 
-	 * @param bucketName
+	 *  bucketName
 	 */
 	public static void listObjects() {
 		// 初始化OSSClient
@@ -99,10 +98,9 @@ public class OssUtils {
 	/**
 	 * 下载文件
 	 * 
-	 * @param client OSSClient对象
-	 * @param bucketName Bucket名
-	 * @param Objectkey 上传到OSS起的名
-	 * @param filename 文件下载到本地保存的路径
+
+	 * @param key 上传到OSS起的名
+	 * @param fileName 文件下载到本地保存的路径
 	 * 
 	 * @throws OSSException
 	 * @throws ClientException
@@ -116,7 +114,6 @@ public class OssUtils {
 	/**
 	 * 新建bucket
 	 * 
-	 * @param bucketName
 	 */
 	public static void createBucket() {
 		OSSClient client = new OSSClient(endpoint, accessKeyId, accessKeySecret);
@@ -128,8 +125,8 @@ public class OssUtils {
 	/**
 	 * 把Bucket设置成所有人可读
 	 * 
-	 * @param client OSSClient对象
-	 * @param bucketName Bucket名
+	 * client OSSClient对象
+	 * bucketName Bucket名
 	 * 
 	 * @throws OSSException
 	 * @throws ClientException

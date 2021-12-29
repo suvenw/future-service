@@ -4,11 +4,7 @@
 package com.suven.framework.http.handler;
 
 
-import com.suven.framework.common.enums.SysResultCodeEnum;
-import com.suven.framework.http.data.vo.IResponseResult;
-import com.suven.framework.http.data.vo.ResponseResultList;
 import com.suven.framework.http.data.vo.ResponseResultVo;
-import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.http.message.ParamMessage;
 import com.suven.framework.http.processor.url.Cdn;
 import org.slf4j.Logger;
@@ -16,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * @Title: OutputResponse.java
@@ -45,7 +40,22 @@ public class OutputCacheResponse extends BaseHttpResponseWriteHandlerConverter {
 	}
 
 
-
+	/**
+	 * 统一出口,写流和cdn信息
+	 */
+	@Override
+	protected void writeStream(Object responseResultVo) {
+		/*** ----------将返回结果进行缓存到redis中---------- ***/
+		if(null == responseResultVo || !(responseResultVo instanceof ResponseResultVo)){
+			return;
+		}
+		if(null != request && Cdn.isCdn()){
+			ResponseResultVo vo = (ResponseResultVo)responseResultVo;
+			cdnCacheResult.set(vo);
+		}
+		/*** ----------将返回结果进行缓存到redis中---------- ***/
+		super.writeStream(responseResultVo);
+	}
 
 
 
@@ -60,7 +70,7 @@ public class OutputCacheResponse extends BaseHttpResponseWriteHandlerConverter {
 	@Override
 	public String toString() {
 		long exeTime = System.currentTimeMillis() - ParamMessage.getRequestMessage().getTimes();
-		String outLogger =  "OutputResponse{" +
+		String outLogger =  "OutputCacheResponse{" +
 				"" + ParamMessage.getRequestMessage().toString() +
 				" [ code = "+ code +
 				", msg = " + msg +

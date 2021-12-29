@@ -20,6 +20,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.*;
 
+/**
+ * @Author 作者 : suven.wang
+ * @CreateDate 创建时间: 2020-01-15
+ * @WeeK 星期: 星期四
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description (说明):  架构基本使用接口,接口文档,错误码参数说明,公共参数说明,请求参数加密例子
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
 
 @ApiDoc(
         group = DocumentConst.GLobal.API_DOC_BASE_GROUP,
@@ -27,7 +43,7 @@ import java.util.*;
         module = "API 接口公共文档", isApp = true
 )
 @Controller
-public class MsgController {
+public class FrameworkController {
 
 
 
@@ -57,14 +73,14 @@ public class MsgController {
     public void getServiceApiDoc(OutputResponse out, ApiDocJsonParse jsonParse)  {
         SwaggerResultBean api =  SwaggerReflectionsDoc.getApiDoc(jsonParse.getSearch());
         if(null != api){
-            out.writeApi(api);
+            out.writeResult(api);
             return;
         }
         StringBuilder sb = new StringBuilder();
         sb.append("please go to  application.properties file  system config info : ");
         sb.append(GlobalConfigConstants.TOP_SERVER_API_ENABLED);
         sb.append(" = true");
-        out.writeApi(sb.toString());
+        out.writeResult(sb.toString());
 
     }
 
