@@ -156,6 +156,9 @@ public abstract class BaseHttpResponseHandlerConverter {
 	 * @return String 返回参与加密的字符串值;
 	 */
 	protected String  converterAesDate(Object data, String aesEncryptKey) {
+		if(data == null || aesEncryptKey == null){
+			return null;
+		}
 		String jsonData = JsonUtils.toJson(data);
 		String signDate = CryptUtil.aesPassEncrypt( jsonData,aesEncryptKey);
 		return signDate;
@@ -173,13 +176,17 @@ public abstract class BaseHttpResponseHandlerConverter {
 		if(vo.getCode() == SysResultCodeEnum.SYS_SUCCESS.getCode() && null != vo.getData()){
 			String aesEncryptKey = this.initAesHeader(response);
 			String aesData = this.converterAesDate(vo.getData(),aesEncryptKey);
+			if(aesData == null){
+				return;
+			}
 			vo.setData(aesData);
 		}
 	}
 
 
 
-    /**
+
+	/**
      * 统一出口,写流和cdn信息
      */
     protected void writeStream(Object responseResultVo) {
