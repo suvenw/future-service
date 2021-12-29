@@ -10,9 +10,11 @@ import com.suven.framework.http.data.vo.IResponseResultList;
 import com.suven.framework.http.data.vo.ResponseResultList;
 import com.suven.framework.http.data.vo.ResponseResultVo;
 import com.suven.framework.http.inters.IResultCodeEnum;
+import com.suven.framework.util.constants.Env;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletOutputStream;
 import java.util.List;
 
 /**
@@ -130,6 +132,34 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 		}
 	}
 
+	/**
+	 * 将被下载文件流,通过文件名下载
+	 * @param fileName
+	 * @param data
+	 */
+	public void writeStream(String fileName , byte[] data){
+		try {
+			response.reset();
+			response.setHeader("Content-Disposition", "attachment; filename='" + fileName + " '");
+			response.addHeader("Content-Length", "" + data.length);
+			response.setContentType("application/octet-stream; charset=UTF-8");
+			ServletOutputStream output = response.getOutputStream();
+			if(null == output){
+				return ;
+			}
+			output.write(data);
+			output.flush();
+			output.close();
+		} catch (Exception e1) {
+			logger.error("type=Exception,  ResponseError=[{}]", e1);
+		}finally {
+			if(!Env.isProd()){
+				logger.warn("type=Success, fileName=[{}]", fileName);
+			}
+			this.printErrorLogForRequestMessage(logger,0,"");
+
+		}
+	}
 
 
 

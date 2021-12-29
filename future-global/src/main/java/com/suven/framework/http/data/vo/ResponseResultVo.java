@@ -68,6 +68,9 @@ public class ResponseResultVo implements IResponseResult{
 	}
 
 	public ResponseResultVo setData(Object data) {
+		if(data == null){
+			return this;
+		}
 		if(!ClassUtils.isPrimitiveOrWrapper(data.getClass())){
 			this.data = data;
 			return this;

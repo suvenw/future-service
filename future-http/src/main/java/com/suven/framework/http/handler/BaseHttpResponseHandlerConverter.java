@@ -8,6 +8,7 @@ import com.suven.framework.common.enums.SysResultCodeEnum;
 import com.suven.framework.core.db.IterableConverter;
 import com.suven.framework.http.data.vo.IResponseResult;
 import com.suven.framework.http.data.vo.ResponseResultVo;
+import com.suven.framework.http.exception.SystemRuntimeException;
 import com.suven.framework.http.message.HttpRequestPostMessage;
 import com.suven.framework.http.message.ParamMessage;
 import com.suven.framework.http.processor.url.Cdn;
@@ -73,6 +74,9 @@ public abstract class BaseHttpResponseHandlerConverter {
 	 * @param responseData
 	 */
     protected void writeResponseData(ResponseResultVo responseResultVo, Object responseData, String... errParam)  {
+		if(responseResultVo == null){
+			throw new SystemRuntimeException(SysResultCodeEnum.SYS_RESPONSE_RESULT_IS_NULL);
+		}
         //返回转换后的规范的错误码信息;
 		if(responseData != null && (responseData instanceof IResultCodeEnum)){//如果是消息类型
             this.setCodeMsgByEnum(responseData);
@@ -94,7 +98,7 @@ public abstract class BaseHttpResponseHandlerConverter {
         code = SysResultCodeEnum.SYS_UNKOWNN_FAIL.getCode();
         msg = SysResultCodeEnum.SYS_UNKOWNN_FAIL.getMsg();
 		try {
-			if(errorType instanceof IResultCodeEnum){
+			if(null != errorType && errorType instanceof IResultCodeEnum){
 				IResultCodeEnum warnType = (IResultCodeEnum)errorType;
 				code = warnType.getCode();
 				msg =  warnType.getMsg();
@@ -208,70 +212,18 @@ public abstract class BaseHttpResponseHandlerConverter {
     }
 
 	/**
-	 * 统一出口,写流和cdn信息
+	 * 统一出口,先判断是成功协议,将data进行aes加密,再写流和cdn信息
 	 */
 	protected void writeAesStream(Object responseResultVo) {
-
-		String smJson = "";
-		try {
-			ServletOutputStream output = response.getOutputStream();
-			if(null == output){
-				return ;
-			}
-			/*** ----------将返回结果进行aes加密处理---------- ***/
-			this.aesDateStream(responseResultVo);
-			/*** ----------将返回结果进行aes加密处理---------- ***/
-			smJson = JsonUtils.toJson(responseResultVo);
-			this.setCdnCache(response);
-			byte[] jsonBytes = smJson.getBytes();
-			output.write(jsonBytes);
-			output.flush();
-			output.close();
-
-		} catch (RuntimeException e) {
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e1) {
-			logger.error("type=Exception,  ResponseError=[{}]", e1);
-		}finally {
-			if(!Env.isProd()){
-				logger.warn("type=Success, ResponseMessage=[{}]", JsonFormatTool.formatJson(smJson));
-			}
-
-		}
+		/*** ----------将返回结果进行aes加密处理---------- ***/
+		this.aesDateStream(responseResultVo);
+		/*** ----------将返回结果进行aes加密处理---------- ***/
+		this.writeStream(responseResultVo);
 
 	}
 
 
 
-	/**
-	 * 将被下载文件流,通过文件名下载
-	 * @param fileName
-	 * @param data
-	 */
-	public void writeStream(String fileName , byte[] data){
-		try {
-			response.reset();
-			response.setHeader("Content-Disposition", "attachment; filename='" + fileName + " '");
-			response.addHeader("Content-Length", "" + data.length);
-			response.setContentType("application/octet-stream; charset=UTF-8");
-			ServletOutputStream output = response.getOutputStream();
-			if(null == output){
-				return ;
-			}
-			output.write(data);
-			output.flush();
-			output.close();
-		} catch (Exception e1) {
-			logger.error("type=Exception,  ResponseError=[{}]", e1);
-		}finally {
-			if(!Env.isProd()){
-				logger.warn("type=Success, fileName=[{}]", fileName);
-			}
-			this.printErrorLogForRequestMessage(logger,0,"");
-
-		}
-	}
 
 
 	/**
@@ -290,7 +242,7 @@ public abstract class BaseHttpResponseHandlerConverter {
 	}
 
 
-	public void printErrorLogForRequestMessage(Logger logger,int code ,String msg) {
+	protected void printErrorLogForRequestMessage(Logger logger,int code ,String msg) {
 		HttpRequestPostMessage message = ParamMessage.getRequestMessage();
 		String  json = ParamMessage.getJsonParseString();
 		long netTime = ParamMessage.getRequestRemote().getNetTime();
@@ -299,7 +251,7 @@ public abstract class BaseHttpResponseHandlerConverter {
 				message.getUri(), code, msg, message.getIp(),
 				message.toString(),json,exeTime,netTime);
 	}
-	public void printSuccessLog(Logger logger) {
+	protected void printSuccessLog(Logger logger) {
 		HttpRequestPostMessage message = ParamMessage.getRequestMessage();
 		long netTime = ParamMessage.getRequestRemote().getNetTime();
 		long exeTime = System.currentTimeMillis() - message.getTimes();

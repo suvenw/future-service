@@ -36,14 +36,16 @@ public class OutputAesResponse extends BaseHttpResponseWriteHandlerConverter {
 
 
 
-
-
     /**
      * 统一出口,写流和cdn信息
      */
     @Override
     protected void writeStream(Object responseResultVo) {
-       this.writeAesStream(responseResultVo);
+        /*** ----------将返回结果进行aes加密处理---------- ***/
+        this.aesDateStream(responseResultVo);
+        /*** ----------将返回结果进行aes加密处理---------- ***/
+        super.writeStream(responseResultVo);
+//        this.writeAesStream(responseResultVo);
     }
 
 

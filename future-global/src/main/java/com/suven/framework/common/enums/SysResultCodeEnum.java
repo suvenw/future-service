@@ -36,6 +36,7 @@ public enum SysResultCodeEnum implements IResultCodeEnum {
 	SYS_TOKEN_NULL(1100002, "请重新登录"),
 	SYS_PROJECT_MAINTAIN(1100003,"服务维护中！"),
 	SYS_LOGIN_CODE_FAIL(1100005, "验证码失效。"),
+	SYS_RESPONSE_RESULT_IS_NULL(1100006, "系统规范模板类不能为空。"),
 
 
 	/** 业务类型　２０－４０ **/
