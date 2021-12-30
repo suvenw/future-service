@@ -1,12 +1,8 @@
-/**
- * Copyright(c)  XXX-Inc.All Rights Reserved. 
- */
+
 package com.suven.framework.http.handler;
 
 
 import com.suven.framework.common.enums.SysResultCodeEnum;
-import com.suven.framework.core.db.IterableConverter;
-import com.suven.framework.http.data.vo.IResponseResult;
 import com.suven.framework.http.data.vo.ResponseResultVo;
 import com.suven.framework.http.exception.SystemRuntimeException;
 import com.suven.framework.http.message.HttpRequestPostMessage;
@@ -168,8 +164,8 @@ public abstract class BaseHttpResponseHandlerConverter {
 	 * 将用户返回ResponseResultVo对象中data属性对象进行加密入里,错误协议时不参与加密
 	 * @param responseResultVo
 	 */
-	protected void aesDateStream(Object responseResultVo){
-		if(null == responseResultVo || !(responseResultVo instanceof ResponseResultVo)){
+	protected void aesDateResultVo(Object responseResultVo){
+		if(null == responseResultVo){
 			return;
 		}
 		ResponseResultVo vo = (ResponseResultVo)responseResultVo;
@@ -184,6 +180,16 @@ public abstract class BaseHttpResponseHandlerConverter {
 	}
 
 
+	protected void cacheDataResultVo(Object responseResultVo){
+		/*** ----------将返回结果进行缓存到redis中---------- ***/
+		if(null != responseResultVo){
+			if(Cdn.isCdn() && responseResultVo instanceof ResponseResultVo){
+				ResponseResultVo vo = (ResponseResultVo)responseResultVo;
+				ParamMessage.setResponseResultVo(vo);
+			}
+		}
+		/*** ----------将返回结果进行缓存到redis中---------- ***/
+	}
 
 
 	/**
@@ -223,7 +229,7 @@ public abstract class BaseHttpResponseHandlerConverter {
 	 */
 	protected void writeAesStream(Object responseResultVo) {
 		/*** ----------将返回结果进行aes加密处理---------- ***/
-		this.aesDateStream(responseResultVo);
+		this.aesDateResultVo(responseResultVo);
 		/*** ----------将返回结果进行aes加密处理---------- ***/
 		this.writeStream(responseResultVo);
 

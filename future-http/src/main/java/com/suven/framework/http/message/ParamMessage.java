@@ -1,5 +1,6 @@
 package com.suven.framework.http.message;
 
+import com.suven.framework.http.data.vo.IResponseResult;
 import com.suven.framework.http.processor.url.UrlExplain;
 import com.suven.framework.util.json.JsonUtils;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,7 @@ public class ParamMessage {
     private static ThreadLocal<HttpRequestRemote> remote = new ThreadLocal<>();
 
     /**url参数 类型**/
-    private static ThreadLocal<Object> responseResultVo = new ThreadLocal<>();
+    private static ThreadLocal<IResponseResult> responseResultVo = new ThreadLocal<>();
 
 
 
@@ -73,11 +74,11 @@ public class ParamMessage {
         return result;
     }
 
-    public static Object getResponseResultVo() {
+    public static IResponseResult getResponseResultVo() {
         return responseResultVo.get();
     }
 
-    public static void setResponseResultVo(Object responseResult) {
+    public static void setResponseResultVo(IResponseResult responseResult) {
         if(responseResult == null){
            return;
         }

@@ -108,11 +108,11 @@ public class JsonHandlerInterceptorAdapter extends BaseHandlerInterceptorAdapter
         ParamMessage.setJsonExcludeParamMap(url,param);
         //收集来自请求接口的代理属性信息
         HttpRequestRemote remote = new HttpRequestRemote();
-        remote.setClientIp(message.getIp());
-        remote.setJsonRequest(isJson);
 
+        remote.setJsonRequest(isJson);
         remote.setUrl(url);
         remote.setClientIp(message.getIp());
+        remote.setDataType(message.getDataType());
         remote.setSrvMd5Sign(SignParam.getServerSign(param));
         remote.setCliMd5Sign(message.getCliSign());
         remote.setPostRequest(isPostReq);

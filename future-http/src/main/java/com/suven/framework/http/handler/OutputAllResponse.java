@@ -4,10 +4,7 @@
 package com.suven.framework.http.handler;
 
 
-import com.suven.framework.http.data.vo.IResponseResult;
-import com.suven.framework.http.data.vo.ResponseResultVo;
 import com.suven.framework.http.message.ParamMessage;
-import com.suven.framework.http.processor.url.Cdn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,24 +21,18 @@ import javax.servlet.http.HttpServletResponse;
  * </pre>
  * @Description: (说明) http 接口统一请求返回结果,返回结果实现写到redis 缓存中,逻辑实现业务类;
  */
-public class OutputCacheResponse extends BaseHttpResponseWriteHandlerConverter implements IResponseVo {
+public class OutputAllResponse extends BaseHttpResponseWriteHandlerConverter implements IResponseVo {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
-//    private static ThreadLocal<ResponseResultVo> cdnCacheResult = new ThreadLocal<>();
 
 
 
-	public static OutputCacheResponse getInstance(  HttpServletResponse response) {
-		OutputCacheResponse outputResponse = new OutputCacheResponse();
+	public static OutputAllResponse getInstance(HttpServletResponse response) {
+		OutputAllResponse outputResponse = new OutputAllResponse();
         outputResponse.response = response;
 		return outputResponse ;
 	}
 
-	public static IResponseResult getResponseResultVo(){
-		IResponseResult vo = ParamMessage.getResponseResultVo();
-		return  vo;
-
-	}
 
 	@Override
 	public IResponseVo initResponse(HttpServletResponse httpResponse) {
@@ -56,15 +47,33 @@ public class OutputCacheResponse extends BaseHttpResponseWriteHandlerConverter i
 	 */
 	@Override
 	protected void writeStream(Object responseResultVo) {
+
 		if(null == responseResultVo){
 			super.writeSuccess();
 			return;
 		}
-		/*** ----------将返回结果进行缓存到redis中---------- ***/
-		this.cacheDataResultVo(responseResultVo);
-		/*** ----------将返回结果进行缓存到redis中---------- ***/
+		int dataType = ParamMessage.getRequestMessage().getDataType();
+		switch (dataType){
+			case 1:
+				/*** ----------将返回结果进行缓存到redis中---------- ***/
+				this.cacheDataResultVo(responseResultVo);
+				break;
+			case 2:
+				/*** ----------将返回结果进行aes加密处理---------- ***/
+				this.aesDateResultVo(responseResultVo);
+				break;
+			case 3:
+				/*** ----------将返回结果进行aes加密处理---------- ***/
+				this.aesDateResultVo(responseResultVo);
+				/*** ----------将返回结果进行缓存到redis中---------- ***/
+				this.cacheDataResultVo(responseResultVo);
+				break;
+		}
 		super.writeStream(responseResultVo);
 	}
+
+
+
 
 
 

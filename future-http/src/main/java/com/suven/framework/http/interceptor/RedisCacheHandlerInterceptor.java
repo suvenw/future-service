@@ -1,5 +1,6 @@
 package com.suven.framework.http.interceptor;
 
+import com.suven.framework.http.data.vo.IResponseResult;
 import com.suven.framework.http.handler.OutputCacheResponse;
 import com.suven.framework.http.handler.OutputResponse;
 import com.suven.framework.http.message.HttpRequestRemote;
@@ -23,11 +24,11 @@ import javax.servlet.http.HttpServletResponse;
  * 接口url 验证
  */
 @Component
-@InterceptorOrder(order = InterceptorOrderValue.HANDEL_ORDER_REDIS_CACHE,isRun = false)
+@InterceptorOrder(order = InterceptorOrderValue.HANDEL_ORDER_REDIS_CACHE,isRun = true)
 public class RedisCacheHandlerInterceptor extends BaseHandlerInterceptorAdapter implements IHandlerInterceptor, InterceptorConstants {
 	private  Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static ThreadLocal<Boolean> cdn = new ThreadLocal<>();
+    private ThreadLocal<Boolean> cdn = new ThreadLocal<>();
 
 
     private RedisClusterServer redisClusterServer;
@@ -51,7 +52,8 @@ public class RedisCacheHandlerInterceptor extends BaseHandlerInterceptorAdapter 
             String resultResponse = redisClusterServer.get(sb.toString());
             if(null != resultResponse){
                 Object result =  JsonUtils.parseObject(resultResponse, Object.class);
-                OutputCacheResponse.getInstance(request,response).write(result);
+                logger.info("========== RedisCacheHandlerInterceptor preHandle redisClusterServer data ========== result:[{}] ", result );
+                OutputCacheResponse.getInstance(response).writeResult(result);
                 cdn.set(false);
                 return false;
             }
@@ -71,18 +73,21 @@ public class RedisCacheHandlerInterceptor extends BaseHandlerInterceptorAdapter 
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)throws SystemRuntimeException {
        try {
            if(cdn.get()){
-               ResponseResultVo resultResponse = OutputCacheResponse.getResponseResultVo();
+               IResponseResult resultResponse = ParamMessage.getResponseResultVo();
                if(resultResponse == null){
                    return;
                }
-               int cdnTime = Cdn.get(ParamMessage.getRequestRemote().getUrl());
+               HttpRequestRemote remote =  ParamMessage.getRequestRemote();
+               int cdnTime = Cdn.get(remote.getUrl());
                if (cdnTime == 0) {
                    return;
                }
-               HttpRequestRemote remote =  ParamMessage.getRequestRemote();
+
+
                StringBuilder sb =  TopStringUtils.toStringBuilder(RedisKeys.CDN_RESULT_CACHE_KEY,remote.getUrl(),remote.getSrvMd5Sign());
-               String result =  JsonUtils.toJson(resultResponse.getData());
+               String result =  JsonUtils.toJson(resultResponse);
                redisClusterServer.setex(sb.toString(),result,cdnTime);
+               logger.info("========== RedisCacheHandlerInterceptor afterCompletion redisClusterServer.setex ========== result:[{}] ,cdnTime :[{}] ", result,cdnTime );
            }
        }catch (Exception e){
            e.printStackTrace();

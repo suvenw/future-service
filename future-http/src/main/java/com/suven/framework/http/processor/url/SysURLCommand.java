@@ -25,37 +25,34 @@ import java.util.concurrent.TimeUnit;
 public class SysURLCommand implements IURLCommand {
 
 
+
+
+
+    /** 架构使用例子接口 start**/
+    public static final String sys_get_framework = "";
+    public static final String sys_get_error_no = "/sys/errorNo";
+    public static final String sys_get_post_param = "/sys/postParam";
+    public static final String sys_get_get_param = "/sys/getParam";
+    public static final String sys_get_sign_param = "/sys/signParam";
+    public static final String sys_get_base_test = "/sys/testBase";
+    @CDN(value = 1, unit = TimeUnit.MINUTES)
+    public static final String sys_get_cache_test = "/sys/testCache";
+    public static final String sys_get_aes_test = "/sys/testAes";
+    @CDN(value = 1, unit = TimeUnit.MINUTES)
+    public static final String sys_get_aes_cache_test = "/sys/testAesCache";
+    public static final String sys_get_service_api_doc = "/v2/api-docs";
+    /** 架构使用例子接口 end **/
+
     /**
      * 登录相关
      **/
     @UrlRemote
     public static final String sys_login = "/sys/login";
-
-
     @UrlRemote
     public static final String sys_logout = "/sys/logout";
-
-
     @UrlRemote
     public static final String sys_get_check_code = "/sys/getCheckCode";
-
     public static final String sys_get_duplicate_check = "/sys/duplicate/check";
-
-
-    public static final String sys_get_error_no = "/sys/errorNo";
-
-    public static final String sys_get_post_param = "/sys/postParam";
-    public static final String sys_get_get_param = "/sys/getParam";
-    public static final String sys_get_sign_param = "/sys/signParam";
-
-    public static final String sys_get_framework = "";
-
-    public static final String sys_get_config = "/sys/config";
-
-    public static final String sys_get_test = "/sys/test";
-
-    public static final String sys_get_service_api_doc = "/v2/api-docs";
-
     public static final String sys_permission_list = "/sys/permission/list";
 
     public static final String sys_permission_get_system_menu_list = "/sys/permission/getSystemMenuList";

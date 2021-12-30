@@ -5,6 +5,9 @@ import com.suven.framework.common.api.ApiDoc;
 import com.suven.framework.common.api.DocumentConst;
 import com.suven.framework.common.constants.GlobalConfigConstants;
 import com.suven.framework.http.data.vo.RequestParserVo;
+import com.suven.framework.http.handler.OutputAesResponse;
+import com.suven.framework.http.handler.OutputAllResponse;
+import com.suven.framework.http.handler.OutputCacheResponse;
 import com.suven.framework.http.handler.OutputResponse;
 import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.http.message.HttpMsgEnumError;
@@ -14,11 +17,14 @@ import com.suven.framework.http.processor.url.SysURLCommand;
 import com.suven.framework.util.createcode.swagger.SwaggerReflectionsDoc;
 import com.suven.framework.util.createcode.swagger.SwaggerResultBean;
 import com.suven.framework.util.crypt.CryptUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.*;
+
 
 /**
  * @Author 作者 : suven.wang
@@ -45,7 +51,7 @@ import java.util.*;
 @Controller
 public class FrameworkController {
 
-
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @ApiDoc(
             value = "错误信息查询",
@@ -93,6 +99,8 @@ public class FrameworkController {
     public void getFrameworkApi(OutputResponse out, RequestParserVo jsonParse)  {
         out.writeSuccess();
     }
+
+
 
     @ApiDoc(
             value = "POST请求的公共参数",
@@ -168,5 +176,47 @@ public class FrameworkController {
             this.salt = salt;
         }
     }
+
+    @ApiDoc(
+            value = "接口服务基本例子-base test,返回success",
+            request = RequestParserVo.class,
+            response = long.class
+    )
+    @RequestMapping(value = SysURLCommand.sys_get_base_test, method = RequestMethod.GET)
+    public void getFrameworkSuccessTest(OutputResponse out, RequestParserVo jsonParse)  {
+        out.write("success");
+    }
+
+    @ApiDoc(
+            value = "接口服务基本例子-redis cache test",
+            request = RequestParserVo.class,
+            response = long.class
+    )
+    @RequestMapping(value = SysURLCommand.sys_get_cache_test, method = RequestMethod.GET)
+    public void getFrameworkCacheTest(OutputCacheResponse out, RequestParserVo jsonParse)  {
+        logger.info("========== FrameworkController getFrameworkCacheTest ==========" );
+        out.write("success");
+    }
+
+    @ApiDoc(
+            value = "接口服务基本例子-aes_test",
+            request = RequestParserVo.class,
+            response = long.class
+    )
+    @RequestMapping(value = SysURLCommand.sys_get_aes_test, method = RequestMethod.GET)
+    public void getFrameworkAesTest(OutputAesResponse out, RequestParserVo jsonParse)  {
+        out.write("success");
+    }
+
+    @ApiDoc(
+            value = "接口服务基本例子-aes_test",
+            request = HttpRequestGetMessage.class,
+            response = long.class
+    )
+    @RequestMapping(value = SysURLCommand.sys_get_aes_cache_test, method = RequestMethod.GET)
+    public void getFrameworkAesCacheTest(OutputAllResponse out, RequestParserVo jsonParse)  {
+        out.write("success");
+    }
+
 
 }

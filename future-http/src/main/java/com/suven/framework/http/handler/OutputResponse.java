@@ -22,18 +22,21 @@ import javax.servlet.http.HttpServletResponse;
  * </pre>
  * @Description: (说明) http 接口统一请求返回结果,返回结果实现写到redis 缓存中,逻辑实现业务类;
  */
-public class OutputResponse extends BaseHttpResponseWriteHandlerConverter {
+public class OutputResponse extends BaseHttpResponseWriteHandlerConverter  implements IResponseVo{
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-
-
-    public static OutputResponse getInstance(HttpServletResponse response) {
-        OutputResponse OutputResponse = new OutputResponse();
+    public static OutputAesResponse getInstance(HttpServletResponse response) {
+        OutputAesResponse OutputResponse = new OutputAesResponse();
         OutputResponse.response = response;
         return OutputResponse ;
     }
 
+    @Override
+    public IResponseVo initResponse(HttpServletResponse httpResponse) {
+        this.response = httpResponse;
+        return this;
+    }
 
     /**
      * 走错误code提示逻辑,但业务处理逻辑写到data对象,返回到客户端结果/消息。以错误返回结果实现
@@ -42,7 +45,7 @@ public class OutputResponse extends BaseHttpResponseWriteHandlerConverter {
      */
     @Deprecated
     public void writeAuth(IResultCodeEnum enumType, Object errorToData)  {
-        this.writeErrorData(enumType,errorToData);
+        this.write(enumType,errorToData);
     }
 
 

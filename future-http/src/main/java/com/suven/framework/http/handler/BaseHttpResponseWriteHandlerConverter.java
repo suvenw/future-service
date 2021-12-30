@@ -29,10 +29,10 @@ import java.util.List;
  *    修改后版本:  v1.0.0    修改人： suven  修改日期:  20160110   修改内容: 添加异常信息参数化 
  * </pre>
  */
-public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResponseHandlerConverter {
+public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResponseHandlerConverter implements IOutputStream {
 
 
-	private	Logger logger = LoggerFactory.getLogger(BaseHttpResponseWriteHandlerConverter.class);
+	private	Logger logger = LoggerFactory.getLogger(getClass());
 	/**
 	 * 按默认格式返回data数据;返回客户端结果/消息。
 	 * ResponseMessage=[{
@@ -42,6 +42,7 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 	 * }]
 	 * @param responseData
 	 */
+	@Override
 	public void write(Object responseData, String... errParam)  {
 		ResponseResultVo vo = ResponseResultVo.build();
 		this.writeResponseData(vo,responseData,errParam);
@@ -61,8 +62,22 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 	 *    "msg":"成功"
 	 * }]
 	 */
+	@Override
 	public void writeSuccess(){
 		write(null);
+	}
+
+	/**
+	 * 走错误code提示逻辑,但业务处理逻辑写到data对象,返回到客户端结果/消息。以错误返回结果实现
+	 * @param enumType
+	 */
+	@Override
+	public void write(IResultCodeEnum enumType, Object errorToData)  {
+		ResponseResultVo vo = ResponseResultVo.build();
+		this.writeResponseData(vo,enumType);
+		vo.setData(errorToData);
+		this.writeStream(vo);
+		this.printErrorLogForRequestMessage(logger,vo.getCode(),vo.getMsg());
 	}
 
 	/**
@@ -70,6 +85,7 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 	 * @param responseDataList
 	 * @param isNextPage
 	 */
+	@Override
 	public void writeList(List<?> responseDataList, boolean isNextPage){
 		IResponseResultList list = ResponseResultList.build()
 				.toList(responseDataList).toIsNextPage(isNextPage);
@@ -81,6 +97,7 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 	 * @param responseDataList
 	 * @param isNextPage
 	 */
+	@Override
 	public void writeList(List responseDataList, boolean isNextPage, long pageIndex, int total){
 		ResponseResultList list = ResponseResultList.build();
 		list.toList(responseDataList)
@@ -91,15 +108,7 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 	}
 
 
-	/**
-	 * 走错误code提示逻辑,但业务处理逻辑写到data对象,返回到客户端结果/消息。以错误返回结果实现
-	 * @param enumType
-	 */
-	public void writeErrorData(IResultCodeEnum enumType, Object errorToData)  {
-		ResponseResultVo vo = ResponseResultVo.build();
-		this.writeResponseData(vo,enumType);
-		vo.setData(errorToData);
-	}
+
 
 	/**
 	 * 按默认格式返回data数据;返回客户端结果/消息。
@@ -111,12 +120,13 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 	 *    "msg":"成功"
 	 * }]
 	 */
+	@Override
 	public void writeResult(Object responseResultVo) {
 		if(responseResultVo == null){
 			throw new SystemRuntimeException(SysResultCodeEnum.SYS_RESPONSE_RESULT_IS_NULL);
 		}
-		this.printSuccessLog(logger);
 		this.writeStream(responseResultVo);
+		this.printSuccessLog(logger);
 	}
 	/**
 	 *
@@ -124,6 +134,7 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 	 * 兼容错误协议封装处理逻辑实现,再将对象转换成json字符串再按字节流返回用户端
 	 * @param responseData
 	 */
+	@Override
 	public void writeResult(IResponseResult responseResultVo, Object responseData, String... errParam)  {
 		//组合错误信息
 		if(responseResultVo == null){
@@ -144,6 +155,7 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 	 * @param fileName
 	 * @param data
 	 */
+	@Override
 	public void writeStream(String fileName , byte[] data){
 		try {
 			response.reset();

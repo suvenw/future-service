@@ -32,7 +32,8 @@ public  class ResponseAesData extends BaseEntity implements IAesData {
 
 
     public String conventAesUrl(String url){
-        boolean isurl = ParamMessage.getRequestRemote().isAesUrl();
+        int dataType = ParamMessage.getRequestRemote().getDataType();
+        boolean isurl = dataType == 2 || dataType == 3;
         if(isurl && null != list && list.size() == NumberEnum.THREE.id()){
             String aesEncryptKey = findAesValue();
             String sign = CryptUtil.aesPassEncrypt( url,aesEncryptKey);

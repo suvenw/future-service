@@ -1,10 +1,13 @@
 package com.suven.framework.http.handler;
 
+import com.suven.framework.common.enums.SysResultCodeEnum;
+import com.suven.framework.http.exception.SystemRuntimeException;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
@@ -20,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  * @Description: (说明) http 接口统一请求返回结果,返回结果实现写到redis 缓存中,逻辑实现业务类;
  */
 
-public class JsonResponseHandlerArgumentResolver extends AbstractHandlerArgumentResolver<OutputResponse> {
+public class JsonResponseHandlerArgumentResolver extends AbstractHandlerArgumentResolver<IResponseVo> {
 
 
 
@@ -32,7 +35,31 @@ public class JsonResponseHandlerArgumentResolver extends AbstractHandlerArgument
 
         mavContainer.setRequestHandled(true);
         HttpServletResponse response = webRequest.getNativeResponse(HttpServletResponse.class);
-        return OutputResponse.getInstance(response);
+        HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
+        Class responseClass = parameter.getParameterType();
+        return parserResponse(request, response,responseClass);
+    }
+
+    private IResponseVo parserResponse(HttpServletRequest request, HttpServletResponse response, Class clazz){
+        boolean isExtendsIRequestVo = IResponseVo.class.isAssignableFrom(clazz);
+        if(!isExtendsIRequestVo){
+            String REQUEST_OBJECT_ERROR_MSG = "receive client IResponseVo Object class :["+clazz+"] not extends BaseHttpResponseWriteHandlerConverter or implements IResponseVo ";
+            throw new SystemRuntimeException(SysResultCodeEnum.SYS_PARAM_ERROR).format(REQUEST_OBJECT_ERROR_MSG);
+        }
+        try {
+            IResponseVo responseVo = (IResponseVo) clazz.newInstance();
+            responseVo.initResponse(response);
+            responseVo.initRequest(request);
+            return responseVo;
+        }catch (Exception e){
+            e.printStackTrace();
+            if(e instanceof SystemRuntimeException){
+                throw  (SystemRuntimeException)e;
+            }else {
+                throw new SystemRuntimeException(SysResultCodeEnum.SYS_PARAM_ERROR).format(e.getCause().getMessage());
+            }
+        }
+
     }
 
 }

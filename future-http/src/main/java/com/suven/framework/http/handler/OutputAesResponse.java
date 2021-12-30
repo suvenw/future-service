@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  * </pre>
  * @Description: (说明) http 接口统一请求返回结果,返回结果实现写到redis 缓存中,逻辑实现业务类;
  */
-public class OutputAesResponse extends BaseHttpResponseWriteHandlerConverter {
+public class OutputAesResponse extends BaseHttpResponseWriteHandlerConverter implements IResponseVo{
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -33,6 +33,12 @@ public class OutputAesResponse extends BaseHttpResponseWriteHandlerConverter {
         return OutputResponse ;
     }
 
+    @Override
+    public IResponseVo initResponse(HttpServletResponse httpResponse) {
+        this.response = httpResponse;
+        return this;
+    }
+
 
 
 
@@ -41,8 +47,12 @@ public class OutputAesResponse extends BaseHttpResponseWriteHandlerConverter {
      */
     @Override
     protected void writeStream(Object responseResultVo) {
+        if(null == responseResultVo){
+            super.writeSuccess();
+            return;
+        }
         /*** ----------将返回结果进行aes加密处理---------- ***/
-        this.aesDateStream(responseResultVo);
+        this.aesDateResultVo(responseResultVo);
         /*** ----------将返回结果进行aes加密处理---------- ***/
         super.writeStream(responseResultVo);
 //        this.writeAesStream(responseResultVo);

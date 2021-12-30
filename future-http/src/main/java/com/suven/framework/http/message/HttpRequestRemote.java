@@ -66,11 +66,8 @@ public class HttpRequestRemote implements IRequestRemote {
 	 */
 	private String module;
 
-	private boolean aesData;
+	private int dataType;
 
-	private boolean aesUrl;
-
-	private boolean aesBytes;
 
 	public static HttpRequestRemote build(){
 		return new HttpRequestRemote();
@@ -237,25 +234,11 @@ public class HttpRequestRemote implements IRequestRemote {
 		isJsonRequest = jsonRequest;
 	}
 
-	public boolean isAesData() {
-		return aesData;
-	}
-	public boolean isAesUrl() {
-		return aesUrl;
-	}
-	public boolean isAesBytes() {
-		return aesBytes;
+	public int getDataType() {
+		return dataType;
 	}
 
-	public void setAesData(int aesData) {
-		switch (aesData){
-			case 1 : this.aesData =true ;
-			return;
-			case 2 : this.aesUrl =true ;
-				return;
-			case 3 : this.aesBytes =true ;
-				return;
-		}
+	public void setDataType(int dataType) {
+		this.dataType = dataType;
 	}
-
 }

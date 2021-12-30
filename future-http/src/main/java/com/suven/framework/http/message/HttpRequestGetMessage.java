@@ -23,7 +23,9 @@ public class HttpRequestGetMessage extends RequestParserVo {
     private int platform ;    //平台
     @ApiDesc(value= "签名机制16位，全部小写(登录接口必传),具体实现规则与技术对接",required=1 )
     private String cliSign;        //会话密码
-    private int aesData;
+
+    @ApiDesc(value= "返回数据类型:0.json,1.json (如果get请求,且接口设置了cds缓存,数据来源 redis cache),2.aes data结果数据加密, 3.aes且cache",required=0 )
+    private int dataType;
 
     public int getVersion() {
         return version;
@@ -44,11 +46,11 @@ public class HttpRequestGetMessage extends RequestParserVo {
         this.cliSign = cliSign;
     }
 
-    public int getAesData() {
-        return aesData;
+    public int getDataType() {
+        return dataType;
     }
 
-    public void setAesData(int aesData) {
-        this.aesData = aesData;
+    public void setDataType(int dataType) {
+        this.dataType = dataType;
     }
 }
