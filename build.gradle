@@ -265,6 +265,11 @@ project(':future-plus') {
         compile 'com.aliyun:aliyun-java-sdk-core:4.4.1'
         compile 'com.aliyun:aliyun-java-sdk-dysmsapi:1.1.0'
 
+        compile 'me.zhyd.oauth:JustAuth:1.16.5'
+        compile 'com.squareup.okio:okio:2.10.0'
+        compile 'com.xkcoding.http:simple-http:1.0.5'
+        compile 'com.squareup.okhttp3:okhttp:4.9.2'
+
     }
 }
 project(':future-utils') {
@@ -341,8 +346,7 @@ project(':future-utils') {
         compile 'com.google.zxing:javase:3.3.0'
 
 
-        compile 'com.squareup.okhttp3:okhttp:3.14.7'
-        compile 'com.squareup.okio:okio:2.1.0'
+
 
         compile 'org.databene:feed4junit:1.2.0'
         compile 'org.databene:databene-commons:1.0.11'
