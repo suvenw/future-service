@@ -5,12 +5,10 @@ package com.suven.framework.http.handler;
 
 
 import com.suven.framework.http.data.vo.IResponseResult;
-import com.suven.framework.http.data.vo.ResponseResultVo;
 import com.suven.framework.http.message.ParamMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @Title: OutputResponse.java
@@ -23,30 +21,12 @@ import javax.servlet.http.HttpServletResponse;
  * </pre>
  * @Description: (说明) http 接口统一请求返回结果,返回结果实现写到redis 缓存中,逻辑实现业务类;
  */
-public class OutputAllResponse extends BaseHttpResponseWriteHandlerConverter implements IResponseHandler {
+public class OutputAllResponse extends BaseHttpResponseWrite {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 
 
-	public static OutputAllResponse getInstance(HttpServletResponse response) {
-		OutputAllResponse outputResponse = new OutputAllResponse();
-        outputResponse.response = response;
-		return outputResponse ;
-	}
-
-
-	@Override
-	public IResponseHandler initResponse(HttpServletResponse httpResponse) {
-		this.response = httpResponse;
-		return this;
-	}
-
-
-	@Override
-	public IResponseResult getResultVo() {
-		return ResponseResultVo.build();
-	}
 	/**
 	 * 统一出口,写流和cdn信息
 	 */

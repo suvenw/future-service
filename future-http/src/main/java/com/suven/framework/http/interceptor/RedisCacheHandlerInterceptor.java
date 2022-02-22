@@ -1,6 +1,7 @@
 package com.suven.framework.http.interceptor;
 
 import com.suven.framework.http.data.vo.IResponseResult;
+import com.suven.framework.http.handler.BaseHttpResponseWrite;
 import com.suven.framework.http.handler.OutputCacheResponse;
 import com.suven.framework.http.handler.OutputResponse;
 import com.suven.framework.http.message.HttpRequestRemote;
@@ -53,7 +54,7 @@ public class RedisCacheHandlerInterceptor extends BaseHandlerInterceptorAdapter 
             if(null != resultResponse){
                 Object result =  JsonUtils.parseObject(resultResponse, Object.class);
                 logger.info("========== RedisCacheHandlerInterceptor preHandle redisClusterServer data ========== result:[{}] ", result );
-                OutputCacheResponse.getInstance(response).writeResult(result);
+                BaseHttpResponseWrite.build(response).writeResult(result);
                 cdn.set(false);
                 return false;
             }

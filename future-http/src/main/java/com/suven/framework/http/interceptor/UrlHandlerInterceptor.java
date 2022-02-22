@@ -1,6 +1,7 @@
 package com.suven.framework.http.interceptor;//package com.suven.frame.server.Interceptor;
 
 
+import com.suven.framework.http.handler.BaseHttpResponseWrite;
 import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.common.enums.SysResultCodeEnum;
 import com.suven.framework.http.exception.SystemRuntimeException;
@@ -51,12 +52,12 @@ public class UrlHandlerInterceptor extends BaseHandlerInterceptorAdapter impleme
 		response.setHeader("Accept",MediaType.APPLICATION_JSON_VALUE);
 		String url = request.getServletPath();
 		if(ALLOWED_URL_PARAM.contains(url)){
-			OutputResponse.getInstance(response).writeSuccess();
+			BaseHttpResponseWrite.build(response).writeSuccess();
 			return false;
 		}
 		if( !AnnoUrlExplain.urlSet.contains(url)){
 			IResultCodeEnum msgEnumType = SysResultCodeEnum.SYS_REQUEST_URL_NOT_FOUND.formatMsg(url);
-			OutputResponse.getInstance(response).write(msgEnumType);
+			BaseHttpResponseWrite.build(response).write(msgEnumType);
 			return false;
 		}
 		return true;

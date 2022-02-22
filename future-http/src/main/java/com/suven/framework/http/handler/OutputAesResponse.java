@@ -23,28 +23,11 @@ import javax.servlet.http.HttpServletResponse;
  * </pre>
  * @Description: (说明) http 接口统一请求返回结果,返回结果实现写到redis 缓存中,逻辑实现业务类;
  */
-public class OutputAesResponse extends BaseHttpResponseWriteHandlerConverter implements IResponseHandler {
+public class OutputAesResponse extends BaseHttpResponseWrite{
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
 
-
-    public static OutputAesResponse getInstance(HttpServletResponse response) {
-        OutputAesResponse OutputResponse = new OutputAesResponse();
-        OutputResponse.response = response;
-        return OutputResponse ;
-    }
-
-    @Override
-    public IResponseHandler initResponse(HttpServletResponse httpResponse) {
-        this.response = httpResponse;
-        return this;
-    }
-
-    @Override
-    public IResponseResult getResultVo() {
-        return ResponseResultVo.build();
-    }
 
 
     /**
