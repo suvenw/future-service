@@ -2,15 +2,20 @@ package com.suven.framework.http.exception;
 
 
 import com.suven.framework.common.enums.SysResultCodeEnum;
+import com.suven.framework.http.data.vo.IResponseResult;
+import com.suven.framework.http.handler.IResponseResultVoHandler;
+import com.suven.framework.http.message.ParamMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.NoHandlerFoundException;
-import com.suven.framework.http.data.vo.ResponseResultVo;
 import org.springframework.web.util.NestedServletException;
 
 import javax.servlet.http.HttpServletResponse;
@@ -31,11 +36,16 @@ import java.util.stream.Collectors;
  *
  */
 @ControllerAdvice
-public class GlobalExceptionHandler extends GlobalExceptionErrorResponse {
+public class GlobalExceptionHandler extends GlobalExceptionErrorResponse implements IResponseResultVoHandler {
 
 	private static Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    /**
+	@Override
+	public IResponseResult getResultVo() {
+		return  ParamMessage.getResult();
+	}
+
+	/**
      * 应用到所有@RequestMapping注解方法，在其执行之前初始化数据绑定器
      */
 //    @InitBinder
@@ -48,18 +58,19 @@ public class GlobalExceptionHandler extends GlobalExceptionErrorResponse {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ExceptionHandler({NoHandlerFoundException.class })
-	protected ResponseResultVo handleNoHandlerFoundException(NoHandlerFoundException e, HttpServletResponse response) {
-
+	protected IResponseResult handleNoHandlerFoundException(NoHandlerFoundException e, HttpServletResponse response) {
+		IResponseResult result = getResultVo();
 		this.printExceptionErrorLogger(logger,e);
-		return this.write(SysResultCodeEnum.SYS_INVALID_REQUEST, response);
+		return this.write(result, SysResultCodeEnum.SYS_INVALID_REQUEST, response);
 	}
 
 	@ResponseStatus(HttpStatus.OK)
 	@ExceptionHandler({ SystemRuntimeException.class })
 	@ResponseBody
 	protected ResponseEntity handleRuntimeException(SystemRuntimeException e, HttpServletResponse response) {
+		IResponseResult result = getResultVo();
 		this.printExceptionErrorLogger(logger,e);
-		return new ResponseEntity(this.write(e, response), HttpStatus.OK);
+		return new ResponseEntity(this.write(result,e, response), HttpStatus.OK);
 
 	}
 
@@ -67,21 +78,21 @@ public class GlobalExceptionHandler extends GlobalExceptionErrorResponse {
 	@ExceptionHandler({ NestedServletException.class})
 	@ResponseBody
 	protected ResponseEntity handleBusinessException(NestedServletException e, HttpServletResponse response) {
-
+		IResponseResult result = getResultVo();
 		this.printExceptionErrorLogger(logger,e);
-		return  new ResponseEntity(this.write(e, response),HttpStatus.OK);
+		return  new ResponseEntity(this.write(result,e, response),HttpStatus.OK);
 	}
 
 	@ResponseStatus(HttpStatus.OK)
 	@ExceptionHandler({ BusinessLogicException.class})
 	@ResponseBody
-	protected ResponseResultVo handleBusinessException(BusinessLogicException e, HttpServletResponse response) {
-
+	protected IResponseResult handleBusinessException(BusinessLogicException e, HttpServletResponse response) {
+		IResponseResult result = getResultVo();
 		this.printExceptionErrorLogger(logger,e);
 		if(e.getError() == null) {
-			return this.write(SysResultCodeEnum.SYS_UNKOWNN_FAIL, response);
+			return this.write(result,SysResultCodeEnum.SYS_UNKOWNN_FAIL, response);
 		}else{
-			return this.write(e.getError(), response);
+			return this.write(result,e.getError(), response);
 		}
 	}
 
@@ -89,21 +100,22 @@ public class GlobalExceptionHandler extends GlobalExceptionErrorResponse {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler({ IllegalArgumentException.class })
-	protected ResponseResultVo handleIllegalArgumentException(IllegalArgumentException e, HttpServletResponse response) {
-
+	protected IResponseResult handleIllegalArgumentException(IllegalArgumentException e, HttpServletResponse response) {
+		IResponseResult result = getResultVo();
 		this.printExceptionErrorLogger(logger,e);
-		return this.write(SysResultCodeEnum.SYS_INVALID_REQUEST, response);
+		return this.write(result,SysResultCodeEnum.SYS_INVALID_REQUEST, response);
 	}
 
 	@ResponseBody
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler({ Exception.class })
 	protected ResponseEntity handleException(Exception e, HttpServletResponse response) {
+		IResponseResult result = getResultVo();
 		if(e.getCause() instanceof  SystemRuntimeException){
 			return handleRuntimeException((SystemRuntimeException)e.getCause(),response);
 		}
 		this.printExceptionErrorLogger(logger,e);
-		return new ResponseEntity(this.write(SysResultCodeEnum.SYS_UNKOWNN_FAIL, response),HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity(this.write(result,SysResultCodeEnum.SYS_UNKOWNN_FAIL, response),HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 //	//RPC异常处理
@@ -122,10 +134,11 @@ public class GlobalExceptionHandler extends GlobalExceptionErrorResponse {
 	@ResponseStatus(HttpStatus.OK)
 	@ExceptionHandler({ BindException.class })
 	@ResponseBody
-	protected ResponseResultVo handleException(BindException e, HttpServletResponse response) {
+	protected IResponseResult handleException(BindException e, HttpServletResponse response) {
+		IResponseResult result = getResultVo();
 		String message = converterParamError(e);
 		SystemRuntimeException systemRuntimeException = new SystemRuntimeException(SysResultCodeEnum.SYS_PARAM_ERROR, new String[]{message});
-		return this.write(systemRuntimeException, response);
+		return this.write(result,systemRuntimeException, response);
 	}
 
 

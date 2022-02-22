@@ -3,20 +3,21 @@ package com.suven.framework.http.handler;
 
 
 import com.suven.framework.common.enums.SysResultCodeEnum;
-import com.suven.framework.http.data.vo.ResponseResultVo;
+import com.suven.framework.http.data.vo.IResponseResult;
 import com.suven.framework.http.exception.SystemRuntimeException;
+import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.http.message.HttpRequestPostMessage;
 import com.suven.framework.http.message.ParamMessage;
 import com.suven.framework.http.processor.url.Cdn;
 import com.suven.framework.util.constants.Env;
 import com.suven.framework.util.crypt.CryptUtil;
+import com.suven.framework.util.json.JsonFormatTool;
+import com.suven.framework.util.json.JsonUtils;
 import com.suven.framework.util.random.RandomUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-import com.suven.framework.http.inters.IResultCodeEnum;
-import com.suven.framework.util.json.JsonFormatTool;
-import com.suven.framework.util.json.JsonUtils;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -37,31 +38,10 @@ public abstract class BaseHttpResponseHandlerConverter {
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
-	/**
-	 * 返回码。
-	 */
-	public int code;
-	/**
-	 * 返回信息。
-	 */
-	public String msg = "";
 
+   protected IResultCodeEnum errorCodeEnum;
 
     protected HttpServletResponse response;
-
-
-	/**
-	 * 返回前端数据前处理。
-	 * @param errParam
-	 */
-    protected   void returnErrorBeforeConverter(String... errParam){
-		if(errParam == null || errParam.length <=0){
-			return;
-		}
-		Object[] param = Arrays.asList(errParam).toArray();
-		String msg = String.format(this.getMsg(), param);
-		this.msg = msg;
-	}
 
 
 
@@ -69,39 +49,40 @@ public abstract class BaseHttpResponseHandlerConverter {
 	 * 将返回结果数据,或错误信息,组合成统一规范的实现类,返回到前端的实现逻辑
 	 * @param responseData
 	 */
-    protected void writeResponseData(ResponseResultVo responseResultVo, Object responseData, String... errParam)  {
+    protected void writeResponseData(IResponseResult responseResultVo, Object responseData, String... errorParam)  {
 		if(responseResultVo == null){
 			throw new SystemRuntimeException(SysResultCodeEnum.SYS_RESPONSE_RESULT_IS_NULL);
 		}
         //返回转换后的规范的错误码信息;
 		if(responseData != null && (responseData instanceof IResultCodeEnum)){//如果是消息类型
-            this.setCodeMsgByEnum(responseData);
-            this.returnErrorBeforeConverter(errParam);
-			responseResultVo.setCodeMsg(this.getCode(),this.getMsg());
+			IResultCodeEnum codeEnum = this.formatCodeMsgByErrorCodeEnum(responseData,errorParam);
+			responseResultVo.buildResultVo(codeEnum.getCode(),codeEnum.getMsg());
 		}else{//为数据,成功结果数据
-			this.setCodeMsgByEnum(SysResultCodeEnum.SYS_SUCCESS);
-			responseResultVo.setCodeMsg(this.getCode(),this.getMsg());
-			responseResultVo.setData(responseData);
+			responseResultVo.buildResultVo(responseData);
+//			responseResultVo.setData(responseData);
 		}
 	}
 
 
 	/**
 	 * 解析出返回代码及返回信息。
-	 * @param errorType
+	 * @param errorCodeEnum
 	 */
-    protected void setCodeMsgByEnum(Object errorType) {
-        code = SysResultCodeEnum.SYS_UNKOWNN_FAIL.getCode();
-        msg = SysResultCodeEnum.SYS_UNKOWNN_FAIL.getMsg();
+    protected IResultCodeEnum formatCodeMsgByErrorCodeEnum(Object errorCodeEnum,String... errorParam) {
 		try {
-			if(null != errorType && errorType instanceof IResultCodeEnum){
-				IResultCodeEnum warnType = (IResultCodeEnum)errorType;
-				code = warnType.getCode();
-				msg =  warnType.getMsg();
+			if(null != errorCodeEnum && errorCodeEnum instanceof IResultCodeEnum){
+				IResultCodeEnum codeEnum = (IResultCodeEnum)errorCodeEnum;
+				if(errorParam == null || errorParam.length <=0){
+					return codeEnum;
+				}
+				Object[] param = Arrays.asList(errorParam).toArray();
+				String msg = String.format(codeEnum.getMsg(), param);
+				return codeEnum.cloneMsg(msg);
 			}
 		} catch (Exception e) {
 			logger.warn("type=Exception, IMsgEnumTypeException =[{}] ", e);
 		}
+		return SysResultCodeEnum.SYS_UNKOWNN_FAIL;
 	}
 
     /**
@@ -164,18 +145,18 @@ public abstract class BaseHttpResponseHandlerConverter {
 	 * 将用户返回ResponseResultVo对象中data属性对象进行加密入里,错误协议时不参与加密
 	 * @param responseResultVo
 	 */
-	protected void aesDateResultVo(Object responseResultVo){
-		if(null == responseResultVo){
+	protected void aesDateResultVo(IResponseResult responseResultVo,Object data){
+		if(null == responseResultVo ){
 			return;
 		}
-		ResponseResultVo vo = (ResponseResultVo)responseResultVo;
-		if(vo.getCode() == SysResultCodeEnum.SYS_SUCCESS.getCode() && null != vo.getData()){
+		if(responseResultVo.code() == SysResultCodeEnum.SYS_SUCCESS.getCode() && null != data){
 			String aesEncryptKey = this.initAesHeader(response);
-			String aesData = this.converterAesDate(vo.getData(),aesEncryptKey);
+			String aesData = this.converterAesDate(data,aesEncryptKey);
 			if(aesData == null){
 				return;
 			}
-			vo.setData(aesData);
+			responseResultVo.buildResultVo(true, SysResultCodeEnum.SYS_SUCCESS.getCode(),
+					SysResultCodeEnum.SYS_SUCCESS.getMsg(),aesData);
 		}
 	}
 
@@ -183,9 +164,9 @@ public abstract class BaseHttpResponseHandlerConverter {
 	protected void cacheDataResultVo(Object responseResultVo){
 		/*** ----------将返回结果进行缓存到redis中---------- ***/
 		if(null != responseResultVo){
-			if(Cdn.isCdn() && responseResultVo instanceof ResponseResultVo){
-				ResponseResultVo vo = (ResponseResultVo)responseResultVo;
-				ParamMessage.setResponseResultVo(vo);
+			if(Cdn.isCdn() && responseResultVo instanceof IResponseResult){
+				IResponseResult vo = (IResponseResult)responseResultVo;
+				ParamMessage.setRedisCacheResponseVo(vo);
 			}
 		}
 		/*** ----------将返回结果进行缓存到redis中---------- ***/
@@ -227,9 +208,9 @@ public abstract class BaseHttpResponseHandlerConverter {
 	/**
 	 * 统一出口,先判断是成功协议,将data进行aes加密,再写流和cdn信息
 	 */
-	protected void writeAesStream(Object responseResultVo) {
+	protected void writeAesStream(IResponseResult responseResultVo,Object data) {
 		/*** ----------将返回结果进行aes加密处理---------- ***/
-		this.aesDateResultVo(responseResultVo);
+		this.aesDateResultVo(responseResultVo,data);
 		/*** ----------将返回结果进行aes加密处理---------- ***/
 		this.writeStream(responseResultVo);
 
@@ -239,20 +220,20 @@ public abstract class BaseHttpResponseHandlerConverter {
 
 
 
-	/**
-	 * @return 返回 code。
-	 */
-    private int getCode() {
-		return code;
-	}
-
-
-	/**
-	 * @return 返回 msg。
-	 */
-	private String getMsg() {
-		return msg;
-	}
+//	/**
+//	 * @return 返回 code。
+//	 */
+//    private int getCode() {
+//		return code;
+//	}
+//
+//
+//	/**
+//	 * @return 返回 msg。
+//	 */
+//	private String getMsg() {
+//		return msg;
+//	}
 
 
 	protected void printErrorLogForRequestMessage(Logger logger,int code ,String msg) {

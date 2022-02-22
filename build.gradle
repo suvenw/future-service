@@ -306,7 +306,7 @@ project(':future-utils') {
         compile "io.dropwizard.metrics:metrics-httpclient:${metrics_version}"
 
         compile 'redis.clients:jedis:2.9.0'
-
+        compile 'com.squareup.okhttp3:okhttp:4.9.2'
 
         compile 'net.sf.ezmorph:ezmorph:1.0.6'
         compile 'commons-codec:commons-codec:1.12'

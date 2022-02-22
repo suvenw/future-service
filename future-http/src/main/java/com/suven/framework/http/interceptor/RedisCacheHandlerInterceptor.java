@@ -73,7 +73,7 @@ public class RedisCacheHandlerInterceptor extends BaseHandlerInterceptorAdapter 
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)throws SystemRuntimeException {
        try {
            if(cdn.get()){
-               IResponseResult resultResponse = ParamMessage.getResponseResultVo();
+               IResponseResult resultResponse = ParamMessage.getRedisCacheResponseVo();
                if(resultResponse == null){
                    return;
                }

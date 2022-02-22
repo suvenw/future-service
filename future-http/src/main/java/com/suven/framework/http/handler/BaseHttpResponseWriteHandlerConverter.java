@@ -8,7 +8,6 @@ import com.suven.framework.common.enums.SysResultCodeEnum;
 import com.suven.framework.http.data.vo.IResponseResult;
 import com.suven.framework.http.data.vo.IResponseResultList;
 import com.suven.framework.http.data.vo.ResponseResultList;
-import com.suven.framework.http.data.vo.ResponseResultVo;
 import com.suven.framework.http.exception.SystemRuntimeException;
 import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.util.constants.Env;
@@ -44,13 +43,13 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 	 */
 	@Override
 	public void write(Object responseData, String... errParam)  {
-		ResponseResultVo vo = ResponseResultVo.build();
+		IResponseResult vo = this.getResultVo() ;
 		this.writeResponseData(vo,responseData,errParam);
 		this.writeStream(vo);
-		if(vo.getCode() == SysResultCodeEnum.SYS_SUCCESS.getCode()){
+		if(vo.code() == SysResultCodeEnum.SYS_SUCCESS.getCode() ||  vo.success()){
 			this.printSuccessLog(logger);
 		}else {
-			this.printErrorLogForRequestMessage(logger,vo.getCode(),vo.getMsg());
+			this.printErrorLogForRequestMessage(logger,vo.code(),vo.message());
 		}
 	}
 
@@ -73,11 +72,11 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 	 */
 	@Override
 	public void write(IResultCodeEnum enumType, Object errorToData)  {
-		ResponseResultVo vo = ResponseResultVo.build();
+		IResponseResult vo = this.getResultVo() ;
+		vo.buildResultVo(errorToData);
 		this.writeResponseData(vo,enumType);
-		vo.setData(errorToData);
 		this.writeStream(vo);
-		this.printErrorLogForRequestMessage(logger,vo.getCode(),vo.getMsg());
+		this.printErrorLogForRequestMessage(logger,vo.code(),vo.message());
 	}
 
 	/**
@@ -140,13 +139,13 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 		if(responseResultVo == null){
 			throw new SystemRuntimeException(SysResultCodeEnum.SYS_RESPONSE_RESULT_IS_NULL);
 		}
-		ResponseResultVo vo = responseResultVo.buildResponseResultVo();
-		this.writeResponseData(vo,responseData,errParam);
+//		ResponseResultVo vo = responseResultVo.buildResponseResultVo();
+		this.writeResponseData(responseResultVo,responseData,errParam);
 		this.writeStream(responseResultVo);
-		if(vo.getCode() == SysResultCodeEnum.SYS_SUCCESS.getCode()){
+		if(responseResultVo.code() == SysResultCodeEnum.SYS_SUCCESS.getCode() || responseResultVo.success()){
 			this.printSuccessLog(logger);
 		}else {
-			this.printErrorLogForRequestMessage(logger,vo.getCode(),vo.getMsg());
+			this.printErrorLogForRequestMessage(logger,responseResultVo.code(), responseResultVo.message());
 		}
 	}
 

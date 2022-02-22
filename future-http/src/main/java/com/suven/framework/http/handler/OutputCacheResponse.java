@@ -7,7 +7,6 @@ package com.suven.framework.http.handler;
 import com.suven.framework.http.data.vo.IResponseResult;
 import com.suven.framework.http.data.vo.ResponseResultVo;
 import com.suven.framework.http.message.ParamMessage;
-import com.suven.framework.http.processor.url.Cdn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  * </pre>
  * @Description: (说明) http 接口统一请求返回结果,返回结果实现写到redis 缓存中,逻辑实现业务类;
  */
-public class OutputCacheResponse extends BaseHttpResponseWriteHandlerConverter implements IResponseVo {
+public class OutputCacheResponse extends BaseHttpResponseWriteHandlerConverter implements IResponseHandler {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 //    private static ThreadLocal<ResponseResultVo> cdnCacheResult = new ThreadLocal<>();
@@ -37,14 +36,14 @@ public class OutputCacheResponse extends BaseHttpResponseWriteHandlerConverter i
 		return outputResponse ;
 	}
 
-	public static IResponseResult getResponseResultVo(){
-		IResponseResult vo = ParamMessage.getResponseResultVo();
-		return  vo;
 
+	@Override
+	public IResponseResult getResultVo() {
+		return ResponseResultVo.build();
 	}
 
 	@Override
-	public IResponseVo initResponse(HttpServletResponse httpResponse) {
+	public IResponseHandler initResponse(HttpServletResponse httpResponse) {
 		this.response = httpResponse;
 		return this;
 	}
@@ -75,8 +74,8 @@ public class OutputCacheResponse extends BaseHttpResponseWriteHandlerConverter i
 		long exeTime = System.currentTimeMillis() - ParamMessage.getRequestMessage().getTimes();
 		String outLogger =  "OutputCacheResponse{" +
 				"" + ParamMessage.getRequestMessage().toString() +
-				" [ code = "+ code +
-				", msg = " + msg +
+				" [ code = "+ errorCodeEnum.getCode() +
+				", msg = " + errorCodeEnum.getMsg() +
 				"] "+
 				"responseEndTime = " + exeTime
 				+"}";

@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.suven.framework.http.inters.IResultCodeEnum;
 import org.apache.commons.lang3.ClassUtils;
 
+import java.io.Serializable;
+
 /**
  * @Title: ResponseResultVo.java
  * @author Joven.wang
@@ -17,7 +19,7 @@ import org.apache.commons.lang3.ClassUtils;
  * @Description: (说明) http 接口返回拉口的统一封装对象类;
  */
 
-public class ResponseResultVo implements IResponseResult{
+public class ResponseResultVo<T> implements IResponseResult<T>, Serializable {
 
 	private int code = 0;     //状态码
 	private String msg = "";     //状态描述
@@ -33,21 +35,52 @@ public class ResponseResultVo implements IResponseResult{
 	}
 
 
-	public ResponseResultVo buildResponseResultVo() {
-		return  this;
+	public static ResponseResultVo ok(Object data){
+		ResponseResultVo  vo = new ResponseResultVo();
+		vo.buildResultVo(true,0,"",data);
+		return  vo;
 	}
 	public static ResponseResultVo error(IResultCodeEnum enumType){
-        return  build().setCodeMsg(enumType.getCode(),enumType.getMsg());
+		ResponseResultVo  vo = new ResponseResultVo();
+		vo.buildResultVo(enumType.getCode(),enumType.getMsg());
+        return  vo;
     }
 
 
-	public ResponseResultVo setCodeMsg(int code, String msg){
-		return this.setCode(code).setMsg(msg);
+	@Override
+	public int code() {
+		return code;
 	}
 
 	public int getCode() {
 		return code;
 	}
+
+	@Override
+	public String message() {
+		return msg;
+	}
+
+	@Override
+	public boolean success() {
+		return true;
+	}
+
+	@Override
+	public IResponseResult buildResultVo(int code, String message) {
+		this.code = code;
+		this.msg = message;
+		return this;
+	}
+
+	@Override
+	public IResponseResult buildResultVo(boolean success, int code, String message, Object result) {
+		this.code = code;
+		this.msg = message;
+		setData(result);
+		return this;
+	}
+
 
 	public ResponseResultVo setCode(int code) {
 		this.code = code;
@@ -67,27 +100,35 @@ public class ResponseResultVo implements IResponseResult{
 		return data;
 	}
 
-	public ResponseResultVo setData(Object data) {
+	public void setData(Object data) {
 		if(data == null){
-			return this;
+			return;
 		}
-		if(!ClassUtils.isPrimitiveOrWrapper(data.getClass())){
+		if( data instanceof String ){
+			this.data = (T)data;
+			return;
+		}
+		if(data != null && !ClassUtils.isPrimitiveOrWrapper(data.getClass())){
 			this.data = data;
-			return this;
+			return;
 		}
 		if(data instanceof  Boolean){
-			int value = (Boolean)data ? 1 : 0;
-			put("result", value);
-			return this;
+			putBoolean( data);
+			return;
 		}
-		put("pkId",data);
-		return this;
+		putId(data);
 	}
 
-	private void put(String result, Object value){
+	private void putBoolean( Object data){
 		JSONObject object = new JSONObject();
-		object.put(result,value);
-		data = object;
+		int value = (Boolean)data ? 1 : 0;
+		object.put("result",value);
+		this.data = object;
+	}
+	private void putId( Object value){
+		JSONObject object = new JSONObject();
+		object.put("pkId",value);
+		this.data = object;
 	}
 
 

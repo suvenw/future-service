@@ -1,6 +1,7 @@
 package com.suven.framework.http.message;
 
 import com.suven.framework.http.data.vo.IResponseResult;
+import com.suven.framework.http.data.vo.ResponseResultVo;
 import com.suven.framework.http.processor.url.UrlExplain;
 import com.suven.framework.util.json.JsonUtils;
 import org.springframework.stereotype.Component;
@@ -32,9 +33,10 @@ public class ParamMessage {
     /**url参数 类型**/
     private static ThreadLocal<HttpRequestRemote> remote = new ThreadLocal<>();
 
-    /**url参数 类型**/
-    private static ThreadLocal<IResponseResult> responseResultVo = new ThreadLocal<>();
-
+    /**返回结果类型 类型**/
+    private static ThreadLocal<IResponseResult> baseResponseResultType = new ThreadLocal<>();
+    /** redis 缓存对象**/
+    private static ThreadLocal<IResponseResult> redisCacheResponseVo = new ThreadLocal<>();
 
 
     /**请求参数**/
@@ -65,24 +67,29 @@ public class ParamMessage {
     }
 
 
+
     public static String getJsonParseString(){
         Map result = json.get();
-       return JsonUtils.toJson(result);
+        return JsonUtils.toJson(result);
     }
     public static Map getJsonParseMap(){
         Map result = json.get();
         return result;
     }
 
-    public static IResponseResult getResponseResultVo() {
-        return responseResultVo.get();
+    public static IResponseResult getResult() {
+        IResponseResult result =   baseResponseResultType.get();
+        if(result ==  null){
+            result = ResponseResultVo.build();
+        }
+        return result;
     }
 
-    public static void setResponseResultVo(IResponseResult responseResult) {
+    public static void setResponseResult(IResponseResult responseResult) {
         if(responseResult == null){
-           return;
+            return;
         }
-        responseResultVo.set(responseResult);
+        baseResponseResultType.set(responseResult);
     }
 
     /**url参数 类型**/
@@ -90,21 +97,31 @@ public class ParamMessage {
         if(remote == null){
             return;
         }
-      try{
-          UrlExplain.excludeParam(url,paramMap);
-          json.set(paramMap);
+        try{
+            UrlExplain.excludeParam(url,paramMap);
+            json.set(paramMap);
 
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
+    public static IResponseResult getRedisCacheResponseVo() {
+        return redisCacheResponseVo.get();
+    }
+
+    public static void setRedisCacheResponseVo(IResponseResult responseResultVo) {
+        redisCacheResponseVo.set(responseResultVo);
+    }
+
     public static void clear(){
         param.remove();
         json.remove();
         remote.remove();
-        responseResultVo.remove();
+        redisCacheResponseVo.remove();
+        baseResponseResultType.remove();
     }
+
 
 }
 

@@ -5,7 +5,8 @@ package com.suven.framework.http.handler;
 
 
 import com.suven.framework.http.data.vo.IResponseResult;
-import com.suven.framework.http.data.vo.ResponseResultVo;
+import com.suven.framework.http.data.vo.SystemResultVo;
+import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.http.message.ParamMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,17 +24,16 @@ import javax.servlet.http.HttpServletResponse;
  * </pre>
  * @Description: (说明) http 接口统一请求返回结果,返回结果实现写到redis 缓存中,逻辑实现业务类;
  */
-public class OutputAesResponse extends BaseHttpResponseWriteHandlerConverter implements IResponseHandler {
+public class OutputSystemResponse extends BaseHttpResponseWriteHandlerConverter implements IResponseHandler {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-
-
-    public static OutputAesResponse getInstance(HttpServletResponse response) {
-        OutputAesResponse OutputResponse = new OutputAesResponse();
+    public static OutputSystemResponse getInstance(HttpServletResponse response) {
+        OutputSystemResponse OutputResponse = new OutputSystemResponse();
         OutputResponse.response = response;
         return OutputResponse ;
     }
+
 
     @Override
     public IResponseHandler initResponse(HttpServletResponse httpResponse) {
@@ -43,26 +43,18 @@ public class OutputAesResponse extends BaseHttpResponseWriteHandlerConverter imp
 
     @Override
     public IResponseResult getResultVo() {
-        return ResponseResultVo.build();
+        return SystemResultVo.build();
     }
-
-
     /**
-     * 统一出口,写流和cdn信息
+     * 走错误code提示逻辑,但业务处理逻辑写到data对象,返回到客户端结果/消息。以错误返回结果实现
+     * 兼容历史版本,不建议使用
+     * @param enumType
      */
-    @Override
-    protected void writeStream(Object responseResultVo) {
-        if(null == responseResultVo){
-            super.writeSuccess();
-            return;
-        }
-        IResponseResult iResultVo =  this.getResultVo();
-        /*** ----------将返回结果进行aes加密处理---------- ***/
-        this.aesDateResultVo(iResultVo,responseResultVo);
-        /*** ----------将返回结果进行aes加密处理---------- ***/
-        super.writeStream(responseResultVo);
-//        this.writeAesStream(responseResultVo);
+    @Deprecated
+    public void writeAuth(IResultCodeEnum enumType, Object errorToData)  {
+        this.write(enumType,errorToData);
     }
+
 
 
 
@@ -70,10 +62,10 @@ public class OutputAesResponse extends BaseHttpResponseWriteHandlerConverter imp
     @Override
     public String toString() {
         long exeTime = System.currentTimeMillis() - ParamMessage.getRequestMessage().getTimes();
-        String outLogger =  "OutputAesResponse{" +
+        String outLogger =  "OutputResponse{" +
                 "" + ParamMessage.getRequestMessage().toString() +
-                " [ code = "+ errorCodeEnum.getCode() +
-                ", msg = " + errorCodeEnum.getMsg() +
+                " [ code = "+errorCodeEnum.getCode() +
+                ", msg = " +errorCodeEnum.getMsg() +
                 "] "+
                 "responseEndTime = " + exeTime
                 +"}";

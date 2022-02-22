@@ -2,6 +2,9 @@ package com.suven.framework.http.exception;
 
 import com.suven.framework.common.constants.GlobalConfigConstants;
 import com.suven.framework.common.enums.SysResultCodeEnum;
+import com.suven.framework.http.data.vo.IResponseResult;
+import com.suven.framework.http.data.vo.ResponseResultVo;
+import com.suven.framework.http.handler.IResponseResultVoHandler;
 import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.http.message.ParamMessage;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -13,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 
 
 /**
@@ -31,11 +33,15 @@ import javax.servlet.http.HttpServletResponse;
  */
 
 @Controller
-public class HttpServletRequestErrorHandler extends GlobalExceptionErrorResponse implements ErrorController {
+public class HttpServletRequestErrorHandler extends GlobalExceptionErrorResponse implements IResponseResultVoHandler, ErrorController {
 
     private final static String ERROR_PATH = GlobalConfigConstants.TOP_SERVER_ERROR_URL;
 
 
+    @Override
+    public IResponseResult getResultVo() {
+        return  ResponseResultVo.build();
+    }
     /**
      * Supports the HTML Error View
      *
@@ -45,8 +51,9 @@ public class HttpServletRequestErrorHandler extends GlobalExceptionErrorResponse
     @RequestMapping(value = ERROR_PATH, produces = "text/html")
     public Object errorHtml(HttpServletRequest request, HttpServletResponse response) {
        String url =  ParamMessage.getRequestMessage().getUri();
+        IResponseResult result = getResultVo();
         IResultCodeEnum msgEnumType = SysResultCodeEnum.SYS_REQUEST_URL_NOT_FOUND.formatMsg(url);
-        return new ResponseEntity(this.write(msgEnumType, response), HttpStatus.NOT_FOUND);
+        return new ResponseEntity(this.write(result,msgEnumType, response), HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -59,8 +66,9 @@ public class HttpServletRequestErrorHandler extends GlobalExceptionErrorResponse
     @ResponseBody
     public Object error(HttpServletRequest request,HttpServletResponse response) {
         String url =  ParamMessage.getRequestMessage().getUri();
+        IResponseResult result = getResultVo();
         IResultCodeEnum msgEnumType = SysResultCodeEnum.SYS_REQUEST_URL_NOT_FOUND.formatMsg(url);
-        return new ResponseEntity(this.write(msgEnumType, response), HttpStatus.NOT_FOUND);
+        return new ResponseEntity(this.write(result,msgEnumType, response), HttpStatus.NOT_FOUND);
     }
 
 

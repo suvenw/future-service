@@ -1,11 +1,11 @@
 package com.suven.framework.http.exception;
 
 import com.suven.framework.common.enums.SysResultCodeEnum;
-import com.suven.framework.util.constants.Env;
-import com.suven.framework.http.data.vo.ResponseResultVo;
+import com.suven.framework.http.data.vo.IResponseResult;
 import com.suven.framework.http.inters.IResultCodeEnum;
-import com.suven.framework.http.message.ParamMessage;
 import com.suven.framework.http.message.HttpRequestPostMessage;
+import com.suven.framework.http.message.ParamMessage;
+import com.suven.framework.util.constants.Env;
 import com.suven.framework.util.json.JsonFormatTool;
 import com.suven.framework.util.json.JsonUtils;
 import org.slf4j.Logger;
@@ -31,20 +31,19 @@ public class GlobalExceptionErrorResponse {
 
     private static Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    protected ResponseResultVo write(Object message, HttpServletResponse response) {
+    protected IResponseResult write(IResponseResult result, Object message, HttpServletResponse response) {
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.setHeader("Accept",MediaType.APPLICATION_JSON_VALUE);
-        ResponseResultVo result =  ResponseResultVo.build();
         if(message instanceof  SystemRuntimeException){
             SystemRuntimeException exception  = (SystemRuntimeException)message;
             if(null == exception.getError() ){
                 logger.error("please definition SystemRuntimeException information to SysMsgEnumType class ");
                 exception = new SystemRuntimeException(SysResultCodeEnum.SYS_UNKOWNN_FAIL);
             }
-            result.setCodeMsg(exception.getErrorCode(),exception.getErrorMessage());
+            result.buildResultVo(exception.getErrorCode(),exception.getErrorMessage());
             if(exception.getResponse() != null) {
-                result.setData(exception.getResponse());
+                result.buildResultVo(false,exception.getErrorCode(),exception.getErrorMessage(),exception.getResponse());
             }
         }
         if(message instanceof BusinessLogicException){
@@ -53,13 +52,13 @@ public class GlobalExceptionErrorResponse {
                 logger.error("please definition BusinessLogicException information to SysMsgEnumType class ");
                 exception = new BusinessLogicException(SysResultCodeEnum.SYS_UNKOWNN_FAIL);
             }
-            result.setCodeMsg(exception.getErrorCode(),exception.getErrorMessage());
+            result.buildResultVo(exception.getErrorCode(),exception.getErrorMessage());
         }
         if(message instanceof IResultCodeEnum){
             IResultCodeEnum msg  = (IResultCodeEnum)message;
-            result.setCodeMsg(msg.getCode(),msg.getMsg());
+            result.buildResultVo(msg.getCode(),msg.getMsg());
         }
-        printErrorLogForRequestMessage(logger,result.getCode(), result.getMsg());
+        printErrorLogForRequestMessage(logger,result.code(), result.message());
         if(!Env.isProd()){
             logger.warn(JsonFormatTool.formatJson(JsonUtils.toJson(result)));
         }

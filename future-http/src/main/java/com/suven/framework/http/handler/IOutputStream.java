@@ -9,7 +9,9 @@ import java.util.List;
 /**
  * 框架http请求接口接收对象统一实现类
  */
-public interface IOutputStream {
+public interface IOutputStream  extends IResponseResultVoHandler{
+
+
 
     /**
      * 按默认格式返回data数据;返回客户端结果/消息。

@@ -1,5 +1,6 @@
 package com.suven.framework.http.data.vo;
 
+
 /**
  * @Author 作者 : suven.wang
  * @CreateDate 创建时间: 2021-06-29
@@ -14,21 +15,65 @@ package com.suven.framework.http.data.vo;
  * 修改记录
  *    修改后版本:     修改人：  修改日期:     修改内容:
  * </pre>
- * @Copyright: (c) 2021 gc by https://www.suven.com
+ * @Copyright: (c) 2021 gc by https://www.sixeco.com
  **/
 
-public interface IResponseResult {
+public interface IResponseResult<T> {
 
 
-//    /**获取错误码 **/
-//    int getCode();
-//    /**获取错误码对应描述 **/
-//    String getMsg();
-//    /**接口返回数据对象 **/
-//    Object getData();
+    /*** 返回指定规范对象 **/
+    int code();
+    String message();
+    boolean success();
 
 
-    /** 返回自定义对象**/
-    ResponseResultVo buildResponseResultVo();
+    /**
+     *  失败时返回对象
+     * @param code 失败错误码
+     * @param message 失败错误提示内容信息
+     * @return
+     */
+    IResponseResult buildResultVo(int code, String message);
+
+    /**
+     * 返回自定义对象,
+     * 默认成功返回的结果数据
+     * @param success
+     * @param code
+     * @param message
+     * @param result
+     * @return
+     */
+    IResponseResult buildResultVo(boolean success, int code, String message, T result);
+
+
+    /**
+     * 默认成功返回的结果数据
+     * @param result 返回的数据对象
+     * @return
+     */
+    default IResponseResult buildResultVo( T result){
+        return buildResultVo(true,0,"成功",result);
+    }
+
+    /**
+     * 成功返回的结果数据,success默认值为true
+     * @param code 返回的编码
+     * @param message 返回的提示内容信息
+     * @param result 返回的结果对象信息;
+     * @return
+     */
+    default IResponseResult buildResultVo(int code, String message,T result){
+        return buildResultVo(true,code,message,result);
+    }
+    /**
+     * 成功返回的结果数据,ResponseResultVo对象 success默认值为true
+     * @return
+     */
+    default  ResponseResultVo buildResultVo(){
+        return ResponseResultVo.build();
+    }
+
+
 
 }

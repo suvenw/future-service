@@ -1,0 +1,135 @@
+package com.suven.framework.http.data.vo;
+
+import com.alibaba.fastjson.JSONObject;
+import com.suven.framework.common.api.ApiDesc;
+import com.suven.framework.common.enums.SystemMsgCodeEnum;
+
+import java.io.Serializable;
+
+/**
+ *   接口返回数据格式
+ * @author scott
+ * @email jeecgos@163.com
+ * @date  2019年1月19日
+ */
+@ApiDesc(value= "接口返回对象")
+public class SystemResultVo<T> implements IResponseResult<T>,Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * 成功标志
+	 */
+	@ApiDesc(value= "成功标志 ")
+	private boolean success = true;
+
+	/**
+	 * 返回处理消息
+	 */
+	@ApiDesc(value= "返回处理消息 ")
+	private String message = "";
+
+	/**
+	 * 返回代码
+	 */
+	@ApiDesc(value= "返回代码 ")
+	private Integer code = 0;
+	
+	/**
+	 * 返回数据对象 data
+	 */
+	@ApiDesc(value= "返回数据对象 ")
+	private Object result = new JSONObject();    //Json 内容
+	
+	/**
+	 * 时间戳
+	 */
+	@ApiDesc(value= "时间戳 ")
+	private long timestamp = System.currentTimeMillis();
+
+
+	public static<T> SystemResultVo<T> build() {
+		SystemResultVo<T> r = new SystemResultVo<T>();
+		r.setSuccess(true);
+		r.setCode(SystemMsgCodeEnum.SYS_SC_OK_200.getCode());
+		return r;
+	}
+
+
+	@Override
+	public int code() {
+		return code;
+	}
+
+	@Override
+	public String message() {
+		return message;
+	}
+
+	@Override
+	public boolean success() {
+		return success;
+	}
+
+	@Override
+	public IResponseResult buildResultVo(int code, String message) {
+		this.success = false;
+		this.code = code;
+		this.message = message;
+		return this;
+	}
+
+	@Override
+	public IResponseResult buildResultVo(boolean success, int code, String message, T result) {
+		this.code = code;
+		this.message = message;
+		this.success = success;
+		this.result = (T)result;
+		return this;
+	}
+
+	@Override
+	public IResponseResult buildResultVo(T result){
+		return buildResultVo(true,SystemMsgCodeEnum.SYS_SC_OK_200.getCode(),SystemMsgCodeEnum.SYS_SC_OK_200.getMsg(),result);
+	}
+
+	public boolean isSuccess() {
+		return success;
+	}
+
+	public void setSuccess(boolean success) {
+		this.success = success;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public Integer getCode() {
+		return code;
+	}
+
+	public void setCode(Integer code) {
+		this.code = code;
+	}
+
+	public Object getResult() {
+		return result;
+	}
+
+	public void setResult(Object result) {
+		this.result = result;
+	}
+
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
+}

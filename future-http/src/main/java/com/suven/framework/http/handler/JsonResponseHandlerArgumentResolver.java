@@ -2,6 +2,7 @@ package com.suven.framework.http.handler;
 
 import com.suven.framework.common.enums.SysResultCodeEnum;
 import com.suven.framework.http.exception.SystemRuntimeException;
+import com.suven.framework.http.message.ParamMessage;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -23,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  * @Description: (说明) http 接口统一请求返回结果,返回结果实现写到redis 缓存中,逻辑实现业务类;
  */
 
-public class JsonResponseHandlerArgumentResolver extends AbstractHandlerArgumentResolver<IResponseVo> {
+public class JsonResponseHandlerArgumentResolver extends AbstractHandlerArgumentResolver<IResponseHandler> {
 
 
 
@@ -40,16 +41,20 @@ public class JsonResponseHandlerArgumentResolver extends AbstractHandlerArgument
         return parserResponse(request, response,responseClass);
     }
 
-    private IResponseVo parserResponse(HttpServletRequest request, HttpServletResponse response, Class clazz){
-        boolean isExtendsIRequestVo = IResponseVo.class.isAssignableFrom(clazz);
+    private IResponseHandler parserResponse(HttpServletRequest request, HttpServletResponse response, Class responseClass){
+        boolean isExtendsIRequestVo =  IResponseHandler.class.isAssignableFrom(responseClass);
         if(!isExtendsIRequestVo){
-            String REQUEST_OBJECT_ERROR_MSG = "receive client IResponseVo Object class :["+clazz+"] not extends BaseHttpResponseWriteHandlerConverter or implements IResponseVo ";
+            String REQUEST_OBJECT_ERROR_MSG = "receive client IResponseVo Object class :["+responseClass+"] not extends BaseHttpResponseWriteHandlerConverter or implements IResponseVo ";
             throw new SystemRuntimeException(SysResultCodeEnum.SYS_PARAM_ERROR).format(REQUEST_OBJECT_ERROR_MSG);
         }
         try {
-            IResponseVo responseVo = (IResponseVo) clazz.newInstance();
+             IResponseHandler responseVo = (IResponseHandler) responseClass.newInstance();
             responseVo.initResponse(response);
             responseVo.initRequest(request);
+
+            /** 用于异常处理,返回统一规范对象 **/
+            ParamMessage.setResponseResult(responseVo.getResultVo());
+
             return responseVo;
         }catch (Exception e){
             e.printStackTrace();
