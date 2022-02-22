@@ -59,9 +59,6 @@ public class VersionHandlerInterceptor extends BaseHandlerInterceptorAdapter imp
         }if(!versionValidator.isPostRequest(request)){
             return true;
         }
-        if(true){
-            return true;
-        }
 
         if(versionValidator.validatorData()){
             VersionHandlerVo newVersion =  versionValidator.getNewVersionVo();
