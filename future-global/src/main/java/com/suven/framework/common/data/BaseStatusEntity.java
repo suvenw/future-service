@@ -20,7 +20,6 @@ public class BaseStatusEntity extends BaseEntity {
 
     private static final long serialVersionUID = -5102197522565173272L;
 
-    @ExcelIgnore
     private int status = TbStatusEnum.ENABLE.index(); //实体状态属性;
 
 

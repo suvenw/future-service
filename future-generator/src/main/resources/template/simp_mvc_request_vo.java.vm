@@ -1,0 +1,55 @@
+package ${packageName}.${moduleName}.vo.request;
+
+
+import java.io.Serializable;
+import java.util.Date;
+import java.math.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import ${mainPath}.common.api.ApiDesc;
+import ${mainPath}.http.data.vo.HttpRequestByIdPageVo;
+
+
+
+/**
+ * @ClassName: ${className}RequestVo.java
+ *
+ * @Author 作者 : ${author}
+ * @CreateDate 创建时间: ${datetime}
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: ${description} http业务接口交互数据请求参数实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+@Data
+@NoArgsConstructor
+public class ${className}RequestVo extends HttpRequestByIdPageVo implements Serializable{
+
+
+
+
+
+    public static ${className}RequestVo build(){
+        return new ${className}RequestVo();
+    }
+
+
+
+
+
+
+}

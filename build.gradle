@@ -204,6 +204,10 @@ project(':future-global') {
         compile 'io.protostuff:protostuff-core:1.6.0'
         compile 'io.protostuff:protostuff-runtime:1.6.0'
         compile 'org.apache.commons:commons-lang3:3.4'
+
+        compile 'javax.servlet:javax.servlet-api:3.1.0'
+        compile 'commons-io:commons-io:2.6'
+
 //        compile 'com.alibaba.nacos:nacos-api:1.2.0'
 //        compile 'com.alibaba.nacos:nacos-common:1.2.0'
 //        compile 'com.alibaba.nacos:nacos-client:1.2.0'
@@ -366,6 +370,7 @@ project(':future-utils') {
 
         compile 'com.fasterxml.jackson.core:jackson-core:2.12.0'
         compile 'org.yaml:snakeyaml:1.25'
+        compile 'org.projectlombok:lombok:1.18.22'
 
         testCompile 'org.springframework:spring-test:4.3.2.RELEASE'
         testCompile 'junit:junit:4.11'
@@ -481,6 +486,7 @@ project(':future-generator') {
         compile 'org.postgresql:postgresql:42.2.5'
         compile 'javax.servlet:javax.servlet-api:3.1.0'
         compile 'org.apache.commons:commons-lang3:3.4'
+        compile 'org.reflections:reflections:0.9.9-RC1'
 
         compile "org.springframework.boot:spring-boot-starter-web:${spring_boot_version}"
         compile "org.springframework.boot:spring-boot-autoconfigure:${spring_boot_version}"
@@ -534,6 +540,7 @@ project(':future-http-system') {
         runtime 'io.jsonwebtoken:jjwt-impl:0.10.7','io.jsonwebtoken:jjwt-jackson:0.10.7'
         compile 'org.apache.shiro:shiro-core:1.4.0:'
         compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.authzserver:1.0.2'
+
 //        compile 'com.github.caspar-chen:swagger-ui-layer:1.1.9'
 
     }

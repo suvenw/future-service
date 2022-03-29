@@ -57,7 +57,7 @@ public class JsonParse {
 	}
 
 
-	public static <T> T parseFrom(Map<String, Object> map, Class<T> clazz)
+	public static <T> T parseFrom(Map map, Class<T> clazz)
 			throws Exception {
 
 		T instance= clazz.newInstance();

@@ -31,6 +31,7 @@
                     <option value="JdbcCodeStatusEnum">JDBC排序模板JdbcCodeStatusEnum</option>
                     <option value="MybatisCodeEnum">MYBATIS排序模板MybatisCodeEnum</option>
                     <option value="MvcCodeEnum">MVC排序模板MvcCodeEnum</option>
+                    <option value="SimpMvcCodeEnum">MVC精简模板SimpMvcCodeEnum</option>
                 </select>
                 <label class="label">基础Dao类名称:</label>
                 <select class="form-select" v-model="q.entityDao" @keyup.enter="query"  name="entityDao"  >
@@ -39,6 +40,9 @@
                     <option value="JdbcBaseEntityDao">JdbcBaseEntityDao</option>
                     <option value="MyBatisBaseCacheDao">MyBatisBaseCacheDao</option>
                     <option value="MyBatisBaseEntityDao">MyBatisBaseEntityDao</option>
+                    <option value="MyBatisBaseEntityDao">MyBatisBaseEntityDao</option>
+                    <option value="MyBatisBaseServiceImpl">MyBatisBaseServiceImpl</option>
+
                 </select>
 
 
@@ -59,6 +63,9 @@
                     <option value="BaseEntity">BaseEntity</option>
                     <option value="BaseStatusEntity">BaseStatusEntity</option>
                     <option value="BaseTimeEntity">BaseTimeEntity</option>
+                    <option value="BaseByTimeEntity">BaseByTimeEntity</option>
+                    <option value="BaseIdEntity">BaseIdEntity</option>
+
                 </select>
 
             </div>

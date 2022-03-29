@@ -1,0 +1,168 @@
+package ${packageName}.${moduleName}.service;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import com.baomidou.mybatisplus.extension.service.IService;
+
+import ${packageName}.${moduleName}.entity.${className};
+import ${packageName}.${moduleName}.vo.request.${className}AddRequestVo;
+import ${packageName}.${moduleName}.vo.request.${className}RequestVo;
+import ${packageName}.${moduleName}.vo.response.${className}ResponseVo;
+import ${packageName}.${moduleName}.dto.enums.${className}QueryEnum;
+
+import ${mainPath}.common.data.BasePage;
+import ${mainPath}.http.data.vo.ResponseResultList;
+
+
+
+
+/**
+ * @ClassName: ${className}Service.java
+ *
+ * @Author 作者 : ${author}
+ * @CreateDate 创建时间: ${datetime}
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: ${description} RPC业务接口逻辑实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+
+public interface ${className}Service  extends IService<${className}>{
+
+
+
+    /**
+     * 保存${description}更新数据库和缓存的实现方法
+     * @param ${paramName}AddRequestVo  ${className}AddRequestVo
+     * @return
+     */
+    ${className}ResponseVo save${className}(${className}AddRequestVo ${paramName}AddRequestVo);
+
+
+
+
+
+
+    /**
+     * 保存${description}更新数据库和缓存的实现方法
+     * @return
+     */
+    boolean saveBatch${className}(Collection<${className}AddRequestVo> entityList, int batchSize);
+
+    /**
+     * 保存${description}更新数据库和缓存的实现方法
+     * @return
+     */
+    boolean saveOrUpdateBatch${className}(Collection<${className}AddRequestVo> entityList, int batchSize);
+
+
+
+    /**
+     * 更新${description}同时更新数据库和缓存的实现方法
+     * @param ${paramName}AddRequestVo  ${className}AddRequestVo
+     * @return
+     */
+    boolean update${className} (${className}AddRequestVo ${paramName}AddRequestVo);
+
+    /**
+     * 更新${description}同时更新数据库和缓存的实现方法
+     * @return
+     */
+    boolean updateBatchByList(Collection<${className}AddRequestVo> entityList, int batchSize);
+
+
+    /**
+     * 通过主键ID删除对象信息实现缓存和数据库,同时删除的方法
+     * @param  id
+     * @return
+     */
+    int del${className}ByIds(long id);
+
+    /**
+     * 通过主键ID删除对象信息实现缓存和数据库,同时删除的方法
+     * @param  ${paramName}Ids
+     * @return
+     */
+    int del${className}ByIds(List<Long>  ${paramName}Ids);
+
+
+    /**
+     * 通过主键ID更新对象${description}实现缓存和数据库更新的方法
+     * @param  ${paramName}Id
+     * @return
+     */
+        ${className}ResponseVo get${className}ById(long ${paramName}Id);
+     /**
+         * 通过ID列表获取SysRolePermission信息实现查找缓存和数据库的方法
+         * @param idList
+         * @return List<${className}ResponseVo>
+         * @author suven
+         * @date 2022-02-28 16:10:49
+         */
+      List<${className}ResponseVo>   get${className}ByIds(Collection<? extends Serializable > idList);
+
+
+    /**
+     * 通过参数limit0,1获取对象${description}的查询方法
+     * @param  queryEnum
+     * @return
+     */
+    ${className}ResponseVo get${className}ByOne( ${className}QueryEnum queryEnum,${className}RequestVo ${paramName}RequestVo);
+
+
+    /**
+    * 通过分页和枚举条件获取${className}信息实现查找缓存和数据库的方法
+    * @param ${paramName}RequestVo ${className}RequestVo
+    * @return
+    * @author ${author}
+    * @date ${datetime}
+    */
+    List<${className}ResponseVo> get${className}ListByQuery(${className}RequestVo  ${paramName}RequestVo, ${className}QueryEnum queryEnum);
+
+
+    /**
+     * 通过分页获取${className}信息实现查找缓存和数据库的方法
+     * @param page BasePage
+     * @return
+     * @author ${author}
+     * @date ${datetime}
+     */
+    List<${className}ResponseVo> get${className}ListByPage(BasePage page,${className}QueryEnum queryEnum);
+
+
+
+
+    /**
+     * 通过分页获取${className} ${description}信息实现查找缓存和数据库的方法,包括查总页数
+     * @param page BasePage
+     * @return
+     * @author ${author}
+     * @date ${datetime}
+     */
+    ResponseResultList<${className}ResponseVo> get${className}ByNextPage(BasePage page,${className}QueryEnum queryEnum);
+
+    /**
+     * 通过分页获取${className} ${description}信息实现查找缓存和数据库的方法,不查总页数
+     * @param page BasePage
+     * @return
+     * @author ${author}
+     * @date ${datetime}
+     */
+    ResponseResultList<${className}ResponseVo> get${className}ByQueryPage(BasePage page,${className}QueryEnum queryEnum);
+
+
+
+}

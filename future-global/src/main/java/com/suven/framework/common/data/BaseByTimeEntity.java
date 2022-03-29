@@ -6,6 +6,7 @@ import com.suven.framework.common.api.ApiDesc;
 import com.suven.framework.common.api.IBaseApi;
 import com.suven.framework.common.api.IBeanClone;
 
+import java.io.Serializable;
 import java.util.Date;
 
 
@@ -18,7 +19,7 @@ import java.util.Date;
  * 提供 POJO Bean 对应的对象间,具有相同的方法的属性值,动态拷贝实现,但不支持builder类性的Bean对象属性拷贝;
  * 提供基本的主健id, 创建时间(createDate) ,修改时间(modifyDate) 的基础实体类
  */
-public class BaseTimeEntity extends BaseBeanClone implements IBaseApi, IBeanClone {
+public class BaseByTimeEntity extends BaseBeanClone implements IBaseApi, IBeanClone, Serializable {
 
 
     private static final long serialVersionUID = -5102197522565173276L;
@@ -33,8 +34,15 @@ public class BaseTimeEntity extends BaseBeanClone implements IBaseApi, IBeanClon
     @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE)
     private Date updateTime; //修改时间;
 
+    @ApiDesc(value =  "创建人")
+    @TableField(value = "create_by", fill = FieldFill.INSERT)
+    private String createBy; //创建人;
+    @ApiDesc(value =  "创建人登录名称")
+    @TableField(value = "update_by", fill = FieldFill.INSERT_UPDATE)
+    private String updateBy; //修改人;
 
-    public BaseTimeEntity() {
+
+    public BaseByTimeEntity() {
         super();
         this.createTime = this.updateTime = new Date();
     }
@@ -75,6 +83,7 @@ public class BaseTimeEntity extends BaseBeanClone implements IBaseApi, IBeanClon
     }
 
 
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -89,5 +98,31 @@ public class BaseTimeEntity extends BaseBeanClone implements IBaseApi, IBeanClon
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public IBaseApi toCreateBy(String createBy) {
+        this.createBy = createBy;
+        return this;
+    }
+
+    public IBaseApi toUpdateBy(String updateBy) {
+        this.updateBy = updateBy;
+        return this;
+    }
+
+    public String getCreateBy() {
+        return createBy;
+    }
+
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
+    }
+
+    public String getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(String updateBy) {
+        this.updateBy = updateBy;
     }
 }

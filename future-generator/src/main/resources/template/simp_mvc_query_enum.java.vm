@@ -1,0 +1,30 @@
+package ${packageName}.${moduleName}.dto.enums;
+
+
+/**
+ * @ClassName: ${className}QueryEnum.java
+ *
+ * @Author 作者 : ${author}
+ * @CreateDate 创建时间: ${datetime}
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: ${description}的数据条件查询枚举类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+
+ public enum ${className}QueryEnum {
+     DESC_ID,
+     SORT,
+     ;
+ }

@@ -5,9 +5,14 @@ import java.util.Map;
 
 public enum BaseEntityEnum {
 
+
+
     BASE_ENTITY(1, "BaseEntity","id,createDate,modifyDate","id,create_date,modify_date"),
     BASE_STATUS_ENTITY(2, "BaseStatusEntity","id,createDate,modifyDate,sort,status","id,create_date,modify_date,sort,status"),
-    BASE_TIME_ENTITY(3, "BaseTimeEntity","id,createTime,updateTime","create_time,update_time");
+    BASE_TIME_ENTITY(3, "BaseTimeEntity","id,createTime,updateTime","create_time,update_time"),
+    BASE_BY_TIME_ENTITY(4, "BaseByTimeEntity","id,createTime,updateTime,createBy,updateBy","create_time,update_time,create_by,update_by"),
+    BASE_ID_ENTITY(5, "BaseIdEntity","id","id"),
+    ;
 
     private int id;
     private String value;

@@ -1,0 +1,364 @@
+package ${packageName}.${moduleName}.service;
+
+
+${importServicePackage}
+import org.springframework.beans.factory.annotation.Autowired;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.io.Serializable;
+
+
+import ${packageName}.${moduleName}.entity.${className};
+import ${packageName}.${moduleName}.mapper.${className}Mapper;
+
+import ${packageName}.${moduleName}.vo.request.${className}AddRequestVo;
+import ${packageName}.${moduleName}.vo.request.${className}RequestVo;
+import ${packageName}.${moduleName}.vo.response.${className}ResponseVo;
+import ${packageName}.${moduleName}.dto.enums.${className}QueryEnum;
+
+import ${mainPath}.core.mybatis.${baseEntityDao};
+import ${mainPath}.core.db.IterableConverter;
+import ${mainPath}.common.data.BasePage;
+import ${mainPath}.common.enums.ResultEnum;
+import ${mainPath}.http.data.vo.ResponseResultList;
+
+
+
+
+
+
+
+/**
+ * @ClassName: ${className}ServiceImpl.java
+ *
+ * @Author 作者 : ${author}
+ * @CreateDate 创建时间: ${datetime}
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: ${description} RPC业务接口逻辑实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+@Service
+public class ${className}ServiceImpl  extends ${baseEntityDao}<${className}Mapper, ${className}> implements ${className}Service  {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    private ${className}Mapper  ${paramName}Mapper;
+
+
+
+    /**
+     * 保存${description}同时更新数据库和缓存的实现方法
+     * @param ${paramName}AddRequestVo ${className}AddRequestVo
+     * @return
+     */
+    @Override
+    public ${className}ResponseVo save${className}(${className}AddRequestVo ${paramName}AddRequestVo){
+        if(${paramName}AddRequestVo== null){
+            return null;
+        }
+        ${className} ${paramName} = ${className}.build().clone(${paramName}AddRequestVo);
+        boolean result = this.save(${paramName});
+        if(!result){
+            return null;
+        }
+        ${className}ResponseVo ${paramName}ResponseVo = ${className}ResponseVo.build().clone(${paramName});
+        return ${paramName}ResponseVo;
+
+
+    }
+
+
+    /**
+     * 批量保存${description}同时更新数据库和缓存的实现方法
+     * @param entityList ${className}AddRequestVo
+     * @return
+     */
+    @Override
+    public boolean saveBatch${className}(Collection<${className}AddRequestVo> entityList, int batchSize) {
+        if(null == entityList || entityList.size() !=  batchSize){
+            return false;
+        }
+        List<${className}> list = new ArrayList<>();
+        entityList.forEach(e -> list.add(${className}.build().clone(e)));
+        boolean result = this.saveBatch(list,batchSize);
+        return result;
+    }
+
+    @Override
+    public boolean saveOrUpdateBatch${className}(Collection<${className}AddRequestVo> entityList, int batchSize) {
+        if(null == entityList || entityList.size() != batchSize ){
+            return false;
+        }
+        List<${className}> list = new ArrayList<>();
+        entityList.forEach(e -> list.add(${className}.build().clone(e)));
+        boolean result = this.saveOrUpdateBatch(list,batchSize);
+        return result;
+    }
+
+
+    @Override
+    public boolean updateBatchByList(Collection<${className}AddRequestVo> entityList, int batchSize) {
+        if(null == entityList || entityList.size() != batchSize ){
+            return false;
+        }
+        List<${className}> list = new ArrayList<>();
+        entityList.forEach(e -> list.add(${className}.build().clone(e)));
+        boolean result =  this.updateBatchById(list,batchSize);
+        return result;
+    }
+
+    /**
+     * 更新${description}同时更新数据库和缓存的实现方法
+     * @param ${paramName}AddRequestVo  ${className}AddRequestVo
+     * @return
+     */
+    @Override
+    public boolean update${className}(${className}AddRequestVo ${paramName}AddRequestVo){
+
+          if(null ==  ${paramName}AddRequestVo){
+              return false;
+          }
+
+        ${className} ${paramName} = ${className}.build().clone(${paramName}AddRequestVo);
+
+        return this.updateById(${paramName});
+
+
+    }
+
+
+
+
+
+ /**
+     * 通过主键ID删除对象信息实现缓存和数据库,同时删除的方法
+     * @param  id
+     * @return
+     */
+    @Override
+    public int del${className}ByIds(long id){
+         boolean result =  this.removeById(id);
+         if(result){
+             return ResultEnum.SUCCESS.id();
+         }
+         return ResultEnum.FAIL.id();
+    }
+
+    /**
+     * 通过主键ID删除对象信息实现缓存和数据库,同时删除的方法
+     * @param  idList
+     * @return
+     */
+    @Override
+    public int del${className}ByIds(List<Long> idList){
+        boolean result = false;
+        if(null == idList){
+            return ResultEnum.FAIL.id();
+        }
+        if( idList.size() == 1) {
+            result =this.removeById(idList.get(0));
+        }else {
+            result =  this.removeByIds(idList);
+        }
+        if(result){
+            return ResultEnum.SUCCESS.id();
+        }
+        return ResultEnum.FAIL.id();
+
+    }
+
+
+    /**
+     * 通过主键ID更新对象${description}实现缓存和数据库更新的方法
+     * @param  ${paramName}Id
+     * @return
+     */
+    @Override
+    public ${className}ResponseVo get${className}ById(long ${paramName}Id){
+        if(${paramName}Id < 0 ){
+            return null;
+        }
+        ${className} ${paramName} =  this.getById(${paramName}Id);
+        if(${paramName} == null){
+            return null;
+        }
+        ${className}ResponseVo ${paramName}ResponseVo = ${className}ResponseVo.build().clone(${paramName});
+
+        return ${paramName}ResponseVo ;
+
+    }
+
+
+        /**
+         * 通过ID列表获取SysRolePermission信息实现查找缓存和数据库的方法
+         * @param idList
+         * @return List<${className}ResponseVo>
+         * @author suven
+         * @date 2022-02-28 16:10:49
+         */
+        @Override
+        public  List<${className}ResponseVo>   get${className}ByIds(Collection<? extends Serializable > idList){
+            List<${className}>  list =   super.baseMapper.selectBatchIds(idList);
+            List<${className}ResponseVo> result =  list.stream().map(obj -> {
+                ${className}ResponseVo vo =  ${className}ResponseVo.build();
+                vo.clone(obj);
+                return vo;
+            }).collect(Collectors.toList());
+            return result;
+        }
+
+    /**
+     * 通过参数limit0,1获取对象${description}的查询方法
+     * @param  queryEnum
+     * @return
+     */
+     @Override
+     public   ${className}ResponseVo get${className}ByOne( ${className}QueryEnum queryEnum,${className}RequestVo ${paramName}RequestVo){
+          if(${paramName}RequestVo == null ){
+              return null;
+          }
+          ${className}  ${paramName}= ${className}.build().clone(${paramName}RequestVo);
+           QueryWrapper<${className}> queryWrapper = ${paramName}Mapper.builderQueryEnum( queryEnum, ${paramName});
+            //分页对象        PageHelper
+           Page<${className}> iPage = new Page<>(0, 1);
+           iPage.setSearchCount(false);
+           List<${className}>  list = ${paramName}Mapper.getListByPage(iPage,queryWrapper);
+           if(null == list || list.isEmpty()){
+                 return null;
+           }
+           ${className} ${paramName}Db = list.get(0);
+           ${className}ResponseVo ${paramName}ResponseVo = ${className}ResponseVo.build().clone(${paramName}Db);
+
+            return ${paramName}ResponseVo ;
+       }
+
+
+ /**
+   * 通过条件查询${className}信息列表,实现查找缓存和数据库的方法,但不统计总页数
+   * @param  ${paramName}RequestVo ${className}RequestVo
+   * @return
+   * @author ${author}
+   * @date ${datetime}
+   */
+  @Override
+  public List<${className}ResponseVo> get${className}ListByQuery( ${className}RequestVo  ${paramName}RequestVo, ${className}QueryEnum queryEnum){
+
+     ${className}  ${paramName}= ${className}.build().clone(${paramName}RequestVo);
+
+      QueryWrapper<${className}> queryWrapper = ${paramName}Mapper.builderQueryEnum( queryEnum, ${paramName});
+
+      List<${className}>  list = ${paramName}Mapper.getListByQuery(queryWrapper);
+      if(null == list ){
+          list = new ArrayList<>();
+      }
+      List<${className}ResponseVo>  resDtoList =  IterableConverter.convertList(list,${className}ResponseVo.class);
+      return resDtoList;
+
+  }
+
+
+    /**
+     * 通过分页获取${className}信息列表,实现查找缓存和数据库的方法,但不统计总页数
+     * @param page BasePage
+     * @return
+     * @author ${author}
+     * @date ${datetime}
+     */
+    @Override
+    public List<${className}ResponseVo> get${className}ListByPage(BasePage page,${className}QueryEnum queryEnum){
+
+        ${className}  ${paramName}= ${className}.build().clone( page.getParamObject());
+
+        QueryWrapper<${className}> queryWrapper =${paramName}Mapper.builderQueryEnum(queryEnum, ${paramName});
+        //分页对象        PageHelper
+        Page<${className}> iPage = new Page<>(page.getPageNo(), page.getPageSize());
+        iPage.setSearchCount(false);
+        List<${className}>  list = ${paramName}Mapper.getListByPage(iPage,queryWrapper);
+        if(null == list ){
+            list = new ArrayList<>();
+        }
+        List<${className}ResponseVo>  resDtoList =  IterableConverter.convertList(list,${className}ResponseVo.class);
+        return resDtoList;
+
+    }
+
+
+
+   /**
+     * 通过分页获取${className} ${description}信息实现查找缓存和数据库的方法,不查总页数
+     * @param page BasePage
+     * @return
+     * @author ${author}
+     * @date ${datetime}
+     */
+    @Override
+    public ResponseResultList<${className}ResponseVo> get${className}ByQueryPage(BasePage page,${className}QueryEnum queryEnum){
+
+        ResponseResultList<${className}ResponseVo> responseResultList = ResponseResultList.build();
+         ${className}  ${paramName} = ${className}.build().clone(page.getParamObject());
+
+        QueryWrapper<${className}> queryWrapper = ${paramName}Mapper.builderQueryEnum(queryEnum,${paramName}  );
+        //分页对象        PageHelper
+        Page<${className}> iPage = new Page<>(page.getPageNo(), page.getPageSize());
+        iPage.setSearchCount(false);
+        List<${className}>  list = ${paramName}Mapper.getListByPage(iPage,queryWrapper);
+        if(null == list ){
+            list = new ArrayList<>();
+        }
+        List<${className}ResponseVo>  resDtoList =  IterableConverter.convertList(list,${className}ResponseVo.class);
+        boolean isNext =  page.isNextPage(resDtoList);
+        responseResultList.toIsNextPage(isNext).toList(resDtoList);
+        return responseResultList;
+    }
+
+    /**
+     * 通过分页获取${className}信息列表,实现查找缓存和数据库的方法,并且查询总页数
+     * @param page BasePage
+     * @return
+     * @author ${author}
+     * @date ${datetime}
+     */
+    @Override
+    public ResponseResultList<${className}ResponseVo> get${className}ByNextPage(BasePage page,${className}QueryEnum queryEnum){
+        ResponseResultList<${className}ResponseVo> responseResultList = ResponseResultList.build();
+         ${className}  ${paramName} = ${className}.build().clone(page.getParamObject());
+        QueryWrapper<${className}> queryWrapper = ${paramName}Mapper.builderQueryEnum(queryEnum,   ${paramName} );
+        //分页对象        PageHelper
+        Page<${className}> iPage = new Page<>(page.getPageNo(), page.getPageSize());
+        iPage.setSearchCount(true);
+        List<${className}>  list = ${paramName}Mapper.getListByPage(iPage,queryWrapper);
+        if(null == list ){
+            list = new ArrayList<>();
+        }
+        List<${className}ResponseVo>  resDtoList =  IterableConverter.convertList(list,${className}ResponseVo.class);
+        boolean isNext =  page.isNextPage(resDtoList);
+        responseResultList.toIsNextPage(isNext).toList(resDtoList).toTotal((int)iPage.getTotal());
+        return responseResultList;
+
+    }
+
+
+
+
+}

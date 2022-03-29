@@ -6,9 +6,10 @@ public class SysConfig {
 
     private String databaseType = "mysql";
     private String dataSourceName;//数据库类实现名
-    private String entity = "BaseEntity"; //1.BaseEntity, 2.BaseStatusEntity
+    private String entity = "BaseEntity"; //1.BaseEntity, 2.BaseStatusEntity,BaseByTimeEntity,BaseTimeEntity,BaseIdEntity
+    //1.JdbcBaseEntityDao, 2.JdbcBaseCacheDao,3.MyBatisBaseEntityDao,4.MyBatisBaseCacheDao,5.MyBatisBaseServiceImpl
     private String entityDao = "MyBatisBaseCacheDao"; //1.JdbcBaseEntityDao, 2.JdbcBaseCacheDao,3.MyBatisBaseEntityDao,4.MyBatisBaseCacheDao
-    private String tempEnum = "MybatisCodeEnum"; //1.JdbcCodeCacheEnum, 2.JdbcCodeStatusEnum, 3.MybatisCodeEnum
+    private String tempEnum = "MybatisCodeEnum"; //1.JdbcCodeCacheEnum, 2.JdbcCodeStatusEnum, 3.MybatisCodeEnum,4.MvcCodeEnum,5.SimpMvcCodeEnum
     private int pageVal = 1;
     private int dubbo = 0;
     private int mvc = 1;

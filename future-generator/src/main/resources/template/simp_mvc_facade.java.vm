@@ -1,0 +1,46 @@
+package ${packageName}.${moduleName}.facade;
+
+${importAutowiredPackage}
+import org.springframework.stereotype.Component;
+
+import ${packageName}.${moduleName}.service.${className}Service;
+import ${packageName}.${moduleName}.vo.request.${className}RequestVo;
+import ${packageName}.${moduleName}.vo.response.${className}ResponseVo;
+
+
+
+
+/**
+  * @ClassName: ${className}Facade.java
+  *
+  * @Author 作者 : ${author}
+  * @email 邮箱 : ${email}
+  * @CreateDate 创建时间: ${datetime}
+  * @Version 版本: v1.0.0
+  * <pre>
+  *
+  *  @Description: ${description} 的业务综合处理门面实现逻辑类
+  *
+  * </pre>
+  * <pre>
+  * 修改记录
+  *    修改后版本:     修改人：  修改日期:     修改内容:
+  * ----------------------------------------------------------------------------
+  *
+  * ----------------------------------------------------------------------------
+  * @RequestMapping("/${moduleName}/${paramName}")
+  * </pre>
+  * @Copyright: (c) 2021 gc by https://www.suven.top
+  **/
+
+@Component
+public class ${className}Facade {
+
+	${importAutowired}
+	private ${className}Service  ${paramName}Service;
+
+	
+
+
+
+}

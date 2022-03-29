@@ -1,6 +1,10 @@
 package com.suven.framework.generator.temp;
 
 
+import org.reflections.Reflections;
+
+import java.util.*;
+
 /**
  * @Title: SysDepartFacade.java
  * @author suven
@@ -33,5 +37,9 @@ public interface CreateCodeEnum {
     public int getIndex();
 
     public default int isWrite(){ return 0;}
+
+
+
+
 
 }
