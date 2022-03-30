@@ -91,7 +91,7 @@ public class SysDataConfig {
 
     public Class getTempCodeEnumClass(){
         String tempEnum =  sysConfig.getTempEnum();
-        Map<String,Class<?>>  map = TemplateCodeEnum.getIMsgEnum();
+        Map<String,Class<?>>  map = TemplateCodeEnum.getTemplateEnum();
         if(map != null && map.get(tempEnum) != null){
             return  map.get(tempEnum);
         }else {

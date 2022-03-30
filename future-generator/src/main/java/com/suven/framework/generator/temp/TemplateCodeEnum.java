@@ -25,7 +25,7 @@ import java.util.Set;
  **/
 @Component
 public class TemplateCodeEnum {
-    public static  Map<String, Class<?>> getIMsgEnum() {
+    public static  Map<String, Class<?>> getTemplateEnum() {
         /**
          * 搜索所有类
          */
