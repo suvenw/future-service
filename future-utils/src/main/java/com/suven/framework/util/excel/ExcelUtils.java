@@ -8,7 +8,9 @@ import com.alibaba.excel.write.metadata.WriteSheet;
 import com.suven.framework.common.api.IBaseExcelData;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.List;
 
 /**
@@ -51,6 +53,39 @@ public class ExcelUtils {
             }
         }
         return true;
+    }
+
+    /**
+     *
+     *  文件导出
+     * @param response 输出流
+     * @param clazzData 实体对象
+     * @param data 导出的list数据
+     * @param sheetName  sheetName名称
+     * @return
+     */
+    public static Boolean writeExcel(HttpServletResponse response, String fileChinaName, Class clazzData, List data, String sheetName) throws Exception{
+        response.setHeader("Content-Disposition", "attachment; filename="
+                + new String(fileChinaName.getBytes("gbk"), "iso8859-1"));
+        response.setContentType("application/octet-stream; charset=UTF-8");
+        return writeExcel(response.getOutputStream(),clazzData,data,sheetName);
+
+    }
+
+    /**
+     *
+     *  文件导出
+     * @param response 输出流
+     * @param clazzData 实体对象
+     * @param data 导出的list数据
+     * @param sheetName  sheetName名称
+     * @return
+     */
+    public static Boolean writeExcel(HttpServletResponse response, String fileName , Charset charset, Class clazzData, List data, String sheetName) throws Exception{
+        response.setHeader("Content-Disposition", "attachment; filename=" + fileName.getBytes(charset) );
+        response.setContentType("application/octet-stream; charset=UTF-8");
+        return writeExcel(response.getOutputStream(),clazzData,data,sheetName);
+
     }
 
     /**
