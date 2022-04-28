@@ -1,0 +1,80 @@
+package ${packageName}.${moduleName}.dto.request;
+
+
+import java.io.Serializable;
+import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ${mainPath}.common.data.${baseEntity};
+import ${mainPath}.common.api.ApiDesc;
+
+
+#if( $isLombok==1)
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+#end
+/**
+ * @ClassName: ${className}RequestDto.java
+ *
+ * @Author 作者 : ${author}
+ * @CreateDate 创建时间: ${datetime}
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: ${description} RPC业务接口交互数据请求参数实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+#if( $isLombok==1)
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+#end
+
+public class ${className}RequestDto extends ${baseEntity} implements Serializable{
+
+
+        private Logger logger = LoggerFactory.getLogger(${className}RequestDto.class);
+
+#foreach ($column in $columns)
+#if( $column.fieldAttrName )
+$column.explainAttrName
+$column.docAttrName
+$column.fieldAttrName
+#end
+
+#end
+
+        public static ${className}RequestDto build(){
+            return new ${className}RequestDto();
+        }
+
+#foreach ($column in $columns)
+#if( $column.fieldAttrName )
+
+$column.buildRequestDtoName
+#if( $isLombok==0)
+$column.setAttrName
+$column.getAttrName
+#end
+#end
+#end
+
+
+
+
+	
+
+
+}
