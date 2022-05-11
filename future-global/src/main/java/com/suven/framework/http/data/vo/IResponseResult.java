@@ -1,6 +1,9 @@
 package com.suven.framework.http.data.vo;
 
 
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.ClassUtils;
+
 /**
  * @Author 作者 : suven.wang
  * @CreateDate 创建时间: 2021-06-29
@@ -75,5 +78,26 @@ public interface IResponseResult<T> {
     }
 
 
+    default Object initData(Object data) {
+        if(data == null){
+            return null;
+        }
+        if( data instanceof String ){
+            return (T)data;
+        }
+        if(data != null && !ClassUtils.isPrimitiveOrWrapper(data.getClass())){
+            return data;
+        }
+        if(data instanceof  Boolean){
+            JSONObject object = new JSONObject();
+            int value = (Boolean)data ? 1 : 0;
+            object.put("result",value);
+            return object;
+        }else {
+            JSONObject object = new JSONObject();
+            object.put("pkId",data);
+            return object;
+        }
+    }
 
 }

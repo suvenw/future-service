@@ -112,32 +112,9 @@ public class ResponseResultVo<T> implements IResponseResult<T>, Serializable {
 		if(data == null){
 			return;
 		}
-		if( data instanceof String ){
-			this.data = (T)data;
-			return;
-		}
-		if(data != null && !ClassUtils.isPrimitiveOrWrapper(data.getClass())){
-			this.data = data;
-			return;
-		}
-		if(data instanceof  Boolean){
-			putBoolean( data);
-			return;
-		}
-		putId(data);
+		this.data = this.initData(data);
 	}
 
-	private void putBoolean( Object data){
-		JSONObject object = new JSONObject();
-		int value = (Boolean)data ? 1 : 0;
-		object.put("result",value);
-		this.data = object;
-	}
-	private void putId( Object value){
-		JSONObject object = new JSONObject();
-		object.put("pkId",value);
-		this.data = object;
-	}
 
 
 

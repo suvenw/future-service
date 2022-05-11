@@ -84,7 +84,10 @@ public class SystemResultVo<T> implements IResponseResult<T>,Serializable {
 		this.code = code;
 		this.message = message;
 		this.success = success;
-		this.result = (T)result;
+		if(null != result){
+			this.result = this.initData(result);
+		}
+
 		return this;
 	}
 
