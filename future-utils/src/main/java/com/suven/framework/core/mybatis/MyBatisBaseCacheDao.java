@@ -251,17 +251,16 @@ public class MyBatisBaseCacheDao<M extends BaseMapper<T>, T extends IBaseApi> ex
         if(CollectionUtils.isEmpty(idList)){
             return new HashMap<>();
         }
-        Map<Long,T> map = myBatisRedisClient.findMapCache(getEntityClass(), idList);
-        if(null != map && map.size() == idList.size() ){
+        Set idSet = new HashSet(idList);
+        Map<Long,T> map = myBatisRedisClient.findMapCache(getEntityClass(), idSet);
+        if(null != map && map.size() == idSet.size() ){
             return map;
         }
 
-        Set<Long> removeKeys = new HashSet<>(); //存储删除已查到的对象信息;
         //查找从缓存中没有查找到的OpusInfo实现;
         if(null != map && !map.isEmpty()){
             Set<Long> mapKeys = map.keySet();
-            idList.removeAll(mapKeys);//删除已查到的对象信息;
-            removeKeys.addAll(mapKeys);
+            idSet.removeAll(mapKeys);//删除已查到的对象信息;
         }
         if(map == null){
             map = new HashMap<>();
@@ -269,12 +268,12 @@ public class MyBatisBaseCacheDao<M extends BaseMapper<T>, T extends IBaseApi> ex
         List<T> list = new ArrayList<>();
 
         /** 如果批量id 少于指定值时100条,直接查询**/
-        if(idList.size() < LISTS_PARTITON_SIZE && !idList.isEmpty()){
-            list = (List<T>) super.listByIds(idList);
+        if(idSet.size() < LISTS_PARTITON_SIZE && !idSet.isEmpty()){
+            list = (List<T>) super.listByIds(idSet);
         }else{
             /*** 如果大于100条,则查用分页查询;返回结果值; */
-            List<List<Long>> partition = Lists.partition(new ArrayList<>(idList), LISTS_PARTITON_SIZE);
-            if(org.apache.commons.collections.CollectionUtils.isNotEmpty(partition)){
+            List<List<Long>> partition = Lists.partition(new ArrayList<>(idSet), LISTS_PARTITON_SIZE);
+            if(CollectionUtils.isNotEmpty(partition)){
                 for(List<Long> ids : partition ){
                     List<T> dbList =  list =(List<T>)  super.listByIds(ids);
                     if(null != dbList && !dbList.isEmpty()){
@@ -292,7 +291,6 @@ public class MyBatisBaseCacheDao<M extends BaseMapper<T>, T extends IBaseApi> ex
             myBatisRedisClient.addCacheList(getEntityClass(), list);
 
         }
-        idList.addAll(removeKeys); //重新赋值已经删除的key 保证传递与返回 colle 一致
         return map;
     }
 

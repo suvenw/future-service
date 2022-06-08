@@ -57,10 +57,10 @@ subprojects {
 
     repositories {
         maven { url  "${mavenUrl}/content/groups/public/" }
-//        maven { url "http://pypi.doubanio.com/simple/" }
-//        maven { url "https://repo.maven.apache.org/maven2/" }
-//        maven { url "https://mvnrepository.com/artifact/" }
-//        maven { url "https://maven.springframework.org/release/" }
+        maven { url "http://pypi.doubanio.com/simple/" }
+        maven { url "https://repo.maven.apache.org/maven2/" }
+        maven { url "https://mvnrepository.com/artifact/" }
+        maven { url "https://maven.springframework.org/release/" }
 
     }
 
@@ -281,7 +281,8 @@ project(':future-utils') {
 
         compile fileTree( dir: "lib", include: '*.jar' )
         compile project(':future-global')
-        
+        compile project(':future-doc')
+
 
         compile "org.springframework.boot:spring-boot-autoconfigure:${spring_boot_version}"
         compile "org.springframework.boot:spring-boot-starter-web:${spring_boot_version}"
