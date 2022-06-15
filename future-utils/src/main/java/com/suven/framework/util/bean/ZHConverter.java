@@ -1,6 +1,8 @@
 package com.suven.framework.util.bean;
 
 
+import org.junit.Assert;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -133,6 +135,7 @@ public class ZHConverter {
     }
 
     public String convert(String in) {
+        Assert.assertNotNull("convert in String is null");
         StringBuilder outString = new StringBuilder();
         StringBuilder stackString = new StringBuilder();
         for (int i = 0; i < in.length(); i++) {
@@ -194,7 +197,7 @@ public class ZHConverter {
         File tFile = new File(targetFile);
         BufferedReader reader = null;
         BufferedWriter writer = null;
-        ZHConverter converter = ZHConverter.getInstance(type);
+        final ZHConverter converter = ZHConverter.getInstance(type);
         try {
             is = new FileInputStream(file);
             if (is != null) {

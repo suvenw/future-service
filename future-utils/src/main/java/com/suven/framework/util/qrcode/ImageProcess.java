@@ -81,7 +81,7 @@ public class ImageProcess {
                 HttpResponse response = httpClient.execute(getMethod, new BasicHttpContext());
                 HttpEntity entity = response.getEntity();
                 InputStream instream = entity.getContent(); 
-                OutputStream outstream = new FileOutputStream(new File(DOWNLOAD_DIR, i + ".png"));
+                final OutputStream outstream = new FileOutputStream(new File(DOWNLOAD_DIR, i + ".png"));
                 int l = -1;
                 byte[] tmp = new byte[2048]; 
                 while ((l = instream.read(tmp)) != -1) {

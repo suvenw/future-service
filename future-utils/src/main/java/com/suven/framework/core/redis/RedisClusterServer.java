@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 
 
 /**
- * @author Joven.wang
- * @version V1.0
- * @Title: RedisClusterServer.java
- * @date 2016年7月27日
- * @Description: TODO(说明)
+ * Author Joven.wang
+ * Version V1.0
+ * Title: RedisClusterServer.java
+ * Date 2016年7月27日
+ * Description: TODO(说明)
  */
 @Component
 public class RedisClusterServer extends RedisClusterFactoryRouter {
@@ -33,8 +33,8 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
     /**
      * 获取前缀key 实现
      *
-     * @param clazz
-     * @return
+     * @param clazz 类对象
+     * @return String 字符串
      */
     protected String getPrefixKey(Class<?> clazz) {
         return null;
@@ -47,12 +47,12 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
     /**
      * 添加到缓存列表
      *
-     * @param key
-     * @param value
-     * @return
+     * @param key 缓存key
+     * @param value 缓存值
+     * @return String 返回字符串
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public String set(@CatCacheKeySign String key, byte[] value) {
+    public String set(@CatCacheKeySign final String key, byte[] value) {
         if (null == key || !isOpenWrite()) {
             return null;
         }
@@ -69,12 +69,12 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
     /**
      * 添加到缓存列表
      *
-     * @param key
-     * @param value
-     * @return
+     * @param key 缓存key
+     * @param value 缓存值
+     * @return String 返回字符串
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public String set(@CatCacheKeySign String key, String value) {
+    public String set(@CatCacheKeySign final String key, String value) {
         if (null == key || !isOpenWrite()) {
             return null;
         }
@@ -93,12 +93,12 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
     /**
      * 返回给定 key 的旧值。 当 key 没有旧值时，即 key 不存在时，返回 nil 。
      * 当 key 存在但不是字符串类型时，返回一个错误。
-     * @param key
-     * @param value
-     * @return
+     * @param key 缓存key值
+     * @param value 缓存value值
+     * @return String 返回字符串
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public String getSet(@CatCacheKeySign String key, String value) {
+    public String getSet(@CatCacheKeySign final String key, String value) {
         if (null == key || !isOpenWrite()) {
             return null;
         }
@@ -114,14 +114,12 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
 	/**
 	 * （SET if Not eXists） 命令在指定的 key 不存在时，为 key 设置指定的值。
 	 *  设置成功，返回 1 。 设置失败，返回 0 。
-	 * @param key
+	 * @param key 缓存key
 	 * @param value 类型：NX | XX,NX ：只在键不存在时，才对键进行设置操作。 SET key value NX 效果等同于 SETNX key value 。
-	 * @param second
+	 * @param second 缓存时间为秒 EX = seconds; PX = milliseconds
 	 * @return 返回是否设置成功
      * Set the string value as value of the key. The string can't be longer than 1073741824 bytes (1
      * GB).
-     * @param key
-     * @param value
      * param nxxx NX|XX, NX -- Only set the key if it does not already exist. XX -- Only set the key
      *          if it already exist.
      * param expx EX|PX, expire time units: EX = seconds; PX = milliseconds
@@ -129,7 +127,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return Status code reply
      */
 	@CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public boolean setNx(@CatCacheKeySign String key, String value, int second){
+    public boolean setNx(@CatCacheKeySign final String key, String value, int second){
         if (null == key || !isOpenWrite()) {
             return false;
         }
@@ -147,12 +145,12 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
     /**
      * 按过期时间添加到缓存列表,默认是3天
      *
-     * @param key
-     * @param value
-     * @return
+     * @param key 缓存key
+     * @param value 缓存value
+     * @return String
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public String setex(@CatCacheKeySign String key, String value) {
+    public String setex(@CatCacheKeySign final String key, String value) {
         if (null == key || !isOpenWrite()) {
             return null;
         }
@@ -168,12 +166,12 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
     /**
      * 按过期时间添加到缓存列表
      *
-     * @param key
-     * @param value
-     * @return
+* @param key 缓存key值
+* @param value 缓存value值
+     * @return boolean 结果
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public boolean setex(@CatCacheKeySign String key, String value, int secondsTime) {
+    public boolean setex(@CatCacheKeySign final String key, String value, int secondsTime) {
         if (null == key || !isOpenWrite()) {
             return false;
         }
@@ -189,12 +187,12 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
     /**
      * 按过期时间添加到缓存列表,默认是3天
      *
-     * @param key
-     * @param value
-     * @return
+* @param key 缓存key值
+* @param value 缓存value值
+     * @return String 结果
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public String setex(@CatCacheKeySign  byte[] key, byte[] value, int secondsTime) {
+    public String setex(@CatCacheKeySign final  byte[] key, byte[] value, int secondsTime) {
         if (null == key || !isOpenWrite()) {
             return null;
         }
@@ -210,12 +208,12 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
     /**
      * 按过期时间添加到缓存列表,默认是3天
      *
-     * @param key
-     * @param value
+    * @param key 缓存key值
+    * @param value 缓存value值
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public String setex(@CatCacheKeySign  String key, byte[] value, int secondsTime) {
+    public String setex(@CatCacheKeySign final  String key, byte[] value, int secondsTime) {
         if (null == key || !isOpenWrite()) {
             return null;
         }
@@ -235,7 +233,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long del(@CatCacheKeySign  String key) {
+    public long del(@CatCacheKeySign final  String key) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
@@ -253,7 +251,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @param keys
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public void del(@CatCacheKeySign  String... keys) {
+    public void del(@CatCacheKeySign final  String... keys) {
         if (null == keys || !isOpenWrite()) {
             return;
         }
@@ -274,11 +272,11 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      *  当 key 不存在时，返回 -2 。
      *  当 key 存在但没有设置剩余生存时间时，返回 -1 。
      *  否则，以秒为单位，返回 key 的剩余生存时间。
-     * @param key
-     * @return
+     * @param key 缓存key
+     * @return long 结果
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long ttl(@CatCacheKeySign  String key) {
+    public long ttl(@CatCacheKeySign final  String key) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
@@ -295,11 +293,11 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
     /**
      * 将值 value 关联到 key ，并将 key 的生存时间设为 seconds (以秒为单位)。
      * 如果 key 已经存在， SETEX 命令将覆写旧值。
-     * @param data
-     * @param seconds
+     * @param data 缓存数据
+     * @param seconds  缓存时间
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public void multiSetex(@CatCacheKeySign  Map<byte[], byte[]> data, int seconds) {
+    public void multiSetex(@CatCacheKeySign final  Map<byte[], byte[]> data, int seconds) {
         if (data == null || !isOpenWrite()) {
             return;
         }
@@ -325,7 +323,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @param <V>     泛型,map 可以传任意类型
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public <V> void  multiSetex(@CatCacheKeySign  String prefix, Map<String, V> kvMap, int seconds) {
+    public <V> void  multiSetex(@CatCacheKeySign final  String prefix, Map<String, V> kvMap, int seconds) {
         if (prefix == null || kvMap == null || !isOpenWrite()) {
             return;
         }
@@ -345,7 +343,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @param kvMap   原始数据map集合
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public <K, V> void mset(@CatCacheKeySign  String prefix, Map<K, V> kvMap, int seconds) {
+    public <K, V> void mset(@CatCacheKeySign final  String prefix, Map<K, V> kvMap, int seconds) {
         if (null == prefix || !isOpenWrite()) {
             return;
         }
@@ -369,7 +367,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @param kvMap   组装后的数据map集合
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public void mset(@CatCacheKeySign  Map<String, byte[]> kvMap,int seconds) {
+    public void mset(@CatCacheKeySign final  Map<String, byte[]> kvMap,int seconds) {
         if (null == kvMap || !isOpenWrite()) {
             return;
         }
@@ -389,7 +387,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @param unixTime 设置失效秒量 RedisConstants.属性为值
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public void expireAt(@CatCacheKeySign  String key, long unixTime) {
+    public void expireAt(@CatCacheKeySign final  String key, long unixTime) {
         if (null == key || !isOpenWrite()) {
             return;
         }
@@ -409,7 +407,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @param
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long expire(@CatCacheKeySign  String key, int unixTime) {
+    public long expire(@CatCacheKeySign final  String key, int unixTime) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
@@ -431,7 +429,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      */
 
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public void multiExpire(@CatCacheKeySign  Map<String, Integer> expireMap) {
+    public void multiExpire(@CatCacheKeySign final  Map<String, Integer> expireMap) {
         if (null == expireMap || !isOpenWrite()) {
             return;
         }
@@ -447,7 +445,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @param expireMap  原始数据map集合
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public void multiExpire(@CatCacheKeySign  String prefix, Map<String, Integer> expireMap) {
+    public void multiExpire(@CatCacheKeySign final  String prefix, Map<String, Integer> expireMap) {
         if (null == expireMap || !isOpenWrite()) {
             return;
         }
@@ -468,7 +466,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long setnx(@CatCacheKeySign  String key, String value) {
+    public long setnx(@CatCacheKeySign final  String key, String value) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
@@ -489,7 +487,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @param key 设置到缓存key值
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long incr(@CatCacheKeySign  String key) {
+    public long incr(@CatCacheKeySign final  String key) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
@@ -509,7 +507,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @param key 设置到缓存key值
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long decr(@CatCacheKeySign  String key) {
+    public long decr(@CatCacheKeySign final  String key) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
@@ -525,7 +523,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
 
 
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long incr(@CatCacheKeySign  String key,int time,boolean refreshTime) {
+    public long incr(@CatCacheKeySign final  String key,int time,boolean refreshTime) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
@@ -540,13 +538,12 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
     }
 
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long decr(@CatCacheKeySign  String key,int time,boolean refreshTime) {
+    public long decr(@CatCacheKeySign final  String key,int time,boolean refreshTime) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
         try {
-            Long data = this.getRedisClusterFactoryBykey(key).refinedIncrByExpire(key,-1,time,false);
-            data = (data == null) ? 0L : data;
+            long data = this.getRedisClusterFactoryBykey(key).refinedIncrByExpire(key,-1,time,false);
             return data;
         }catch ( Exception e){
             logger.warn(" Redis Cluster Server by decr Modifier key:[{}] , time:[{}] ,  Exception: [{}] ",key,time, e);
@@ -564,7 +561,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return 成功的数量
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long rpush(@CatCacheKeySign  String key, String... value) {
+    public long rpush(@CatCacheKeySign final  String key, String... value) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
@@ -587,7 +584,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return 成功的数量
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long rpushByte(@CatCacheKeySign  String key, byte[]... value) {
+    public long rpushByte(@CatCacheKeySign final  String key, byte[]... value) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
@@ -611,7 +608,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return 成功的数量
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long rpushWithExpire(@CatCacheKeySign  String key, int expireSeconds, Object value) {
+    public long rpushWithExpire(@CatCacheKeySign final  String key, int expireSeconds, Object value) {
         if (null == key || null == value || !isOpenWrite()) {
             return 0;
         }
@@ -634,7 +631,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * 如果有多个 value 值，那么各个 value 值按从左到右的顺序依次插入到表头：
      **/
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long lpush(@CatCacheKeySign  byte[] key, byte[] value) {
+    public long lpush(@CatCacheKeySign final  byte[] key, byte[] value) {
         if (null == key || !isOpenWrite()) {
             return 0l;
         }
@@ -660,7 +657,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long lrem(@CatCacheKeySign  String key, long count, String value) {
+    public long lrem(@CatCacheKeySign final  String key, long count, String value) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
@@ -681,7 +678,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public String lset(@CatCacheKeySign  String key, int index, String value) {
+    public String lset(@CatCacheKeySign final  String key, int index, String value) {
         if (null == key || !isOpenWrite()) {
             return null;
         }
@@ -706,7 +703,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long zrem(@CatCacheKeySign  String key, String... members) {
+    public long zrem(@CatCacheKeySign final  String key, String... members) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
@@ -728,7 +725,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long zremrangeByScore(@CatCacheKeySign  String key, double start, double end) {
+    public long zremrangeByScore(@CatCacheKeySign final  String key, double start, double end) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
@@ -751,7 +748,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-     public Long sadd(@CatCacheKeySign String key, String... member) {
+     public Long sadd(@CatCacheKeySign final String key, String... member) {
         if (null == key || !isOpenWrite()) {
             return 0l;
         }
@@ -773,7 +770,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Long srem(@CatCacheKeySign String key, String... member) {
+    public Long srem(@CatCacheKeySign final String key, String... member) {
         if (null == key || !isOpenWrite()) {
             return 0l;
         }
@@ -798,7 +795,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public int zadd(@CatCacheKeySign  String key, long score, String member) {
+    public int zadd(@CatCacheKeySign final  String key, long score, String member) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
@@ -822,7 +819,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public int zadd(@CatCacheKeySign String key, Map<String, Double> scoreMembers) {
+    public int zadd(@CatCacheKeySign final String key, Map<String, Double> scoreMembers) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
@@ -846,7 +843,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public int zadd(@CatCacheKeySign  byte[] key, Map<byte[], Double> scoreMembers) {
+    public int zadd(@CatCacheKeySign final  byte[] key, Map<byte[], Double> scoreMembers) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
@@ -869,7 +866,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @param sortSetMap
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public void multiZSet(@CatCacheKeySign Map<String, Map<String, Double>> sortSetMap) {
+    public void multiZSet(@CatCacheKeySign final Map<String, Map<String, Double>> sortSetMap) {
         if (sortSetMap == null || sortSetMap.isEmpty() || !isOpenWrite()) {
             return;
         }
@@ -885,7 +882,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public String get(@CatCacheKeySign String key) {
+    public String get(@CatCacheKeySign final String key) {
         if (null == key || !isOpenRead()) {
             return "";
         }
@@ -905,13 +902,13 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public byte[] getByte(@CatCacheKeySign String key) {
+    public byte[] getByte(@CatCacheKeySign final String key) {
         if (null == key || !isOpenRead()) {
             return null;
         }
         try {
             byte[] data = getRedisClusterFactoryBykey(key).get(key.getBytes());
-            if (data == null || "".equals(data)) {//设置默认初始值
+            if (data == null || data.length == 0) {//设置默认初始值
                 return null;
             }
             return data;
@@ -930,7 +927,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public <T> T getT(@CatCacheKeySign String fildKey, Class<T> clazz) {
+    public <T> T getT(@CatCacheKeySign final String fildKey, Class<T> clazz) {
         if (null == fildKey || !isOpenRead()) {
             return null;
         }
@@ -958,7 +955,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public <K, V> Map<K, V> mget(Class<V> clazz, @CatCacheKeySign   String prefix, Collection<K> set, boolean isRemove) {
+    public <K, V> Map<K, V> mget(Class<V> clazz, @CatCacheKeySign final  String prefix, Collection<K> set, boolean isRemove) {
 
         if (set == null || set.isEmpty()) {
             return new HashMap<K, V>();
@@ -993,7 +990,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
     }
 
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Map<Long, Long> mgetLong(@CatCacheKeySign  String prefix, Collection<Long> keys) {
+    public Map<Long, Long> mgetLong(@CatCacheKeySign final  String prefix, Collection<Long> keys) {
         if (prefix == null || keys == null || !isOpenRead()) {
             return new HashMap<>();
         }
@@ -1026,7 +1023,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public boolean exists(@CatCacheKeySign String key) {
+    public boolean exists(@CatCacheKeySign final String key) {
         if (null == key || !isOpenRead()) {
             return false;
         }
@@ -1044,12 +1041,12 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * 返回列表 key 中，下标为 index 的元素。
      * 下标(index)参数 start 和 stop 都以 0 为底，也就是说，以 0 表示列表的第一个元素，以 1 表示列表的第二个元素，以此类推。
      * 你也可以使用负数下标，以 -1 表示列表的最后一个元素， -2 表示列表的倒数第二个元素，以此类推。
-     * @param key
-     * @param index
+     * @param key 缓存key
+     * @param index 索引数据
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public String lindex(@CatCacheKeySign  String key, long index) {
+    public String lindex(@CatCacheKeySign final  String key, long index) {
         if (null == key || !isOpenRead()) {
             return null;
         }
@@ -1067,7 +1064,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * 返回指定key的list的长度
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long llen(@CatCacheKeySign  String key) {
+    public long llen(@CatCacheKeySign final  String key) {
         if (null == key || !isOpenRead()) {
             return 0;
         }
@@ -1093,7 +1090,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      */
     @SuppressWarnings("unchecked")
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public <T> List<T> lrange(@CatCacheKeySign  byte[] key, long start, long end, Class<T> clazzType) {
+    public <T> List<T> lrange(@CatCacheKeySign final  byte[] key, long start, long end, Class<T> clazzType) {
         List<T> resultList = new ArrayList<>();
         if (null == key || !isOpenRead()) {
             return resultList;
@@ -1130,7 +1127,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Set<String> zrevRange(@CatCacheKeySign  String key, long start, long end) {
+    public Set<String> zrevRange(@CatCacheKeySign final  String key, long start, long end) {
         if (null == key || !isOpenRead()) {
             return new HashSet<>();
         }
@@ -1151,7 +1148,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Double zscore(@CatCacheKeySign  String key, String member) {
+    public Double zscore(@CatCacheKeySign final  String key, String member) {
         if (null == key || !isOpenRead()) {
             return 0d;
         }
@@ -1171,7 +1168,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public int zcard(@CatCacheKeySign  byte[] key) {
+    public int zcard(@CatCacheKeySign final  byte[] key) {
         if (null == key || !isOpenRead()) {
             return 0;
         }
@@ -1187,7 +1184,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
     }
 
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Map<String, Double> zrevRangeWithScore(@CatCacheKeySign  String key, long start, long end) {
+    public Map<String, Double> zrevRangeWithScore(@CatCacheKeySign final  String key, long start, long end) {
         Map<String, Double> map = new LinkedHashMap<>();
         if (null == key || !isOpenRead()) {
             return map;
@@ -1219,7 +1216,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public <K> Map<K, Double> zrangeByScoreWithScore(@CatCacheKeySign  String key, double min, double max, int offset, int count,
+    public <K> Map<K, Double> zrangeByScoreWithScore(@CatCacheKeySign final  String key, double min, double max, int offset, int count,
                                                      Class<K> clazzKey) {
         Map<K, Double> map = new LinkedHashMap<>();
         if (null == key || !isOpenRead()) {
@@ -1261,7 +1258,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Set<String> zrange(@CatCacheKeySign String key, long start, long end) {
+    public Set<String> zrange(@CatCacheKeySign final String key, long start, long end) {
         if (null == key || !isOpenRead()) {
             return new HashSet<>();
         }
@@ -1275,7 +1272,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
     }
 
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Map<byte[], Double> zrangewithScore(@CatCacheKeySign String key, long start, long end) {
+    public Map<byte[], Double> zrangewithScore(@CatCacheKeySign final String key, long start, long end) {
         if (null == key || !isOpenRead()) {
             return new HashMap<>();
         }
@@ -1301,7 +1298,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Double zincrby(@CatCacheKeySign String key, long score, String member) {
+    public Double zincrby(@CatCacheKeySign final String key, long score, String member) {
         if (null == key || !isOpenRead()) {
             return 0d;
         }
@@ -1323,7 +1320,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Set<String> zrangeByScore(@CatCacheKeySign String key, double min, double max) {
+    public Set<String> zrangeByScore(@CatCacheKeySign final String key, double min, double max) {
         if (null == key || !isOpenRead()) {
             return new HashSet<>();
         }
@@ -1344,7 +1341,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Set<String> zrevrangeByScore(@CatCacheKeySign String key, double min, double max) {
+    public Set<String> zrevrangeByScore(@CatCacheKeySign final String key, double min, double max) {
         if (null == key || !isOpenRead()) {
             return new HashSet<>();
         }
@@ -1365,7 +1362,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Long zcount(@CatCacheKeySign String key, double min, double max) {
+    public Long zcount(@CatCacheKeySign final String key, double min, double max) {
         if (null == key || !isOpenRead()) {
             return 0l;
         }
@@ -1385,7 +1382,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Long scard(@CatCacheKeySign String key) {
+    public Long scard(@CatCacheKeySign final String key) {
         if (null == key || !isOpenRead()) {
             return 0l;
         }
@@ -1399,7 +1396,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
     }
 
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public ScanResult<String> sscan(@CatCacheKeySign String key, String cursor) {
+    public ScanResult<String> sscan(@CatCacheKeySign final String key, String cursor) {
         if (null == key || !isOpenRead()) {
             return null;
         }
@@ -1419,7 +1416,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public boolean sismember(@CatCacheKeySign String key, String member) {
+    public boolean sismember(@CatCacheKeySign final String key, String member) {
         if (null == key || !isOpenRead()) {
             return false;
         }
@@ -1439,7 +1436,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public List<String> srandmember(@CatCacheKeySign String key, int count) {
+    public List<String> srandmember(@CatCacheKeySign final String key, int count) {
         if (null == key || !isOpenRead()) {
             return new ArrayList<>();
         }
@@ -1456,7 +1453,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * 返回set中的所有成员
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Set<String> smembers(@CatCacheKeySign String key) {
+    public Set<String> smembers(@CatCacheKeySign final String key) {
         if (null == key || !isOpenRead()) {
             return new HashSet<>();
         }
@@ -1474,7 +1471,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * 按倒序返回有序集合中的元素
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Set<byte[]> zrevrange(@CatCacheKeySign byte[] key, long start, long end) {
+    public Set<byte[]> zrevrange(@CatCacheKeySign final byte[] key, long start, long end) {
         if (null == key || !isOpenRead()) {
             return new HashSet<>();
         }
@@ -1491,7 +1488,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * 按倒序返回有序集合中的元素
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Set<byte[]> zrevrangeByScore(@CatCacheKeySign byte[] key, double max, double min, int pos, int count) {
+    public Set<byte[]> zrevrangeByScore(@CatCacheKeySign final byte[] key, double max, double min, int pos, int count) {
         if (null == key || !isOpenRead()) {
             return new HashSet<>();
         }
@@ -1508,7 +1505,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * 在哈希中放置一个字段
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public int hset(@CatCacheKeySign String key, byte[] field, byte[] value) {
+    public int hset(@CatCacheKeySign final String key, byte[] field, byte[] value) {
         if (null == key || !isOpenWrite()) {
             return 0;
         }
@@ -1528,7 +1525,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @param fieldValue redis 缓存中 map->Value
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public boolean hmset(@CatCacheKeySign String key, String fieldKey, String fieldValue) {
+    public boolean hmset(@CatCacheKeySign final String key, String fieldKey, String fieldValue) {
         if (null == key || !isOpenWrite()) {
             return false;
         }
@@ -1548,7 +1545,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @param hash
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public void hmset(@CatCacheKeySign String key, Map<String, String> hash) {
+    public void hmset(@CatCacheKeySign final String key, Map<String, String> hash) {
         if (null == key || !isOpenWrite()) {
             return;
         }
@@ -1565,7 +1562,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @param hash
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public void hmset(@CatCacheKeySign byte[] key, Map<byte[], byte[]> hash) {
+    public void hmset(@CatCacheKeySign final byte[] key, Map<byte[], byte[]> hash) {
         if (null == key || !isOpenWrite()) {
             return;
         }
@@ -1582,7 +1579,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public int hlen(@CatCacheKeySign String key) {
+    public int hlen(@CatCacheKeySign final String key) {
         if (null == key || !isOpenRead()) {
             return 0;
         }
@@ -1602,7 +1599,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public byte[] hget(@CatCacheKeySign String key, String field) {
+    public byte[] hget(@CatCacheKeySign final String key, String field) {
         try {
             if (null == key || null == field || !isOpenRead()) {
                 return null;
@@ -1622,7 +1619,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public <T>T hgetT(@CatCacheKeySign String key, String field, Class<T> clazz) {
+    public <T>T hgetT(@CatCacheKeySign final String key, String field, Class<T> clazz) {
         try {
             if (null == key || !isOpenRead()) {
                 return null;
@@ -1641,7 +1638,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
     }
 
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Map<String, String> hmget(@CatCacheKeySign String key, String...fields) {
+    public Map<String, String> hmget(@CatCacheKeySign final String key, String...fields) {
         if (null == key || !isOpenRead()) {
             return new HashMap<>();
         }
@@ -1674,7 +1671,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public <K, V> Map<K,V> hmget(@CatCacheKeySign String key, Collection<K> fields, Class<V> clazz) {
+    public <K, V> Map<K,V> hmget(@CatCacheKeySign final String key, Collection<K> fields, Class<V> clazz) {
         if (null == key || !isOpenRead()) {
             return new HashMap<>();
         }
@@ -1707,7 +1704,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Map<byte[],byte[]> hgetAll(@CatCacheKeySign byte[] key) {
+    public Map<byte[],byte[]> hgetAll(@CatCacheKeySign final byte[] key) {
         if (null == key || !isOpenRead()) {
             return new HashMap<>();
         }
@@ -1726,7 +1723,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Map<String,String> hgetAll(@CatCacheKeySign String key) {
+    public Map<String,String> hgetAll(@CatCacheKeySign final String key) {
         if (null == key || !isOpenRead()) {
             return new HashMap<>();
         }
@@ -1745,7 +1742,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @param field
      * @return
      */
-    public int hdel(@CatCacheKeySign String key,String...field) {
+    public int hdel(@CatCacheKeySign final String key,String...field) {
         if (null == key || !isOpenWrite() || field==null || field.length==0) {
             return 0;
         }
@@ -1765,7 +1762,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public boolean hexists(@CatCacheKeySign String key,String field) {
+    public boolean hexists(@CatCacheKeySign final String key,String field) {
         if (null == key || !isOpenRead()) {
             return false;
         }
@@ -1817,7 +1814,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
     }
 
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public <T> Map<T, Long> multiZrank(@CatCacheKeySign  String key, Collection<T> collection) {
+    public <T> Map<T, Long> multiZrank(@CatCacheKeySign final  String key, Collection<T> collection) {
         if (null == key || null == collection || !isOpenRead()) {
             return new HashMap<>(0);
         }
@@ -1896,7 +1893,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Set<Tuple> zrangeWithScores(@CatCacheKeySign String key, long start, long end) {
+    public Set<Tuple> zrangeWithScores(@CatCacheKeySign final String key, long start, long end) {
         if (null == key || !isOpenRead()) {
             return new HashSet<>();
         }
@@ -1920,7 +1917,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public Set<byte[]> zrevRangeByScore(@CatCacheKeySign  byte[] key, double max, double min) {
+    public Set<byte[]> zrevRangeByScore(@CatCacheKeySign final  byte[] key, double max, double min) {
         if (null == key || !isOpenRead()) {
             return new HashSet<>();
         }
@@ -1940,7 +1937,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return 返回该channel的订阅数量
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public long publish(@CatCacheKeySign  String key, String channel, String message) {
+    public long publish(@CatCacheKeySign final  String key, String channel, String message) {
         if (null == key || !isOpenRead()) {
          return   0l;
         }
@@ -1973,7 +1970,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return 是否获取成功
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public boolean getSet(@CatCacheKeySign String lockKey, String uuid, int expireTime) {
+    public boolean getSet(@CatCacheKeySign final String lockKey, String uuid, int expireTime) {
         if (null == lockKey || !isOpenWrite()) {
             return false;
         }
@@ -1989,7 +1986,7 @@ public class RedisClusterServer extends RedisClusterFactoryRouter {
      * @return 是否释放成功
      */
     @CatCacheSign(service = CatTopConstants.TYPE_REDIS)
-    public boolean evalLock(@CatCacheKeySign String lockKey, String uuid) {
+    public boolean evalLock(@CatCacheKeySign final String lockKey, String uuid) {
         String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
         //释放分布式锁
         Object result = this.getRedisClusterFactoryBykey(lockKey).eval(script, Collections.singletonList(lockKey), Collections.singletonList(uuid));

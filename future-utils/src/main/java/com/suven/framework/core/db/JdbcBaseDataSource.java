@@ -324,7 +324,7 @@ public class JdbcBaseDataSource  {
 			KeyHolder keyHolder = new GeneratedKeyHolder();
 			PreparedStatementCreator psc  = new PreparedStatementCreator() {
 				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-					PreparedStatement ps = connection.prepareStatement(sql,new String[] { key });
+					final PreparedStatement ps = connection.prepareStatement(sql,new String[] { key });
 					if ( args != null) {
 						for(int i= 0; i<args.length;i++ ){
 							Object param = args[i];

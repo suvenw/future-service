@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SERVICE_NAME="com.sixeco.framework.generato.GeneratorMain"
+SERVICE_NAME="com.suven.framework.generator.GeneratorMain"
 SERVICE_PATH=""
 
 COMMAND="$1"

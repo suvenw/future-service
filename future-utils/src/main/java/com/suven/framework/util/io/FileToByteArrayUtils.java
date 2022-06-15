@@ -33,7 +33,7 @@ public class FileToByteArrayUtils {
             System.out.println("file too big...");
             return null;
         }
-        FileInputStream fi = new FileInputStream(file);
+        final FileInputStream fi = new FileInputStream(file);
         byte[] buffer = new byte[(int) fileSize];
         int offset = 0;
         int numRead = 0;
@@ -62,7 +62,7 @@ public class FileToByteArrayUtils {
             throw new FileNotFoundException(filename);
         }
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream((int) f.length());
+       final ByteArrayOutputStream bos = new ByteArrayOutputStream((int) f.length());
         BufferedInputStream in = null;
         try {
             in = new BufferedInputStream(new FileInputStream(f));
@@ -78,11 +78,16 @@ public class FileToByteArrayUtils {
             throw e;
         } finally {
             try {
-                in.close();
+                if(null != in){
+                    in.close();
+                }
+                if(null != bos){
+                    bos.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            bos.close();
+
         }
     }
 
@@ -114,15 +119,17 @@ public class FileToByteArrayUtils {
             throw e;
         } finally {
             try {
-                channel.close();
+                if(null != channel){
+                    channel.close();
+                }
+                if (fs != null){
+                    fs.close();
+                }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            try {
-                fs.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
         }
     }
 
@@ -133,8 +140,7 @@ public class FileToByteArrayUtils {
      * @throws IOException
      */
     public static byte[] toAccessFile(String filename) throws IOException {
-
-        FileChannel fc = null;
+          FileChannel  fc = null;
         try {
             fc = new RandomAccessFile(filename, "r").getChannel();
             MappedByteBuffer byteBuffer = fc.map(MapMode.READ_ONLY, 0,fc.size()).load();
@@ -150,7 +156,9 @@ public class FileToByteArrayUtils {
             throw e;
         } finally {
             try {
-                fc.close();
+                if(null != fc){
+                    fc.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -158,9 +166,9 @@ public class FileToByteArrayUtils {
     }
 
     public static byte[] toAccessFile(String filePath, int startPoint, int blockSize) throws IOException {
-        RandomAccessFile accessFile;
-        ByteArrayOutputStream os ;
-        File file = new File(filePath);
+        final  RandomAccessFile accessFile;
+        final ByteArrayOutputStream os ;
+        final File file = new File(filePath);
         if (!file.exists()) {
             throw new FileNotFoundException(filePath);
         }

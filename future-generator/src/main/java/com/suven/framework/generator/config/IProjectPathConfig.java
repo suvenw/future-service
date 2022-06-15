@@ -63,7 +63,7 @@ public interface IProjectPathConfig {
                 break;
 
         }
-        if(outFilePath == null){
+        if(outFilePath != null){
             outFilePath = outFilePath.trim();
         }
         return outFilePath;

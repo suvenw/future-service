@@ -196,8 +196,8 @@ public class TopTools {
 			throw new IllegalArgumentException(
 					"The scale must be a positive integer or zero");
 		}
-		BigDecimal b = new BigDecimal(Double.toString(v));
-		BigDecimal one = new BigDecimal("1");
+		BigDecimal b = BigDecimal.valueOf(v);
+		BigDecimal one =  BigDecimal.valueOf(1);
 		return b.divide(one, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
 	}
 
@@ -206,8 +206,8 @@ public class TopTools {
 			throw new IllegalArgumentException(
 					"The scale must be a positive integer or zero");
 		}
-		BigDecimal b = new BigDecimal(Double.toString(v));
-		BigDecimal one = new BigDecimal("1");
+		BigDecimal b = BigDecimal.valueOf(v);
+		BigDecimal one =  BigDecimal.valueOf(1);
 		return b.divide(one, scale, BigDecimal.ROUND_DOWN).doubleValue();
 	}
 
@@ -216,8 +216,8 @@ public class TopTools {
 			throw new IllegalArgumentException(
 					"The scale must be a positive integer or zero");
 		}
-		BigDecimal b = new BigDecimal(Double.toString(v));
-		BigDecimal one = new BigDecimal("1");
+		BigDecimal b = BigDecimal.valueOf(v);;
+		BigDecimal one = BigDecimal.valueOf(1);;
 		return b.divide(one, scale, BigDecimal.ROUND_UP).doubleValue();
 	}
 
@@ -227,8 +227,8 @@ public class TopTools {
 					"The scale must be a positive integer or zero");
 		}
 
-		BigDecimal bd1 = new BigDecimal(v1);
-		BigDecimal bd2 = new BigDecimal(v2);
+		BigDecimal bd1 = BigDecimal.valueOf(v1);
+		BigDecimal bd2 = BigDecimal.valueOf(v2);
 
 		return bd1.divide(bd2, scale, BigDecimal.ROUND_UP).doubleValue();
 	}
@@ -239,8 +239,8 @@ public class TopTools {
 					"The scale must be a positive integer or zero");
 		}
 
-		BigDecimal bd1 = new BigDecimal(v1);
-		BigDecimal bd2 = new BigDecimal(v2);
+		BigDecimal bd1 =  BigDecimal.valueOf(v1);
+		BigDecimal bd2 = BigDecimal.valueOf(v2);
 
 		return bd1.divide(bd2, scale, BigDecimal.ROUND_DOWN).doubleValue();
 	}

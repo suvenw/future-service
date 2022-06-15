@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SERVICE_NAME="com.sixeco.framework.FileMain"
+SERVICE_NAME="com.suven.framework.FileMain"
 SERVICE_PATH=""
 
 COMMAND="$1"
@@ -23,7 +23,7 @@ echo " ${SERVICE_PATH}"
 
 # check the start.out log output file
 if [ ! -f "${SERVICE_PATH}/app.log" ]; then
-  touch "${SERVICE_PATH}/app.log "
+  echo "${SERVICE_PATH}/app.log"
 fi
 
 

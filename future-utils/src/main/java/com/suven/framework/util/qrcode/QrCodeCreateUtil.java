@@ -72,7 +72,7 @@ public class QrCodeCreateUtil {
     /**
      * 读二维码并输出携带的信息
      */
-    public static void readQrCode(InputStream inputStream) throws IOException{  
+    public static String readQrCode(InputStream inputStream) throws IOException{
         //从输入流中获取字符串信息
         BufferedImage image = ImageIO.read(inputStream);  
         //将图像转换为二进制位图源
@@ -81,20 +81,24 @@ public class QrCodeCreateUtil {
         QRCodeReader reader = new QRCodeReader();  
         Result result = null ;  
         try {
-         result = reader.decode(bitmap);  
+         result = reader.decode(bitmap);
+         if(null != result){
+             return result.getText();
+         }
         } catch (ReaderException e) {
             e.printStackTrace();  
         }
-        System.out.println(result.getText());  
+        return null;
+//        System.out.println(result.getText());
     }
-    /**
-     * 测试代码
-     * @throws WriterException 
-     */
-    public static void main(String[] args) throws IOException, WriterException {  
-        
-        createQrCode(new FileOutputStream(new File("d:\\qrcode.jpg")),"WE1231238239128sASDASDSADSDWEWWREWRERWSDFDFSDSDF123123123123213123",900,"JPEG");
-        readQrCode(new FileInputStream(new File("d:\\qrcode.jpg")));  
-    }  
+//    /**
+//     * 测试代码
+//     * @throws WriterException
+//     */
+//    public static void main(String[] args) throws IOException, WriterException {
+//
+//        createQrCode(new FileOutputStream(new File("d:\\qrcode.jpg")),"WE1231238239128sASDASDSADSDWEWWREWRERWSDFDFSDSDF123123123123213123",900,"JPEG");
+//        readQrCode(new FileInputStream(new File("d:\\qrcode.jpg")));
+//    }
   
 }

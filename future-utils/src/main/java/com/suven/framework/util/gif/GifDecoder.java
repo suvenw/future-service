@@ -275,6 +275,9 @@ public class GifDecoder {
 	 * @return read status code (0 = no errors)
 	 */
 	public int read(BufferedInputStream is) {
+		if(null == is){
+			return 0;
+		}
 		init();
 		if (is != null) {
 			in = is;

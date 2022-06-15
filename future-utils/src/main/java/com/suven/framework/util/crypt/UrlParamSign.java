@@ -37,6 +37,9 @@ public class UrlParamSign{
         }
         Map<String, String> map = objectToMap(object);
         String s = "";
+        if(map == null || map.isEmpty()){
+            return s;
+        }
         boolean is = true;
         for(String key : map.keySet()){
             String v = map.get(key);

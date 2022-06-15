@@ -119,11 +119,11 @@ fi
 
 JAVA_OPTS='-Xms128m -Xmx512m -Xmn64m -Xss1m'
 
-RUN_MAIN=com.suven.framework.FileMain
+RUN_MAIN=com.suven.framework.generator.GeneratorMain
 
-SERVER_NAME=FileMain
+SERVER_NAME=GeneratorMain
 
-SERVER_PORT=9030
+SERVER_PORT=8030
 
 SERVER_ENV=prod
 

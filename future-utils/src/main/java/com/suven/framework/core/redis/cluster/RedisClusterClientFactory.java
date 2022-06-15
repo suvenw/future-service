@@ -873,8 +873,14 @@ public class RedisClusterClientFactory implements FactoryBean<RedisClusterInterf
             if(expireTime < 0 || value <= 0){
                 throw new RuntimeException("redis method executeIncrByExpire from param error, by key["+key+"] by expireTime["+expireTime+"]" );
             }
+            if(null == jedisPool || expireTime < 0 || value <= 0){
+                throw new RuntimeException("redis method executeIncrByExpire from param error, by key["+key+"] by expireTime["+expireTime+"]" );
+            }
+            jedis = jedisPool.getResource();
+            if(null == jedis ){
+                throw new RuntimeException("redis method executeIncrByExpire from param error,jedis[null] by key["+key+"] by expireTime["+expireTime+"]" );
+            }
             if(!refreshTime ){
-                jedis = jedisPool.getResource();
                 long time =  jedis.ttl(key);
                 if(expireTime > time && time > 0 ){
                     expireTime = (int)time;

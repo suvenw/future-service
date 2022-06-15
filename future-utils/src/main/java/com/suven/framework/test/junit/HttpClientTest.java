@@ -55,8 +55,8 @@ public class HttpClientTest extends BaseConfigTest {
 
     public static final byte[] input2byte(File file )
             throws IOException {
-        InputStream inStream = new FileInputStream(file);
-        ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
+        final InputStream inStream = new FileInputStream(file);
+        final ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
         byte[] buff = new byte[1024];
         int rc = 0;
         while ((rc = inStream.read(buff, 0, 100)) > 0) {

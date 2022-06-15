@@ -126,7 +126,7 @@ public class DynamicDataSourceEnum extends AbstractRoutingDataSource {
 			//从枚举中获取完整的组信息;
 			DataSourceGroup dataSourceGroup = DatasourceEnumManager.getDataSourceGroupAndDataType(ds.getGroupName(),ds.getDataType());
 			if (null == dataSourceGroup) {
-				throw new IllegalArgumentException("Property 'determineCurrentLookupKey' is DataSourceGroupNameEnum.getDataSourceGroupByName() not  dataSourceGroup:[" + dataSourceGroup.toString() + "]");
+				throw new IllegalArgumentException("Property 'determineCurrentLookupKey' is DataSourceGroupNameEnum.getDataSourceGroupByName() not  dataSourceGroup:[" + ds.toString() + "]");
 			}
 			String dataSourceKey = null;
 			DataSourceTypeEnum dataEnum = dataSourceGroup.getDataType();

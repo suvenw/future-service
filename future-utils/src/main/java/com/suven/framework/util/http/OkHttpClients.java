@@ -196,7 +196,7 @@ public class OkHttpClients extends UrlParamSign {
         String url = null;
         Object obj = null;
         Class cc = null;
-        OkHttpClients.getAsynHttp(url,obj,cc);
+//        OkHttpClients.getAsynHttp(url,obj,cc);
     }
     
   

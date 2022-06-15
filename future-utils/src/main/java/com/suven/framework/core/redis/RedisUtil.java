@@ -19,7 +19,7 @@ public class RedisUtil {
     }
     public static String formatKey(Boolean isZero,Object... args){
         StringBuilder builder = new StringBuilder();
-        if(args == null || "".equals(args)){
+        if(args == null || args.length == 0){
             return builder.toString();
         }
         for (int i = 0,s = args.length, j = s-1; i < s ; i++) {
