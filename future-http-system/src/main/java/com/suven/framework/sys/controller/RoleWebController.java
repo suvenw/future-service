@@ -21,14 +21,13 @@ import com.suven.framework.http.handler.OutputResponse;
 import com.suven.framework.http.processor.url.SysURLCommand;
 import com.suven.framework.sys.dto.request.RoleRequestDto;
 import com.suven.framework.sys.dto.response.RoleResponseDto;
-import com.suven.framework.sys.entity.Role;
-import com.suven.framework.sys.facade.RoleFacade;
-import com.suven.framework.sys.service.RoleService;
+import com.suven.framework.sys.entity.SysRole;
+import com.suven.framework.sys.facade.SysRoleFacade;
+import com.suven.framework.sys.service.SysRoleService;
 import com.suven.framework.sys.service.SysPermissionService;
 import com.suven.framework.sys.vo.request.RoleRequestVo;
 import com.suven.framework.sys.vo.response.RoleResponseVo;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -58,12 +57,12 @@ public class RoleWebController {
 
 
     @Autowired
-    private RoleService roleService;
+    private SysRoleService sysRoleService;
     @Autowired
     private SysPermissionService sysPermissionService;
 
     @Autowired
-    private RoleFacade sysRoleFacade;
+    private SysRoleFacade sysRoleFacade;
 
     @ApiDoc(
             value = "获取角色表分页信息",
@@ -78,7 +77,7 @@ public class RoleWebController {
         roleRequestDto.setCreateDateEnd(roleRequestVo.getCreateDateEnd());
         BasePage page = BasePage.build().toPageSize(roleRequestVo.getPageSize()).toPageNo(roleRequestVo.getPageNo());
         page.toParamObject(roleRequestDto);
-        ResponseResultList<RoleResponseDto> resultList = roleService.getRoleByNextPage(page);
+        ResponseResultList<RoleResponseDto> resultList = sysRoleService.getRoleByNextPage(page);
         if (null == resultList || resultList.getList().isEmpty()) {
             out.write(ResponseResultList.build());
             return;
@@ -104,7 +103,7 @@ public class RoleWebController {
         RoleRequestDto roleRequestDto = RoleRequestDto.build().clone(roleRequestVo);
 
         roleRequestDto.setStatus(TbStatusEnum.ENABLE.index());
-        RoleResponseDto roleresponseDto = roleService.saveRole(roleRequestDto);
+        RoleResponseDto roleresponseDto = sysRoleService.saveRole(roleRequestDto);
         if (roleresponseDto == null) {
             out.write(SysResultCodeEnum.SYS_UNKOWNN_FAIL);
             return;
@@ -126,7 +125,7 @@ public class RoleWebController {
             out.write(SysResultCodeEnum.SYS_WEB_ID_INFO_NO_EXIST);
             return;
         }
-        boolean result = roleService.updateRole(roleRequestDto);
+        boolean result = sysRoleService.updateRole(roleRequestDto);
         out.write(result);
     }
 
@@ -140,7 +139,7 @@ public class RoleWebController {
     @RequiresPermissions("sys:role:detail")
     public void detail(OutputResponse out, HttpRequestByIdVo idRequestVo) {
 
-        RoleResponseDto roleResponseDto = roleService.getRoleById(idRequestVo.getId());
+        RoleResponseDto roleResponseDto = sysRoleService.getRoleById(idRequestVo.getId());
         RoleResponseVo vo = RoleResponseVo.build().clone(roleResponseDto);
         out.write(vo);
     }
@@ -171,7 +170,7 @@ public class RoleWebController {
             out.write(SysResultCodeEnum.SYS_WEB_ID_INFO_NO_EXIST);
             return;
         }
-        int result = roleService.delRoleByIds(idRequestVo.getIdList());
+        int result = sysRoleService.delRoleByIds(idRequestVo.getIdList());
         out.write(result);
     }
 
@@ -199,7 +198,7 @@ public class RoleWebController {
     @RequiresPermissions("sys:role:queryall")
     public void queryall(OutputResponse out) {
         ResponseResultList result = ResponseResultList.build();
-        List<Role> roleList = roleService.list();
+        List<SysRole> roleList = sysRoleService.list();
         if (roleList == null || roleList.size() <= 0) {
             out.write(SysResultCodeEnum.SYS_USER_FIND_FAIL);
             return;

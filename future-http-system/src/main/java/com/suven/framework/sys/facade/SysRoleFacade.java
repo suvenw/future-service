@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.suven.framework.sys.dto.request.SysPermissionRequestDto;
 import com.suven.framework.sys.dto.response.SysPermissionResponseDto;
-import com.suven.framework.sys.service.RoleService;
+import com.suven.framework.sys.service.SysRoleService;
 import com.suven.framework.sys.service.SysPermissionService;
 import com.suven.framework.sys.vo.response.TreeModelResponseVo;
 
@@ -28,11 +28,11 @@ import java.util.stream.Collectors;
  */
  
 @Component
-public class RoleFacade {
+public class SysRoleFacade {
 
 
 	@Autowired
-	private RoleService sysRoleService;
+	private SysRoleService sysRoleService;
 
 	@Autowired
 	private SysPermissionService sysPermissionService;

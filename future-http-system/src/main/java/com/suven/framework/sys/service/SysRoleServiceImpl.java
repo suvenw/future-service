@@ -14,10 +14,10 @@ import com.suven.framework.common.data.BasePage;
 import com.suven.framework.common.enums.ResultEnum;
 import com.suven.framework.core.db.ext.Query;
 import com.suven.framework.http.data.vo.ResponseResultList;
-import com.suven.framework.sys.dao.RoleDao;
+import com.suven.framework.sys.dao.SysRoleDao;
 import com.suven.framework.sys.dto.request.RoleRequestDto;
 import com.suven.framework.sys.dto.response.RoleResponseDto;
-import com.suven.framework.sys.entity.Role;
+import com.suven.framework.sys.entity.SysRole;
 import com.suven.framework.util.PageUtils;
 
 import java.util.ArrayList;
@@ -40,12 +40,12 @@ import java.util.Map;
  * @date 2019-11-21 15:22:59
  */
 @Service
-public class RoleServiceImpl implements RoleService {
+public class SysRoleServiceImpl implements SysRoleService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private RoleDao roleDao;
+    private SysRoleDao sysRoleDao;
 
 
 
@@ -61,8 +61,8 @@ public class RoleServiceImpl implements RoleService {
         if (roleRequestDto == null) {
             return null;
         }
-        Role role = Role.build().clone(roleRequestDto);
-        boolean result = roleDao.save(role);
+        SysRole role = SysRole.build().clone(roleRequestDto);
+        boolean result = sysRoleDao.save(role);
         if (!result) {
             return null;
         }
@@ -76,9 +76,9 @@ public class RoleServiceImpl implements RoleService {
         if (null == entityList || entityList.size() != batchSize) {
             return false;
         }
-        List<Role> list = new ArrayList<>();
-        entityList.forEach(e -> list.add(Role.build().clone(e)));
-        boolean result = roleDao.saveBatch(list, batchSize);
+        List<SysRole> list = new ArrayList<>();
+        entityList.forEach(e -> list.add(SysRole.build().clone(e)));
+        boolean result = sysRoleDao.saveBatch(list, batchSize);
         return result;
     }
 
@@ -87,9 +87,9 @@ public class RoleServiceImpl implements RoleService {
         if (null == entityList || entityList.size() != batchSize) {
             return false;
         }
-        List<Role> list = new ArrayList<>();
-        entityList.forEach(e -> list.add(Role.build().clone(e)));
-        boolean result = roleDao.saveOrUpdateBatch(list, batchSize);
+        List<SysRole> list = new ArrayList<>();
+        entityList.forEach(e -> list.add(SysRole.build().clone(e)));
+        boolean result = sysRoleDao.saveOrUpdateBatch(list, batchSize);
         return result;
     }
 
@@ -98,9 +98,9 @@ public class RoleServiceImpl implements RoleService {
         if (null == entityList || entityList.size() != batchSize) {
             return false;
         }
-        List<Role> list = new ArrayList<>();
-        entityList.forEach(e -> list.add(Role.build().clone(e)));
-        boolean result = roleDao.updateBatchById(list, batchSize);
+        List<SysRole> list = new ArrayList<>();
+        entityList.forEach(e -> list.add(SysRole.build().clone(e)));
+        boolean result = sysRoleDao.updateBatchById(list, batchSize);
         return result;
     }
 
@@ -116,9 +116,9 @@ public class RoleServiceImpl implements RoleService {
             return false;
         }
 
-        Role role = Role.build().clone(roleRequestDto);
+        SysRole role = SysRole.build().clone(roleRequestDto);
 
-        return roleDao.updateById(role);
+        return sysRoleDao.updateById(role);
 
 
     }
@@ -136,9 +136,9 @@ public class RoleServiceImpl implements RoleService {
             return ResultEnum.FAIL.id();
         }
         if (idList.size() == 1) {
-            result = roleDao.removeById(idList.get(0));
+            result = sysRoleDao.removeById(idList.get(0));
         } else {
-            result = roleDao.removeByIds(idList);
+            result = sysRoleDao.removeByIds(idList);
         }
         if (result) {
             return ResultEnum.SUCCESS.id();
@@ -158,7 +158,7 @@ public class RoleServiceImpl implements RoleService {
         if (roleId < 0) {
             return null;
         }
-        Role role = roleDao.getById(roleId);
+        SysRole role = sysRoleDao.getById(roleId);
         if (role == null) {
             return null;
         }
@@ -185,14 +185,14 @@ public class RoleServiceImpl implements RoleService {
             return resDtoList;
         }
         //分页对象        PageHelper
-        IPage<Role> iPage = new Page<>(basePage.getPageNo(), basePage.getRealPageSize());
-        QueryWrapper<Role> queryWrapper = checkQueryCondition(basePage);
-        IPage<Role> page = roleDao.page(iPage, queryWrapper);
+        IPage<SysRole> iPage = new Page<>(basePage.getPageNo(), basePage.getRealPageSize());
+        QueryWrapper<SysRole> queryWrapper = checkQueryCondition(basePage);
+        IPage<SysRole> page = sysRoleDao.page(iPage, queryWrapper);
         if (null == page) {
             return resDtoList;
         }
 
-        List<Role> list = page.getRecords();
+        List<SysRole> list = page.getRecords();
         ;
         if (null == list || list.isEmpty()) {
             return resDtoList;
@@ -209,8 +209,8 @@ public class RoleServiceImpl implements RoleService {
     /**
      * 查询条件
      */
-    public QueryWrapper<Role> checkQueryCondition(BasePage basePage) {
-        QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
+    public QueryWrapper<SysRole> checkQueryCondition(BasePage basePage) {
+        QueryWrapper<SysRole> queryWrapper = new QueryWrapper<>();
         RoleRequestDto param = (RoleRequestDto) basePage.getParamObject();
         if (!StringUtils.isEmpty(param.getRoleName())) {
             queryWrapper.like("role_name", param.getRoleName());
@@ -244,9 +244,9 @@ public class RoleServiceImpl implements RoleService {
     }
 
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage iPage = new Query<Role>().getPage(params);
-        QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
-        IPage<Role> page = roleDao.page(iPage, queryWrapper);
+        IPage iPage = new Query<SysRole>().getPage(params);
+        QueryWrapper<SysRole> queryWrapper = new QueryWrapper<>();
+        IPage<SysRole> page = sysRoleDao.page(iPage, queryWrapper);
         return new PageUtils(page);
     }
 
@@ -255,9 +255,9 @@ public class RoleServiceImpl implements RoleService {
      * @return
      */
     @Override
-    public List<Role> list() {
-        QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
-        return roleDao.list(queryWrapper);
+    public List<SysRole> list() {
+        QueryWrapper<SysRole> queryWrapper = new QueryWrapper<>();
+        return sysRoleDao.list(queryWrapper);
     }
 
 
@@ -266,8 +266,8 @@ public class RoleServiceImpl implements RoleService {
      *
      * @return
      */
-    public Role setRole() {
-        Role role = new Role();
+    public SysRole setRole() {
+        SysRole role = new SysRole();
         /**
          //role.setCreateDate (Date createDate);
          //role.setModifyDate (Date modifyDate);
@@ -287,15 +287,15 @@ public class RoleServiceImpl implements RoleService {
         }
 
         BasePage basePage = BasePage.build().toPageNo(0).toPageSize(1);
-        IPage<Role> iPage = new Page<>(basePage.getPageNo(), basePage.getRealPageSize());
-        QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(Role::getRoleCode, code);
-        IPage<Role> page = roleDao.page(iPage, queryWrapper);
+        IPage<SysRole> iPage = new Page<>(basePage.getPageNo(), basePage.getRealPageSize());
+        QueryWrapper<SysRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(SysRole::getRoleCode, code);
+        IPage<SysRole> page = sysRoleDao.page(iPage, queryWrapper);
         if (null == page) {
             return null;
         }
 
-        Role role = page.getRecords().get(0);
+        SysRole role = page.getRecords().get(0);
         if (role == null) {
             return null;
         }
@@ -315,7 +315,7 @@ public class RoleServiceImpl implements RoleService {
         if(CollectionUtil.isEmpty(sysRoleIds)){
             return null;
         }
-        List<Role> sysRoleList = roleDao.getListByIds(sysRoleIds);
+        List<SysRole> sysRoleList = sysRoleDao.getListByIds(sysRoleIds);
         if(sysRoleList == null){
             return null;
         }

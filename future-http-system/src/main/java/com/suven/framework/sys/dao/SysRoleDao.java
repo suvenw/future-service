@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.suven.framework.core.db.ext.Query;
 import com.suven.framework.core.mybatis.MyBatisBaseCacheDao;
-import com.suven.framework.sys.entity.Role;
-import com.suven.framework.sys.mapper.RoleMapper;
+import com.suven.framework.sys.entity.SysRole;
+import com.suven.framework.sys.mapper.SysRoleMapper;
 import com.suven.framework.util.PageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,18 +14,18 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 
-@Service("roleDao")
-public class RoleDao extends MyBatisBaseCacheDao<RoleMapper, Role> {
+@Service("sysRoleDao")
+public class SysRoleDao extends MyBatisBaseCacheDao<SysRoleMapper, SysRole> {
 
     @Autowired
-    private RoleMapper  roleMapper;
+    private SysRoleMapper sysRoleMapper;
 
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<Role>  iPage =  new Query<Role>().getPage(params);
+        IPage<SysRole>  iPage =  new Query<SysRole>().getPage(params);
 
-        QueryWrapper<Role> query =  new QueryWrapper<>();
+        QueryWrapper<SysRole> query =  new QueryWrapper<>();
 
-        IPage<Role> page = this.page(iPage,query );
+        IPage<SysRole> page = this.page(iPage,query );
 
         return new PageUtils(page);
     }

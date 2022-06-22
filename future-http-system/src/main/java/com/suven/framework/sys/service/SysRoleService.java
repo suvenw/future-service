@@ -4,7 +4,7 @@ import com.suven.framework.common.data.BasePage;
 import com.suven.framework.http.data.vo.ResponseResultList;
 import com.suven.framework.sys.dto.request.RoleRequestDto;
 import com.suven.framework.sys.dto.response.RoleResponseDto;
-import com.suven.framework.sys.entity.Role;
+import com.suven.framework.sys.entity.SysRole;
 import com.suven.framework.util.PageUtils;
 
 import java.util.Collection;
@@ -24,7 +24,7 @@ import java.util.Map;
  * ----------------------------------------------------------------------------
  * </p>
  */
-public interface RoleService {
+public interface SysRoleService {
 
 
 
@@ -105,7 +105,7 @@ public interface RoleService {
      * 查询角色列表
      * @return
      */
-    List<Role> list();
+    List<SysRole> list();
 
 
     RoleResponseDto getRoleByCode(String code);

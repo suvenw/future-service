@@ -19,7 +19,7 @@ import com.suven.framework.core.db.ext.DS;
  */
 @DS("sys")
 @TableName(value = "sys_role")
-public class Role extends BaseStatusEntity {
+public class SysRole extends BaseStatusEntity {
 
 private static final long serialVersionUID = 1L;
 
@@ -41,14 +41,14 @@ private static final long serialVersionUID = 1L;
  		private String description;
 
 
-    public static Role build(){
-        return new Role();
+    public static SysRole build(){
+        return new SysRole();
     }
 
  		public void setRoleName( String roleName){
  		 		this.roleName = roleName ; 
  		 		}
- 		public Role toRoleName( String roleName){
+ 		public SysRole toRoleName(String roleName){
  		 		this.roleName = roleName ; 
  		 		 return this ;
  		}
@@ -59,7 +59,7 @@ private static final long serialVersionUID = 1L;
  		public void setRoleCode( String roleCode){
  		 		this.roleCode = roleCode ; 
  		 		}
- 		public Role toRoleCode( String roleCode){
+ 		public SysRole toRoleCode(String roleCode){
  		 		this.roleCode = roleCode ; 
  		 		 return this ;
  		}
@@ -70,7 +70,7 @@ private static final long serialVersionUID = 1L;
  		public void setDescription( String description){
  		 		this.description = description ; 
  		 		}
- 		public Role toDescription( String description){
+ 		public SysRole toDescription(String description){
  		 		this.description = description ; 
  		 		 return this ;
  		}

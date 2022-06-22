@@ -1,7 +1,7 @@
 package com.suven.framework.sys.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.suven.framework.sys.entity.Role;
+import com.suven.framework.sys.entity.SysRole;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -12,6 +12,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @date 2019-11-21 15:22:59
  */
 @Mapper
-public interface RoleMapper extends BaseMapper<Role> {
+public interface SysRoleMapper extends BaseMapper<SysRole> {
 
 }

@@ -28,7 +28,7 @@ import com.suven.framework.sys.dto.response.RoleResponseDto;
 import com.suven.framework.sys.dto.response.SysUserResponseDto;
 import com.suven.framework.sys.entity.SysUserRole;
 import com.suven.framework.sys.facade.SysUserFacade;
-import com.suven.framework.sys.service.RoleService;
+import com.suven.framework.sys.service.SysRoleService;
 import com.suven.framework.sys.service.SysUserDepartService;
 import com.suven.framework.sys.service.SysUserRoleService;
 import com.suven.framework.sys.service.SysUserService;
@@ -77,7 +77,7 @@ public class SysUserWebController {
     private SysUserService sysUserService;
 
     @Autowired
-    private RoleService sysRoleService;
+    private SysRoleService sysRoleService;
 
     @Autowired
     private SysUserRoleService userRoleService;
