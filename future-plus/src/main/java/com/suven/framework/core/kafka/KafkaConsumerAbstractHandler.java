@@ -45,7 +45,7 @@ public abstract class KafkaConsumerAbstractHandler<T>{
                 return;
             }
             if(clazz == Object.class|| null == clazz){
-                clazz = this.getTempalteType();
+                clazz = this.getTemplateType();
             }
             logger.info("  onMessage ConsumerRecord  value=:[{}]" , record.value());
             setLogger(clazz);
@@ -74,7 +74,7 @@ public abstract class KafkaConsumerAbstractHandler<T>{
             throw new RuntimeException(e);
         }
     }
-    private Class<T> getTempalteType() {
+    private Class<T> getTemplateType() {
         Class<T> clazz = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         return clazz;
     }

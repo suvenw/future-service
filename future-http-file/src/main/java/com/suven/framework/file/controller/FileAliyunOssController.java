@@ -13,7 +13,6 @@ import com.suven.framework.file.config.FileConfigSetting;
 import com.suven.framework.file.util.OSSUploadUtil;
 import com.suven.framework.file.util.QRCodeUtil;
 import com.suven.framework.file.vo.response.FileHistoryResponseVo;
-import com.suven.framework.http.SysMsgEnumCache;
 import com.suven.framework.util.date.DateUtil;
 import com.suven.framework.util.http.OkHttpClients;
 import com.suven.framework.util.io.FileToByteArrayUtils;

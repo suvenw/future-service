@@ -65,7 +65,7 @@ public class ResponseResultVo<T> implements IResponseResult<T>, Serializable {
 	public IResponseResult buildResultVo(boolean success, int code, String message, Object result) {
 		this.code = code;
 		this.msg = message;
-		this.data = this.initData(result);
+		this.setData(result);
 		return this;
 	}
 
@@ -88,8 +88,9 @@ public class ResponseResultVo<T> implements IResponseResult<T>, Serializable {
 		return data;
 	}
 
-
-
+	public void setData(Object data) {
+		this.data = this.initData(data);;
+	}
 
 	@Override
 	public String toString(){

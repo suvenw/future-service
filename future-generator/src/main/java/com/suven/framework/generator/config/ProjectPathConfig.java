@@ -156,24 +156,5 @@ public class ProjectPathConfig implements IProjectPathConfig{
                 .setTemplatesPath("/Users/suven/project/workspace/openSource/future-service/future-http-system/src/main/resources");
 
     }
-    public static ProjectPathConfig init4(){
-        return build().setId(4).setUserNme("Suven").setIsUse(1)
-                .setBaseProjectPath("/Users/sixeco/suven/workspace/sixeco/sixeco_framework/")
-                .setApiProjectPath("future-http-system")
-                .setHttpProjectPath("future-http-system")
-                .setRpcProjectPath("future-http-system")
-                .setHtmlPath("future-vue")
-                .setTemplatesPath("");
 
-    }
-    public static ProjectPathConfig init5(){
-        return build().setId(5).setUserNme("Suven").setIsUse(0)
-                .setBaseProjectPath("/Users/sixeco/suven/workspace/sixeco/sixeco-im/")
-                .setApiProjectPath("rpc-api-oauth")
-                .setHttpProjectPath("http-assets-service")
-                .setRpcProjectPath("rpc-assets-service")
-                .setHtmlPath("future-vue")
-                .setTemplatesPath("");
-
-    }
 }

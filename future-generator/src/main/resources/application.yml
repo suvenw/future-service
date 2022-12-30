@@ -13,16 +13,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     #MySQL配置
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1/sixeco_acgn
+    url: jdbc:mysql://127.0.0.1/suven_acgn
     username: dev
     password: dev123456
-#    url: jdbc:mysql://rm-uf60841xu50evrh921o.mysql.rds.aliyuncs.com:3306/redt-3.0?rewriteBatchedStatements=true&characterEncoding=UTF8&allowMultiQueries=true&autoReconnect=true&zeroDateTimeBehavior=convertToNull
-#    username: xpower_dev
-#    password: Xpower@123
-#    url: jdbc:mysql://124.71.181.176:3306/sixeco-user-assets?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-#    username: dev
-#    password: dev123456
-
 
 
   jackson:

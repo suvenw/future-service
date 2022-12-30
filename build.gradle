@@ -227,9 +227,9 @@ project(':future-plus') {
 
 //        compile 'com.aliyun:aliyun-java-sdk-core:4.3.8'
 
-        compile 'org.apache.kafka:kafka-clients:2.2.0'
-        compile 'org.apache.kafka:kafka-streams:2.2.0'
-        compile 'org.springframework.kafka:spring-kafka:2.2.0.RELEASE'
+//        compile 'org.apache.kafka:kafka-clients:2.2.0'
+//        compile 'org.apache.kafka:kafka-streams:2.2.0'
+        compile 'org.springframework.kafka:spring-kafka:2.5.8.RELEASE'
 
         compile 'org.apache.dubbo:dubbo:2.7.3'
         //使用dubboRpc 实现
@@ -534,7 +534,8 @@ project(':future-http-system') {
         compile project(':future-http')
         compile project(':future-global')
         compile project(':future-doc')
-        compile 'com.sixeco.framework:swagger-ui-layer:0.0.57'
+        compile 'com.suven.framework:swagger-ui-layer:1.0.3'
+//        compile 'com.suven.framework:future-http-system:1.0.3'
 
         compile 'io.jsonwebtoken:jjwt-api:0.10.7'
 
@@ -570,7 +571,7 @@ project(':future-http-file') {
         compile 'com.aliyun.oss:aliyun-sdk-oss:3.7.0'
         compile 'com.aliyun:aliyun-java-sdk-core:4.4.1'
         compile 'com.aliyun:aliyun-java-sdk-dysmsapi:1.1.0'
-        compile 'com.suven.framework:swagger-ui-layer:0.0.01'
+        compile 'com.suven.framework:swagger-ui-layer:1.0.3'
 
         compile 'org.apache.curator:curator-framework:2.12.0'
 

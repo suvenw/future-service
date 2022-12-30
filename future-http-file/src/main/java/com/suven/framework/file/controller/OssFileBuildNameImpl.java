@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
  * 修改记录
  *    修改后版本:     修改人：  修改日期:     修改内容:
  * </pre>
- * @Copyright: (c) 2021 gc by https://www.sixeco.com
+ * @Copyright: (c) 2021 gc by https://www.66os.com
  **/
 @Component
 public class OssFileBuildNameImpl implements IOssFileBuildName {
