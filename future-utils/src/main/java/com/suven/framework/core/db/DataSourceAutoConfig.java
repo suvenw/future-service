@@ -3,7 +3,6 @@ package com.suven.framework.core.db;
 import com.alibaba.druid.filter.config.ConfigTools;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
-import com.suven.framework.core.db.druid.DruidDataConfig;
 import com.suven.framework.util.tool.Splitable;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;

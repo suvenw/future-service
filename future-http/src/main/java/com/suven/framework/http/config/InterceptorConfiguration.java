@@ -13,6 +13,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import com.suven.framework.core.jetty.settings.JettyServerSettings;
 
 import java.lang.reflect.Modifier;

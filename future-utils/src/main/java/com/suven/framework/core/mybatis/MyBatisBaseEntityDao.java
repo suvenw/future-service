@@ -53,13 +53,18 @@ public class MyBatisBaseEntityDao<M extends BaseMapper<T>, T extends IBaseApi> i
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
 
-    private final int LISTS_PARTITON_SIZE = 100;//Lists.partition
+    protected final int LISTS_PARTITON_SIZE = 100;//Lists.partition
 
     @Autowired
     protected M baseMapper;
 
+    public M getSlaveMapper() {
+        slaveDataSource();
+        return baseMapper;
+    }
     @Override
     public M getBaseMapper() {
+        masterDataSource();
         return baseMapper;
     }
 
@@ -328,6 +333,15 @@ public class MyBatisBaseEntityDao<M extends BaseMapper<T>, T extends IBaseApi> i
         return baseMapper.selectById(id);
     }
 
+    @CatDBSign
+    public Collection<T> getListByIds(Collection<Long> idList) {
+        if(CollectionUtils.isEmpty(idList)){
+            return new ArrayList<>();
+        }
+        Collection<T> list  =  listByIds(idList);
+        return list;
+
+    }
     @Override
     @CatDBSign
         public Collection<T> listByIds(Collection<? extends Serializable> idList) {

@@ -3,6 +3,7 @@ package com.suven.framework.util.createcode.swagger;
 
 import com.suven.framework.common.api.ApiDesc;
 
+import java.math.BigDecimal;
 
 public class SwaggerInfo {
 //"info":{

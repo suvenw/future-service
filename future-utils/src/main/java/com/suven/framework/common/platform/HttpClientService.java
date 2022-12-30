@@ -74,10 +74,13 @@ public class HttpClientService {
 			httpGet.setConfig(requestConfig);
 			/** 执行请求，得到响应对象 */
 			response = httpClient.execute(httpGet);
+			if(null == response){
+				throw new RuntimeException("HttpResponseEntity sendGet RuntimeException");
+			}
 			/** 判断response，获取响应数据 */
 			String content =  (response != null && response.getEntity() != null) 
 					? EntityUtils.toString(response.getEntity(), StringUtils.isBlank(encode) ? CHARSET : encode) : null;
-			if(logger.isDebugEnabled()){
+			if(logger.isDebugEnabled() && null != response){
 				logger.debug("url={}, params={}, statusCode={}, content={}", new Object[]{url, params, response.getStatusLine().getStatusCode(), content});
 			}
 			/** 返回数据 */
@@ -134,6 +137,9 @@ public class HttpClientService {
 			httpPost.setConfig(requestConfig);
 			/** 执行请求，得到响应对象 */
 			response = httpClient.execute(httpPost);
+			if(null == response){
+				throw new RuntimeException("HttpResponseEntity sendPost RuntimeException");
+			}
 			/** 判断response，获取响应数据 */
 			String content =  (response != null && response.getEntity() != null) 
 					? EntityUtils.toString(response.getEntity(), StringUtils.isNotBlank(encode) ? encode : CHARSET) : null;
@@ -172,6 +178,9 @@ public class HttpClientService {
 			}
 			/** 执行请求，得到响应对象 */
 			response = httpClient.execute(httpPost);
+			if(null == response){
+				throw new RuntimeException("HttpResponseEntity sendPost RuntimeException");
+			}
 			/** 判断response，获取响应数据 */
 			String content =  (response != null && response.getEntity() != null) 
 					? EntityUtils.toString(response.getEntity(), Consts.UTF_8) : null;
@@ -222,6 +231,9 @@ public class HttpClientService {
 			httpPut.setConfig(requestConfig);
 			/** 执行请求，得到响应对象 */
 			response = httpClient.execute(httpPut);
+			if(null == response){
+				throw new RuntimeException("HttpResponseEntity sendPostsendPut RuntimeException");
+			}
 			/** 判断response，获取响应数据 */
 			String content =  (response != null && response.getEntity() != null) 
 					? EntityUtils.toString(response.getEntity(), Consts.UTF_8) : null;

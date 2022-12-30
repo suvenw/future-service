@@ -4,6 +4,8 @@ package com.suven.framework.http.data.vo;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.ClassUtils;
 
+import java.io.Serializable;
+
 /**
  * @Author 作者 : suven.wang
  * @CreateDate 创建时间: 2021-06-29
@@ -21,7 +23,7 @@ import org.apache.commons.lang3.ClassUtils;
  * @Copyright: (c) 2021 gc by https://www.sixeco.com
  **/
 
-public interface IResponseResult<T> {
+public interface IResponseResult<T> extends Serializable {
 
 
     /*** 返回指定规范对象 **/
@@ -77,7 +79,6 @@ public interface IResponseResult<T> {
         return ResponseResultVo.build();
     }
 
-
     default Object initData(Object data) {
         if(data == null){
             return null;
@@ -99,5 +100,9 @@ public interface IResponseResult<T> {
             return object;
         }
     }
+
+
+
+
 
 }

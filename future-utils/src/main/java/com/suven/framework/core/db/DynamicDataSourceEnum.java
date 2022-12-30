@@ -134,7 +134,8 @@ public class DynamicDataSourceEnum extends AbstractRoutingDataSource {
 			if (DataSourceTypeEnum.MASTER == dataEnum) {
 				dataSourceKey = dataSourceGroup.getMasterSources();
 				dataSourceGroup.setDataClient(dataSourceKey);
-				logger.info(" AbstractRoutingDataSource determineCurrentLookupKey DataSourceTypeEnum.MASTER DataSourceGroup [{}]" , JsonUtils.toJson(dataSourceGroup));
+//				logger.info(" AbstractRoutingDataSource determineCurrentLookupKey DataSourceTypeEnum.MASTER DataSourceGroup [{}]" , JsonUtils.toJson(dataSourceGroup));
+				logger.info(" AbstractRoutingDataSource determineCurrentLookupKey DataSourceTypeEnum.MASTER " );
 				return dataSourceKey;
 			}
 			/** 如果是从数据库, 先判断从数据集合是否包括从数据key,如果没有则返回主数据库key, 否则轮询返回从数据库key **/
@@ -143,7 +144,8 @@ public class DynamicDataSourceEnum extends AbstractRoutingDataSource {
 				if (null == list || list.isEmpty()) {
 					dataSourceKey = dataSourceGroup.getMasterSources();
 					dataSourceGroup.setDataClient(dataSourceKey);
-					logger.info(" AbstractRoutingDataSource determineCurrentLookupKey DataSourceTypeEnum.SLAVE from MASTER DataSourceGroup [{}]" , dataSourceGroup.toString());
+//					logger.info(" AbstractRoutingDataSource determineCurrentLookupKey DataSourceTypeEnum.SLAVE from MASTER DataSourceGroup [{}]" , dataSourceGroup.toString());
+					logger.info(" AbstractRoutingDataSource determineCurrentLookupKey DataSourceTypeEnum.SLAVE from MASTER " );
 					return dataSourceKey;
 				}
 //			throw new IllegalArgumentException("Property 'determineCurrentLookupKey' is DataSourceHolder.map.get(dataType) list isEmpty or null ");
@@ -158,7 +160,8 @@ public class DynamicDataSourceEnum extends AbstractRoutingDataSource {
 				}
 			}
 			dataSourceGroup.setDataClient(dataSourceKey);
-			logger.info(" AbstractRoutingDataSource determineCurrentLookupKey DataSourceTypeEnum.SLAVE DataSourceGroup [{}]" , dataSourceGroup.toString());
+//			logger.info(" AbstractRoutingDataSource determineCurrentLookupKey DataSourceTypeEnum.SLAVE DataSourceGroup [{}]" , dataSourceGroup.toString());
+			logger.info(" AbstractRoutingDataSource determineCurrentLookupKey DataSourceTypeEnum.SLAVE " );
 			return dataSourceKey;
 		}catch (Exception e){
 			e.printStackTrace();

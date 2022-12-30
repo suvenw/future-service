@@ -1,5 +1,7 @@
 package com.suven.framework.http.handler;
 
+import com.suven.framework.http.data.vo.IResponseResult;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 

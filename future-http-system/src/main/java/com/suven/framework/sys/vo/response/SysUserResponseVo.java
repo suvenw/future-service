@@ -1,306 +1,403 @@
 package com.suven.framework.sys.vo.response;
 
 
-import com.suven.framework.common.api.ApiDesc;
-import com.suven.framework.common.data.BaseStatusEntity;
-
 import java.io.Serializable;
 import java.util.Date;
 
+import com.suven.framework.common.data.BaseByTimeEntity;
+import com.suven.framework.common.api.ApiDesc;
+import com.alibaba.excel.annotation.ExcelProperty;
+
 /**
- * @author xxx.xxx
- * @version V1.0.0
- * <p>
- * ----------------------------------------------------------------------------
- * modifyer    modifyTime                 comment
- * <p>
- * ----------------------------------------------------------------------------
- * </p>
  * @ClassName: SysUserResponseVo.java
- * @Description: 用户表的数据交互处理类
- * @date 2019-10-18 12:35:25
- */
-public class SysUserResponseVo extends BaseStatusEntity implements Serializable {
+ *
+ * @Author 作者 : suven
+ * @CreateDate 创建时间: 2022-02-28 16:09:37
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: 用户表 http业务接口交互数据返回参数实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+public class SysUserResponseVo  extends BaseByTimeEntity implements Serializable {
 
 
-    @ApiDesc(value = "状态，0：默认  1：禁号")
-    private int status;
 
-    @ApiDesc(value = "昵称")
-    private String nickName;
 
-    @ApiDesc(value = "手机号码")
-    private String phone;
-//
-//    @ApiDesc(value = "账号密码")
-//    private String password;
+ 		/** username 登录账号  */
+ 		@ApiDesc(value = "登录账号", required = 0)
+ 		@ExcelProperty(value = "登录账号")
+ 		private String username;
 
-    @ApiDesc(value = "头像")
-    private String headImage;
+ 		/** realname 真实姓名  */
+ 		@ApiDesc(value = "真实姓名", required = 0)
+ 		@ExcelProperty(value = "真实姓名")
+ 		private String realname;
 
-    @ApiDesc(value = "邮箱")
-    private String email;
 
-    @ApiDesc(value = "地址")
-    private String address;
 
-    @ApiDesc(value = "性别")
-    private int sex;
 
-    @ApiDesc(value = "生日")//datetime 不能存入1970年以前的时间戳
-    private Date birthday;
 
-    @ApiDesc(value = "IP")
-    private String ip;
+ 		/** avatar 头像  */
+ 		@ApiDesc(value = "头像", required = 0)
+ 		@ExcelProperty(value = "头像")
+ 		private String avatar;
 
-    @ApiDesc(value = "用户简介")
-    private String remarks;
+ 		/** birthday 生日  */
+ 		@ApiDesc(value = "生日", required = 0)
+ 		@ExcelProperty(value = "生日")
+ 		private Date birthday;
 
-    @ApiDesc(value = "推荐人ID")
-    private long referrerId;
+ 		/** sex 性别(0-默认未知,1-男,2-女)  */
+ 		@ApiDesc(value = "性别(0-默认未知,1-男,2-女)", required = 0)
+ 		@ExcelProperty(value = "性别(0-默认未知,1-男,2-女)")
+ 		private int sex;
 
-    @ApiDesc(value = "二维码CODE")
-    private String qrCode;
+ 		/** email 电子邮件  */
+ 		@ApiDesc(value = "电子邮件", required = 0)
+ 		@ExcelProperty(value = "电子邮件")
+ 		private String email;
 
-    @ApiDesc(value = "注册渠道")
-    private int channel;
+ 		/** phone 电话  */
+ 		@ApiDesc(value = "电话", required = 0)
+ 		@ExcelProperty(value = "电话")
+ 		private String phone;
 
-    @ApiDesc(value = "版本号")
-    private int version;
+ 		/** org_code 机构编码  */
+ 		@ApiDesc(value = "机构编码", required = 0)
+ 		@ExcelProperty(value = "机构编码")
+ 		private String orgCode;
 
-    @ApiDesc(value = "邀请码")
-    private String invitationCode;
+ 		/** status 状态（1启用，0不启用）  */
+ 		@ApiDesc(value = "状态（1启用，0不启用）", required = 0)
+ 		@ExcelProperty(value = "状态（1启用，0不启用）")
+ 		private int status;
 
-    @ApiDesc(value = "注册平台")
-    private int platform;
+ 		/** del_flag 删除状态(0-正常,1-已删除)  */
+ 		@ApiDesc(value = "删除状态(0-正常,1-已删除)", required = 0)
+ 		@ExcelProperty(value = "删除状态(0-正常,1-已删除)")
+ 		private int delFlag;
 
-    @ApiDesc(value = "是否禁言，0：默认  1：禁言")
-    private int banned;
+ 		/** third_id 第三方登录的唯一标识  */
+ 		@ApiDesc(value = "第三方登录的唯一标识", required = 0)
+ 		@ExcelProperty(value = "第三方登录的唯一标识")
+ 		private String thirdId;
 
-    @ApiDesc(value = "所在城市ID")
-    private int cityId;
+ 		/** third_type 第三方类型  */
+ 		@ApiDesc(value = "第三方类型", required = 0)
+ 		@ExcelProperty(value = "第三方类型")
+ 		private String thirdType;
 
-    @ApiDesc(value = "所在城市")
-    private String cityName;
+ 		/** activiti_sync 同步工作流引擎(1-同步,0-不同步)  */
+ 		@ApiDesc(value = "同步工作流引擎(1-同步,0-不同步)", required = 0)
+ 		@ExcelProperty(value = "同步工作流引擎(1-同步,0-不同步)")
+ 		private int activitiSync;
 
-    @ApiDesc(value = "是否展示（生日）0展示 1不展示")
-    private int isShow;
+ 		/** work_no 工号，唯一键  */
+ 		@ApiDesc(value = "工号，唯一键", required = 0)
+ 		@ExcelProperty(value = "工号，唯一键")
+ 		private String workNo;
 
-    @ApiDesc(value = "等级")
-    private int grade;
+ 		/** post 职务，关联职务表  */
+ 		@ApiDesc(value = "职务，关联职务表", required = 0)
+ 		@ExcelProperty(value = "职务，关联职务表")
+ 		private String post;
 
-    @ApiDesc(value = "最后登陆时间")
-    private Date lastLoginDate;
+ 		/** telephone 座机号  */
+ 		@ApiDesc(value = "座机号", required = 0)
+ 		@ExcelProperty(value = "座机号")
+ 		private String telephone;
 
-    @ApiDesc(value = "用户昵称（前端页面展示）")
-    private String nickNameView;
 
-    @ApiDesc(value = "是否版主", required = 0)
-    private int isModerator;
 
-    public static SysUserResponseVo build() {
+
+
+ 		/** user_identity 身份（1普通成员 2上级）  */
+ 		@ApiDesc(value = "身份（1普通成员 2上级）", required = 0)
+ 		@ExcelProperty(value = "身份（1普通成员 2上级）")
+ 		private int userIdentity;
+
+ 		/** depart_ids 负责部门  */
+ 		@ApiDesc(value = "负责部门", required = 0)
+ 		@ExcelProperty(value = "负责部门")
+ 		private String departIds;
+
+ 		/** rel_tenant_ids 多租户标识  */
+ 		@ApiDesc(value = "多租户标识", required = 0)
+ 		@ExcelProperty(value = "多租户标识")
+ 		private String relTenantIds;
+
+ 		/** client_id 设备ID  */
+ 		@ApiDesc(value = "设备ID", required = 0)
+ 		@ExcelProperty(value = "设备ID")
+ 		private String clientId;
+
+
+    public static SysUserResponseVo build(){
         return new SysUserResponseVo();
     }
 
-    public int getIsModerator() {
-        return isModerator;
-    }
+    
+     		public void setUsername( String username){
+ 		 		this.username = username ; 
+ 		 		}
+ 		public SysUserResponseVo toUsername( String username){
+ 		 		this.username = username ; 
+ 		 		 return this ;
+ 		}
 
-    public void setIsModerator(int isModerator) {
-        this.isModerator = isModerator;
-    }
+ 		public String getUsername(){
+ 		 		return this.username;
+ 		}
+    
+     		public void setRealname( String realname){
+ 		 		this.realname = realname ; 
+ 		 		}
+ 		public SysUserResponseVo toRealname( String realname){
+ 		 		this.realname = realname ; 
+ 		 		 return this ;
+ 		}
 
-    @Override
-    public int getStatus() {
-        return status;
-    }
+ 		public String getRealname(){
+ 		 		return this.realname;
+ 		}
+    
 
-    @Override
-    public void setStatus(int status) {
-        this.status = status;
-    }
+    
+     		public void setAvatar( String avatar){
+ 		 		this.avatar = avatar ; 
+ 		 		}
+ 		public SysUserResponseVo toAvatar( String avatar){
+ 		 		this.avatar = avatar ; 
+ 		 		 return this ;
+ 		}
 
-    public String getNickName() {
-        return nickName;
-    }
+ 		public String getAvatar(){
+ 		 		return this.avatar;
+ 		}
+    
+     		public void setBirthday( Date birthday){
+ 		 		this.birthday = birthday ; 
+ 		 		}
+ 		public SysUserResponseVo toBirthday( Date birthday){
+ 		 		this.birthday = birthday ; 
+ 		 		 return this ;
+ 		}
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
+ 		public Date getBirthday(){
+ 		 		return this.birthday;
+ 		}
+    
+     		public void setSex( int sex){
+ 		 		this.sex = sex ; 
+ 		 		}
+ 		public SysUserResponseVo toSex( int sex){
+ 		 		this.sex = sex ; 
+ 		 		 return this ;
+ 		}
 
-    public String getPhone() {
-        return phone;
-    }
+ 		public int getSex(){
+ 		 		return this.sex;
+ 		}
+    
+     		public void setEmail( String email){
+ 		 		this.email = email ; 
+ 		 		}
+ 		public SysUserResponseVo toEmail( String email){
+ 		 		this.email = email ; 
+ 		 		 return this ;
+ 		}
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+ 		public String getEmail(){
+ 		 		return this.email;
+ 		}
+    
+     		public void setPhone( String phone){
+ 		 		this.phone = phone ; 
+ 		 		}
+ 		public SysUserResponseVo toPhone( String phone){
+ 		 		this.phone = phone ; 
+ 		 		 return this ;
+ 		}
 
-//    public String getPassword() {
-//        return password;
-//    }
-//
-//    public void setPassword(String password) {
-//        this.password = password;
-//    }
+ 		public String getPhone(){
+ 		 		return this.phone;
+ 		}
+    
+     		public void setOrgCode( String orgCode){
+ 		 		this.orgCode = orgCode ; 
+ 		 		}
+ 		public SysUserResponseVo toOrgCode( String orgCode){
+ 		 		this.orgCode = orgCode ; 
+ 		 		 return this ;
+ 		}
 
-    public String getHeadImage() {
-        return headImage;
-    }
+ 		public String getOrgCode(){
+ 		 		return this.orgCode;
+ 		}
+    
+     		public void setStatus( int status){
+ 		 		this.status = status ; 
+ 		 		}
+ 		public SysUserResponseVo toStatus( int status){
+ 		 		this.status = status ; 
+ 		 		 return this ;
+ 		}
 
-    public void setHeadImage(String headImage) {
-        this.headImage = headImage;
-    }
+ 		public int getStatus(){
+ 		 		return this.status;
+ 		}
+    
+     		public void setDelFlag( int delFlag){
+ 		 		this.delFlag = delFlag ; 
+ 		 		}
+ 		public SysUserResponseVo toDelFlag( int delFlag){
+ 		 		this.delFlag = delFlag ; 
+ 		 		 return this ;
+ 		}
 
-    public String getEmail() {
-        return email;
-    }
+ 		public int getDelFlag(){
+ 		 		return this.delFlag;
+ 		}
+    
+     		public void setThirdId( String thirdId){
+ 		 		this.thirdId = thirdId ; 
+ 		 		}
+ 		public SysUserResponseVo toThirdId( String thirdId){
+ 		 		this.thirdId = thirdId ; 
+ 		 		 return this ;
+ 		}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+ 		public String getThirdId(){
+ 		 		return this.thirdId;
+ 		}
+    
+     		public void setThirdType( String thirdType){
+ 		 		this.thirdType = thirdType ; 
+ 		 		}
+ 		public SysUserResponseVo toThirdType( String thirdType){
+ 		 		this.thirdType = thirdType ; 
+ 		 		 return this ;
+ 		}
 
-    public String getAddress() {
-        return address;
-    }
+ 		public String getThirdType(){
+ 		 		return this.thirdType;
+ 		}
+    
+     		public void setActivitiSync( int activitiSync){
+ 		 		this.activitiSync = activitiSync ; 
+ 		 		}
+ 		public SysUserResponseVo toActivitiSync( int activitiSync){
+ 		 		this.activitiSync = activitiSync ; 
+ 		 		 return this ;
+ 		}
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+ 		public int getActivitiSync(){
+ 		 		return this.activitiSync;
+ 		}
+    
+     		public void setWorkNo( String workNo){
+ 		 		this.workNo = workNo ; 
+ 		 		}
+ 		public SysUserResponseVo toWorkNo( String workNo){
+ 		 		this.workNo = workNo ; 
+ 		 		 return this ;
+ 		}
 
-    public int getSex() {
-        return sex;
-    }
+ 		public String getWorkNo(){
+ 		 		return this.workNo;
+ 		}
+    
+     		public void setPost( String post){
+ 		 		this.post = post ; 
+ 		 		}
+ 		public SysUserResponseVo toPost( String post){
+ 		 		this.post = post ; 
+ 		 		 return this ;
+ 		}
 
-    public void setSex(int sex) {
-        this.sex = sex;
-    }
+ 		public String getPost(){
+ 		 		return this.post;
+ 		}
+    
+     		public void setTelephone( String telephone){
+ 		 		this.telephone = telephone ; 
+ 		 		}
+ 		public SysUserResponseVo toTelephone( String telephone){
+ 		 		this.telephone = telephone ; 
+ 		 		 return this ;
+ 		}
 
-    public Date getBirthday() {
-        return birthday;
-    }
+ 		public String getTelephone(){
+ 		 		return this.telephone;
+ 		}
+    
+    
+    
+    
+    
+     		public void setUserIdentity( int userIdentity){
+ 		 		this.userIdentity = userIdentity ; 
+ 		 		}
+ 		public SysUserResponseVo toUserIdentity( int userIdentity){
+ 		 		this.userIdentity = userIdentity ; 
+ 		 		 return this ;
+ 		}
 
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
+ 		public int getUserIdentity(){
+ 		 		return this.userIdentity;
+ 		}
+    
+     		public void setDepartIds( String departIds){
+ 		 		this.departIds = departIds ; 
+ 		 		}
+ 		public SysUserResponseVo toDepartIds( String departIds){
+ 		 		this.departIds = departIds ; 
+ 		 		 return this ;
+ 		}
 
-    public String getIp() {
-        return ip;
-    }
+ 		public String getDepartIds(){
+ 		 		return this.departIds;
+ 		}
+    
+     		public void setRelTenantIds( String relTenantIds){
+ 		 		this.relTenantIds = relTenantIds ; 
+ 		 		}
+ 		public SysUserResponseVo toRelTenantIds( String relTenantIds){
+ 		 		this.relTenantIds = relTenantIds ; 
+ 		 		 return this ;
+ 		}
 
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
+ 		public String getRelTenantIds(){
+ 		 		return this.relTenantIds;
+ 		}
+    
+     		public void setClientId( String clientId){
+ 		 		this.clientId = clientId ; 
+ 		 		}
+ 		public SysUserResponseVo toClientId( String clientId){
+ 		 		this.clientId = clientId ; 
+ 		 		 return this ;
+ 		}
 
-    public String getRemarks() {
-        return remarks;
-    }
+ 		public String getClientId(){
+ 		 		return this.clientId;
+ 		}
+    
 
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
-    }
 
-    public long getReferrerId() {
-        return referrerId;
-    }
 
-    public void setReferrerId(long referrerId) {
-        this.referrerId = referrerId;
-    }
 
-    public String getQrCode() {
-        return qrCode;
-    }
 
-    public void setQrCode(String qrCode) {
-        this.qrCode = qrCode;
-    }
 
-    public int getChannel() {
-        return channel;
-    }
-
-    public void setChannel(int channel) {
-        this.channel = channel;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
-    public String getInvitationCode() {
-        return invitationCode;
-    }
-
-    public void setInvitationCode(String invitationCode) {
-        this.invitationCode = invitationCode;
-    }
-
-    public int getPlatform() {
-        return platform;
-    }
-
-    public void setPlatform(int platform) {
-        this.platform = platform;
-    }
-
-    public int getBanned() {
-        return banned;
-    }
-
-    public void setBanned(int banned) {
-        this.banned = banned;
-    }
-
-    public int getCityId() {
-        return cityId;
-    }
-
-    public void setCityId(int cityId) {
-        this.cityId = cityId;
-    }
-
-    public String getCityName() {
-        return cityName;
-    }
-
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
-    }
-
-    public int getIsShow() {
-        return isShow;
-    }
-
-    public void setIsShow(int isShow) {
-        this.isShow = isShow;
-    }
-
-    public int getGrade() {
-        return grade;
-    }
-
-    public void setGrade(int grade) {
-        this.grade = grade;
-    }
-
-    public Date getLastLoginDate() {
-        return lastLoginDate;
-    }
-
-    public void setLastLoginDate(Date lastLoginDate) {
-        this.lastLoginDate = lastLoginDate;
-    }
-
-    public String getNickNameView() {
-        return nickNameView;
-    }
-
-    public void setNickNameView(String nickNameView) {
-        this.nickNameView = nickNameView;
-    }
 }

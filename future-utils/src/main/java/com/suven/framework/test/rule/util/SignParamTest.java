@@ -154,15 +154,4 @@ public class SignParamTest {
 	    }
 	    return returnMap;
 }
-
-	public static void main(String[] args) {
-		String data = "accessToken=0b803234f6a540236d6584ba4bd08268&appId=100000001&headImg=https%3A%2F%2Fim-file.suven.com%2F%2Fim%2F202112%2F4E3CBB287139441EB88CFA4E15BF043F.png&platform=3&sysVersion=201001&userId=30638&version=201001H@s0zSix!fiNger8";
-		String pass = "";
-		try {
-			pass = CryptUtil.md5(data ).toLowerCase();
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-		System.out.println(pass);
-	}
 }

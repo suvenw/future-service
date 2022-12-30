@@ -307,8 +307,8 @@ public abstract class AbstractDbService {
 			long result = -1L;
 			KeyHolder keyHolder = new GeneratedKeyHolder();
 			PreparedStatementCreator psc  = new PreparedStatementCreator() {
-				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-					PreparedStatement ps = connection.prepareStatement(sql,new String[] { key });
+				 public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+					 final PreparedStatement ps = connection.prepareStatement(sql,new String[] { key });
 					if ( args != null) {
 						for(int i= 0; i<args.length;i++ ){
 							Object param = args[i];

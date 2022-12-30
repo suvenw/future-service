@@ -1,43 +1,62 @@
 package com.suven.framework.sys.service;
 
 
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.databene.commons.CollectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.suven.framework.common.data.BasePage;
-import com.suven.framework.common.enums.ResultEnum;
-import com.suven.framework.core.db.ext.Query;
-import com.suven.framework.http.data.vo.ResponseResultList;
-import com.suven.framework.sys.dao.SysPermissionDataRuleDao;
-import com.suven.framework.sys.dto.request.SysPermissionDataRuleRequestDto;
-import com.suven.framework.sys.dto.response.SysPermissionDataRuleResponseDto;
-import com.suven.framework.sys.entity.SysPermissionDataRule;
-import com.suven.framework.util.PageUtils;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.io.InputStream;
+
+
+import com.suven.framework.sys.entity.SysPermissionDataRule;
+import com.suven.framework.sys.dao.SysPermissionDataRuleDao;
+import com.suven.framework.sys.dto.request.SysPermissionDataRuleRequestDto;
+import com.suven.framework.sys.dto.response.SysPermissionDataRuleResponseDto;
+import com.suven.framework.sys.dto.enums.SysPermissionDataRuleQueryEnum;
+
+import com.suven.framework.core.db.IterableConverter;
+import com.suven.framework.core.mybatis.MyBatisUtils;
+import com.suven.framework.core.db.ext.Query;
+import com.suven.framework.common.data.BasePage;
+import com.suven.framework.common.enums.ResultEnum;
+import com.suven.framework.http.data.vo.ResponseResultList;
+import com.suven.framework.util.PageUtils;
+import com.suven.framework.util.excel.ExcelUtils;
+
+
+
+
+
 
 
 /**
- * @ClassName: SysPermissionDataRuleDao.java
- * @Description: 的数据交互处理类
- * @author xxx.xxx
- * @date   2019-11-25 19:45:26
- * @version V1.0.0
- * <p>
+ * @ClassName: SysPermissionDataRuleServiceImpl.java
+ *
+ * @Author 作者 : suven
+ * @CreateDate 创建时间: 2022-02-28 16:10:35
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: 菜单权限规则表 RPC业务接口逻辑实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
  * ----------------------------------------------------------------------------
- *  modifyer    modifyTime                 comment
  *
  * ----------------------------------------------------------------------------
- * </p>
- */
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
 @Service
 public class SysPermissionDataRuleServiceImpl  implements SysPermissionDataRuleService {
 
@@ -49,10 +68,11 @@ public class SysPermissionDataRuleServiceImpl  implements SysPermissionDataRuleS
 
 
     /**
-     * 保存同时更新数据库和缓存的实现方法
+     * 保存菜单权限规则表同时更新数据库和缓存的实现方法
      * @param sysPermissionDataRuleRequestDto SysPermissionDataRuleResponseDto
      * @return
      */
+    @Override
     public SysPermissionDataRuleResponseDto saveSysPermissionDataRule(SysPermissionDataRuleRequestDto sysPermissionDataRuleRequestDto){
         if(sysPermissionDataRuleRequestDto== null){
             return null;
@@ -68,6 +88,47 @@ public class SysPermissionDataRuleServiceImpl  implements SysPermissionDataRuleS
 
     }
 
+    /**
+     * 保存菜单权限规则表同时更新数据库和缓存的实现方法,同时保存Id主键到对象中
+     * @param sysPermissionDataRuleRequestDto SysPermissionDataRuleResponseDto
+     * @return
+     */
+    @Override
+    public SysPermissionDataRuleResponseDto saveIdSysPermissionDataRule(SysPermissionDataRuleRequestDto sysPermissionDataRuleRequestDto){
+        if(sysPermissionDataRuleRequestDto== null){
+            return null;
+        }
+        SysPermissionDataRule sysPermissionDataRule = SysPermissionDataRule.build().clone(sysPermissionDataRuleRequestDto);
+        sysPermissionDataRule = sysPermissionDataRuleDao.saveId(sysPermissionDataRule);
+        if(null == sysPermissionDataRule){
+            return null;
+        }
+        SysPermissionDataRuleResponseDto sysPermissionDataRuleResponseDto = SysPermissionDataRuleResponseDto.build().clone(sysPermissionDataRule);
+        return sysPermissionDataRuleResponseDto;
+
+
+    }
+    /**
+     * 保存菜单权限规则表同时更新数据库和缓存的实现方法,同时保存Id主键到对象中
+     * @param entityList SysPermissionDataRuleRequestDto集合
+     * @return
+     */
+    @Override
+    public boolean saveBatchIdSysPermissionDataRule(Collection<SysPermissionDataRuleRequestDto> entityList) {
+        if(null == entityList ){
+            return false;
+        }
+        List<SysPermissionDataRule> list = new ArrayList<>();
+        entityList.forEach(e -> list.add(SysPermissionDataRule.build().clone(e)));
+        boolean result = sysPermissionDataRuleDao.saveBatchId(list);
+        return result;
+    }
+    /**
+     * 批量保存菜单权限规则表同时更新数据库和缓存的实现方法
+     * @param entityList SysPermissionDataRuleRequestDto集合
+     * @return
+     */
+    @Override
     public boolean saveBatchSysPermissionDataRule(Collection<SysPermissionDataRuleRequestDto> entityList, int batchSize) {
         if(null == entityList || entityList.size() !=  batchSize){
             return false;
@@ -78,7 +139,7 @@ public class SysPermissionDataRuleServiceImpl  implements SysPermissionDataRuleS
         return result;
     }
 
-
+    @Override
     public boolean saveOrUpdateBatchSysPermissionDataRule(Collection<SysPermissionDataRuleRequestDto> entityList, int batchSize) {
         if(null == entityList || entityList.size() != batchSize ){
             return false;
@@ -90,6 +151,7 @@ public class SysPermissionDataRuleServiceImpl  implements SysPermissionDataRuleS
     }
 
 
+    @Override
     public boolean updateBatchById(Collection<SysPermissionDataRuleRequestDto> entityList, int batchSize) {
         if(null == entityList || entityList.size() != batchSize ){
             return false;
@@ -101,10 +163,11 @@ public class SysPermissionDataRuleServiceImpl  implements SysPermissionDataRuleS
     }
 
     /**
-     * 更新同时更新数据库和缓存的实现方法
+     * 更新菜单权限规则表同时更新数据库和缓存的实现方法
      * @param sysPermissionDataRuleRequestDto  SysPermissionDataRuleResponseDto
      * @return
      */
+    @Override
     public boolean updateSysPermissionDataRule(SysPermissionDataRuleRequestDto sysPermissionDataRuleRequestDto){
 
           if(null ==  sysPermissionDataRuleRequestDto){
@@ -129,6 +192,7 @@ public class SysPermissionDataRuleServiceImpl  implements SysPermissionDataRuleS
      * @param  idList
      * @return
      */
+    @Override
     public int delSysPermissionDataRuleByIds(List<Long> idList){
         boolean result = false;
         if(null == idList){
@@ -148,116 +212,175 @@ public class SysPermissionDataRuleServiceImpl  implements SysPermissionDataRuleS
 
 
     /**
-     * 通过主键ID更新对象实现缓存和数据库更新的方法
+     * 通过主键ID更新对象菜单权限规则表实现缓存和数据库更新的方法
      * @param  sysPermissionDataRuleId
      * @return
      */
-    public List<SysPermissionDataRuleResponseDto> getSysPermissionDataRuleById(long sysPermissionDataRuleId){
+    @Override
+    public SysPermissionDataRuleResponseDto getSysPermissionDataRuleById(long sysPermissionDataRuleId){
         if(sysPermissionDataRuleId < 0 ){
             return null;
         }
-        List<Long> ids = new ArrayList<>();
-        ids.add(sysPermissionDataRuleId);
-        List<SysPermissionDataRule> sysPermissionDataRules =  sysPermissionDataRuleDao.getListByIds(ids);
-        if(CollectionUtil.isEmpty(sysPermissionDataRules)){
-            return new ArrayList<>();
+        SysPermissionDataRule sysPermissionDataRule =  sysPermissionDataRuleDao.getById(sysPermissionDataRuleId);
+        if(sysPermissionDataRule == null){
+            return null;
         }
-        List<SysPermissionDataRuleResponseDto> resps = new ArrayList<>();
-        sysPermissionDataRules.forEach(s -> {
-            resps.add(SysPermissionDataRuleResponseDto.build().clone(s));
-        });
-        return resps;
+        SysPermissionDataRuleResponseDto sysPermissionDataRuleResponseDto = SysPermissionDataRuleResponseDto.build().clone(sysPermissionDataRule);
+
+        return sysPermissionDataRuleResponseDto ;
 
     }
 
+    /**
+     * 通过参数limit0,1获取对象菜单权限规则表的查询方法
+     * @param  queryEnum
+     * @return
+     */
+     @Override
+     public   SysPermissionDataRuleResponseDto getSysPermissionDataRuleByOne( SysPermissionDataRuleQueryEnum queryEnum,SysPermissionDataRuleRequestDto sysPermissionDataRuleRequestDto){
+          if(sysPermissionDataRuleRequestDto == null ){
+              return null;
+          }
+           QueryWrapper<SysPermissionDataRule> queryWrapper = sysPermissionDataRuleDao.builderQueryEnum( queryEnum, sysPermissionDataRuleRequestDto);
+            //分页对象        PageHelper
+           Page<SysPermissionDataRule> iPage = new Page<>(0, 1);
+           iPage.setSearchCount(false);
+           List<SysPermissionDataRule>  list = sysPermissionDataRuleDao.getListByPage(iPage,queryWrapper);
+           if(null == list || list.isEmpty()){
+                 return null;
+           }
+           SysPermissionDataRule sysPermissionDataRule = list.get(0);
+           SysPermissionDataRuleResponseDto sysPermissionDataRuleResponseDto = SysPermissionDataRuleResponseDto.build().clone(sysPermissionDataRule);
 
+            return sysPermissionDataRuleResponseDto ;
+       }
+
+
+ /**
+   * 通过条件查询SysPermissionDataRule信息列表,实现查找缓存和数据库的方法,但不统计总页数
+   * @param paramObject Object
+   * @return
+   * @author suven
+   * @date 2022-02-28 16:10:35
+   */
+  @Override
+  public List<SysPermissionDataRuleResponseDto> getSysPermissionDataRuleListByQuery( Object  paramObject, SysPermissionDataRuleQueryEnum queryEnum){
+
+      QueryWrapper<SysPermissionDataRule> queryWrapper = sysPermissionDataRuleDao.builderQueryEnum( queryEnum, paramObject);
+
+      List<SysPermissionDataRule>  list = sysPermissionDataRuleDao.getListByQuery(queryWrapper);
+      if(null == list ){
+          list = new ArrayList<>();
+      }
+      List<SysPermissionDataRuleResponseDto>  resDtoList =  IterableConverter.convertList(list,SysPermissionDataRuleResponseDto.class);
+      return resDtoList;
+
+  }
 
 
     /**
-     * 通过分页获取SysPermissionDataRule信息实现查找缓存和数据库的方法
-     * @param basePage BasePage
+     * 通过分页获取SysPermissionDataRule信息列表,实现查找缓存和数据库的方法,但不统计总页数
+     * @param page BasePage
      * @return
-     * @author xxx.xxx
-     * @date 2019-11-25 19:45:26
+     * @author suven
+     * @date 2022-02-28 16:10:35
      */
-    public List<SysPermissionDataRuleResponseDto> getSysPermissionDataRuleByPage(BasePage basePage){
+    @Override
+    public List<SysPermissionDataRuleResponseDto> getSysPermissionDataRuleListByPage(BasePage page,SysPermissionDataRuleQueryEnum queryEnum){
 
-
-        List<SysPermissionDataRuleResponseDto> resDtoList = new ArrayList<>();
-        if(basePage == null){
-            return resDtoList;
-        }
+        QueryWrapper<SysPermissionDataRule> queryWrapper =sysPermissionDataRuleDao.builderQueryEnum(queryEnum,  page.getParamObject());
         //分页对象        PageHelper
-        IPage<SysPermissionDataRule> iPage = new Page<>(basePage.getPageNo(), basePage.getPageSize());
-        QueryWrapper<SysPermissionDataRule> queryWrapper = new QueryWrapper<>();
-
-        IPage<SysPermissionDataRule> page = sysPermissionDataRuleDao.page(iPage, queryWrapper);
-        if(null == page){
-            return resDtoList;
-        }
-
-        List<SysPermissionDataRule>  list = page.getRecords();;
-        if(null == list || list.isEmpty()){
-            return resDtoList;
-        }
-        list.forEach(sysPermissionDataRule -> {
-                SysPermissionDataRuleResponseDto sysPermissionDataRuleResponseDto = SysPermissionDataRuleResponseDto.build().clone(sysPermissionDataRule);
-
-            resDtoList.add(sysPermissionDataRuleResponseDto);
-        });
-        return resDtoList;
-
-
-    }
-
-    /**
-     * 通过分页获取SysPermissionDataRule信息实现查找缓存和数据库的方法
-     * @param basePage BasePage
-     * @return
-     * @author xxx.xxx
-     * @date 2019-11-25 19:45:26
-     */
-    public ResponseResultList<SysPermissionDataRuleResponseDto> getSysPermissionDataRuleByNextPage(BasePage basePage){
-        List<SysPermissionDataRuleResponseDto>  list = this.getSysPermissionDataRuleByPage(basePage);
+        Page<SysPermissionDataRule> iPage = new Page<>(page.getPageNo(), page.getPageSize());
+        iPage.setSearchCount(false);
+        List<SysPermissionDataRule>  list = sysPermissionDataRuleDao.getListByPage(iPage,queryWrapper);
         if(null == list ){
             list = new ArrayList<>();
         }
-        boolean isNext =  basePage.isNextPage(list);
-        ResponseResultList<SysPermissionDataRuleResponseDto> responseResultList = ResponseResultList.build().toIsNextPage(isNext).toList(list);
+        List<SysPermissionDataRuleResponseDto>  resDtoList =  IterableConverter.convertList(list,SysPermissionDataRuleResponseDto.class);
+        return resDtoList;
+
+    }
+
+
+
+   /**
+     * 通过分页获取SysPermissionDataRule 菜单权限规则表信息实现查找缓存和数据库的方法,不查总页数
+     * @param page BasePage
+     * @return
+     * @author suven
+     * @date 2022-02-28 16:10:35
+     */
+    @Override
+    public ResponseResultList<SysPermissionDataRuleResponseDto> getSysPermissionDataRuleByQueryPage(BasePage page,SysPermissionDataRuleQueryEnum queryEnum){
+
+        ResponseResultList<SysPermissionDataRuleResponseDto> responseResultList = ResponseResultList.build();
+        QueryWrapper<SysPermissionDataRule> queryWrapper = sysPermissionDataRuleDao.builderQueryEnum(queryEnum,  page.getParamObject());
+        //分页对象        PageHelper
+        Page<SysPermissionDataRule> iPage = new Page<>(page.getPageNo(), page.getPageSize());
+        iPage.setSearchCount(false);
+        List<SysPermissionDataRule>  list = sysPermissionDataRuleDao.getListByPage(iPage,queryWrapper);
+        if(null == list ){
+            list = new ArrayList<>();
+        }
+        List<SysPermissionDataRuleResponseDto>  resDtoList =  IterableConverter.convertList(list,SysPermissionDataRuleResponseDto.class);
+        boolean isNext =  page.isNextPage(resDtoList);
+        responseResultList.toIsNextPage(isNext).toList(resDtoList);
+        return responseResultList;
+    }
+
+    /**
+     * 通过分页获取SysPermissionDataRule信息列表,实现查找缓存和数据库的方法,并且查询总页数
+     * @param page BasePage
+     * @return
+     * @author suven
+     * @date 2022-02-28 16:10:35
+     */
+    @Override
+    public ResponseResultList<SysPermissionDataRuleResponseDto> getSysPermissionDataRuleByNextPage(BasePage page,SysPermissionDataRuleQueryEnum queryEnum){
+        ResponseResultList<SysPermissionDataRuleResponseDto> responseResultList = ResponseResultList.build();
+        QueryWrapper<SysPermissionDataRule> queryWrapper = sysPermissionDataRuleDao.builderQueryEnum(queryEnum,  page.getParamObject());;
+        //分页对象        PageHelper
+        Page<SysPermissionDataRule> iPage = new Page<>(page.getPageNo(), page.getPageSize());
+        iPage.setSearchCount(true);
+        List<SysPermissionDataRule>  list = sysPermissionDataRuleDao.getListByPage(iPage,queryWrapper);
+        if(null == list ){
+            list = new ArrayList<>();
+        }
+        List<SysPermissionDataRuleResponseDto>  resDtoList =  IterableConverter.convertList(list,SysPermissionDataRuleResponseDto.class);
+        boolean isNext =  page.isNextPage(resDtoList);
+        responseResultList.toIsNextPage(isNext).toList(resDtoList).toTotal((int)iPage.getTotal());
         return responseResultList;
 
     }
 
-    public PageUtils queryPage(Map<String, Object> params) {
-        IPage iPage =  new Query<SysPermissionDataRule>().getPage(params);
-        QueryWrapper<SysPermissionDataRule> queryWrapper = new QueryWrapper<>();
-        IPage<SysPermissionDataRule> page = sysPermissionDataRuleDao.page(iPage,queryWrapper);
-        return new PageUtils(page);
-    }
 
 
     /**
-     * 保存同时更新数据库和缓存的实现方法
+     * 保存菜单权限规则表同时更新数据库和缓存的实现方法
      * @return
      */
     public SysPermissionDataRule  setSysPermissionDataRule(){
         SysPermissionDataRule sysPermissionDataRule = new SysPermissionDataRule();
         /**
- 			//sysPermissionDataRule.setCreateDate (Date createDate);
- 			//sysPermissionDataRule.setModifyDate (Date modifyDate);
- 			//sysPermissionDataRule.setStatus (int status);
- 			//sysPermissionDataRule.setSort (int sort);
  			//sysPermissionDataRule.setPermissionId (long permissionId);
  			//sysPermissionDataRule.setRuleName (String ruleName);
  			//sysPermissionDataRule.setRuleColumn (String ruleColumn);
  			//sysPermissionDataRule.setRuleConditions (String ruleConditions);
  			//sysPermissionDataRule.setRuleValue (String ruleValue);
+ 			//sysPermissionDataRule.setStatus (int status);
+ 			//sysPermissionDataRule.setCreateTime (Date createTime);
+ 			//sysPermissionDataRule.setCreateBy (String createBy);
+ 			//sysPermissionDataRule.setUpdateTime (Date updateTime);
+ 			//sysPermissionDataRule.setUpdateBy (String updateBy);
 		**/
 
         return sysPermissionDataRule;
     }
 
-
+    @Override
+    public boolean saveData(InputStream initialStream) {
+        return ExcelUtils.readExcel(initialStream,sysPermissionDataRuleDao, SysPermissionDataRule.class,0);
+    }
 
 
 }

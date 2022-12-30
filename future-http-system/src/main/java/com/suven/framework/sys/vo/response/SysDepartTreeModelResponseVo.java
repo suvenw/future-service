@@ -97,8 +97,8 @@ public class SysDepartTreeModelResponseVo implements Serializable{
         this.fax = sysDepart.getFax();
         this.address = sysDepart.getAddress();
         this.status = sysDepart.getStatus();
-        this.sort = sysDepart.getSort();
-        this.remarks = sysDepart.getRemarks();
+//        this.sort = sysDepart.getSort();
+//        this.remarks = sysDepart.getRemarks();
     }
 
     public boolean getIsLeaf() {

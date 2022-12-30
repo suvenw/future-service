@@ -1,12 +1,12 @@
 package com.suven.framework.core.rocketmq;
 
 import com.suven.framework.common.constants.GlobalConfigConstants;
-import com.suven.framework.util.json.JsonUtils;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.autoconfigure.RocketMQAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+import com.suven.framework.util.json.JsonUtils;
 
 /**
  * RocketMQMessageListener

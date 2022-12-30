@@ -1,12 +1,12 @@
 package com.suven.framework.core.db;
 
-import org.aspectj.lang.annotation.Aspect;
 import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.interceptor.*;
 
 import javax.annotation.Resource;
@@ -28,13 +28,12 @@ import java.util.Map;
  * @Copyright: (c) 2018 gc by https://www.suven.top
  *
  */
-@Configuration
-@Aspect
+//@Configuration
+//@Aspect
 public class DatasourceTransactionalConfig {
 
-    private static final int TX_METHOD_TIMEOUT = 5;
-    private static final String AOP_POINTCUT_EXPRESSION = "execution (* com.suven.*.rpc..service.*.*(..))";
-
+    private static final int TX_METHOD_TIMEOUT = 300;
+    private static final String AOP_POINTCUT_EXPRESSION = "execution (* com.suven.*.*..dao.*.*(..))";
     private DataSource dataSource;
 
     @Resource(name="dataSource")
@@ -45,10 +44,14 @@ public class DatasourceTransactionalConfig {
     }
 
 
+    protected String getAopPath(){
+        return AOP_POINTCUT_EXPRESSION;
+    }
+
     @Bean
 //    @ConditionalOnClass(DataSourceGroupProperties.class)
 //    @ConditionalOnMissingBean(DataSourceGroupProperties.class)
-    public PlatformTransactionManager txManager() {
+    public TransactionManager txManager() {
         return new DataSourceTransactionManager(dataSource);
     }
 
@@ -88,8 +91,9 @@ public class DatasourceTransactionalConfig {
     @Bean
     public AspectJExpressionPointcutAdvisor pointcutAdvisor(TransactionInterceptor txAdvice){
         AspectJExpressionPointcutAdvisor pointcutAdvisor = new AspectJExpressionPointcutAdvisor();
+        String aopPath = getAopPath();
         pointcutAdvisor.setAdvice(txAdvice);
-        pointcutAdvisor.setExpression(AOP_POINTCUT_EXPRESSION);
+        pointcutAdvisor.setExpression(aopPath);
        String name = pointcutAdvisor.getPointcut().getClass().getName();
 
         return pointcutAdvisor;

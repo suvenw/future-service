@@ -30,6 +30,10 @@ public interface RedisKeys  extends RedisConstants{
 	@RedisEx(redisKey=ONE_REDIS_GROUP)
 	String CLIENT_SECRET="client_secret:";
 
+	/** 账号权限 */
+	@RedisEx(redisKey=ONE_REDIS_GROUP)
+	String OAUTH_PERMISSION = "oauth_permission:";
+
 
 	/** 验证服务的缓存临时前缀key */
 	@RedisEx(redisKey=ONE_REDIS_GROUP)
@@ -61,6 +65,10 @@ public interface RedisKeys  extends RedisConstants{
     /**登录后用户的渠道*/
     @RedisEx(redisKey=ONE_REDIS_GROUP)
     String CHANNEL_CODE = "channel_code:";
+
+	/**碳账户渠道*/
+	@RedisEx(redisKey=ONE_REDIS_GROUP)
+	String CARBON_CHANNEL = "carbon_channel:";
 
 	/**登录后用户的渠道*/
 	@RedisEx(redisKey=ONE_REDIS_GROUP)

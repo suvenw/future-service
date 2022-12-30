@@ -1,50 +1,68 @@
 package com.suven.framework.sys.entity;
 
+import com.suven.framework.common.data.BaseByTimeEntity;
 import com.suven.framework.common.api.ApiDesc;
-import com.suven.framework.common.data.BaseStatusEntity;
 import com.suven.framework.core.db.ext.DS;
 
+import java.util.Date;
+
 /**
- * @Title: SysPermissionDataRule.java
- * @Description: 的数据模型
- * @author xxx.xxx
- * @date   2019-11-25 19:45:26
- * @version V1.0.0
- * ----------------------------------------------------------------------------
- *  modifyer    modifyTime                 comment
- *
- * ----------------------------------------------------------------------------
- *
- */
-@DS("sys")
-public class SysPermissionDataRule extends BaseStatusEntity {
+  * @ClassName: SysPermissionDataRule.java
+  *
+  * @Author 作者 : suven
+  * @email 邮箱 : suvenw@163.com
+  * @CreateDate 创建时间: 2022-02-28 16:10:35
+  * @Version 版本: v1.0.0
+  * <pre>
+  *
+  *  @Description: 菜单权限规则表 数据库表对应的实现类
+  *
+  * </pre>
+  * <pre>
+  * 修改记录
+  *    修改后版本:     修改人：  修改日期:     修改内容:
+  * ----------------------------------------------------------------------------
+  *
+  * ----------------------------------------------------------------------------
+  * </pre>
+  * @Copyright: (c) 2021 gc by https://www.suven.top
+  **/
+
+@DS(DataSourceModuleName.module_name_sys)
+public class SysPermissionDataRule extends BaseByTimeEntity{
 
 private static final long serialVersionUID = 1L;
 
 
 
 
-
-
- 		/** permissionId 菜单ID  */
+ 		/** permission_id 菜单ID  */
  		@ApiDesc(value = "菜单ID", required = 0)
  		private long permissionId;
 
- 		/** ruleName 规则名称  */
+ 		/** rule_name 规则名称  */
  		@ApiDesc(value = "规则名称", required = 0)
  		private String ruleName;
 
- 		/** ruleColumn 字段  */
+ 		/** rule_column 字段  */
  		@ApiDesc(value = "字段", required = 0)
  		private String ruleColumn;
 
- 		/** ruleConditions 条件  */
+ 		/** rule_conditions 条件  */
  		@ApiDesc(value = "条件", required = 0)
  		private String ruleConditions;
 
- 		/** ruleValue 规则值  */
+ 		/** rule_value 规则值  */
  		@ApiDesc(value = "规则值", required = 0)
  		private String ruleValue;
+
+ 		/** status   `status` int DEFAULT NULL COMMENT '删除状态(1-正常,0-已删除)',  */
+ 		@ApiDesc(value = "  `status` int DEFAULT NULL COMMENT '删除状态(1-正常,0-已删除)',", required = 0)
+ 		private int status;
+
+
+
+
 
 
     public static SysPermissionDataRule build(){
@@ -105,5 +123,16 @@ private static final long serialVersionUID = 1L;
 
  		public String getRuleValue(){
  		 		return this.ruleValue;
+ 		}
+ 		public void setStatus( int status){
+ 		 		this.status = status ; 
+ 		 		}
+ 		public SysPermissionDataRule toStatus( int status){
+ 		 		this.status = status ; 
+ 		 		 return this ;
+ 		}
+
+ 		public int getStatus(){
+ 		 		return this.status;
  		}
 }

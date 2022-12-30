@@ -4,14 +4,17 @@ package com.suven.framework.http.interceptor;//package com.suven.frame.server.In
 import com.google.common.collect.Sets;
 import com.suven.framework.common.GlobalLogbackThread;
 import com.suven.framework.core.db.DataSourceHolder;
-import com.suven.framework.http.message.ParamMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import com.suven.framework.http.exception.BusinessLogicException;
+import com.suven.framework.http.message.ParamMessage;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

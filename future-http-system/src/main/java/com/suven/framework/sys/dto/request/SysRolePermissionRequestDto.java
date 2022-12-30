@@ -1,45 +1,61 @@
 package com.suven.framework.sys.dto.request;
 
 
-import com.suven.framework.common.api.ApiDesc;
-import com.suven.framework.common.data.BaseStatusEntity;
+import java.io.Serializable;
+import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
+import com.suven.framework.common.data.BaseByTimeEntity;
+import com.suven.framework.common.api.ApiDesc;
 
 /**
-* @ClassName: SysRolePermissionRequestDto.java
-* @Description: 角色权限表的数据交互处理类
-* @author xxx.xxx
-* @date   2019-10-18 12:35:25
-* @version V1.0.0
-* <p>
-    * ----------------------------------------------------------------------------
-    *  modifyer    modifyTime                 comment
-    *
-    * ----------------------------------------------------------------------------
-    * </p>
-*/
-public class SysRolePermissionRequestDto extends BaseStatusEntity implements Serializable{
+ * @ClassName: SysRolePermissionRequestDto.java
+ *
+ * @Author 作者 : suven
+ * @CreateDate 创建时间: 2022-02-28 16:10:49
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: 角色权限表 RPC业务接口交互数据请求参数实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+
+public class SysRolePermissionRequestDto extends BaseByTimeEntity implements Serializable{
 
 
         private Logger logger = LoggerFactory.getLogger(SysRolePermissionRequestDto.class);
 
 
-
-
- 		/** roleId 角色id  */
+ 		/** role_id 角色id  */
  		@ApiDesc(value = "角色id", required = 0)
  		private long roleId;
 
- 		/** permissionId 权限id  */
+ 		/** permission_id 权限id  */
  		@ApiDesc(value = "权限id", required = 0)
  		private long permissionId;
 
- 		/** dataRuleIds   */
- 		@ApiDesc(value = "", required = 0)
+ 		/** data_rule_ids 数据权限ids  */
+ 		@ApiDesc(value = "数据权限ids", required = 0)
  		private String dataRuleIds;
+
+ 		/** operate_ip 操作ip  */
+ 		@ApiDesc(value = "操作ip", required = 0)
+ 		private String operateIp;
+
+
+
+
 
 
         public static SysRolePermissionRequestDto build(){
@@ -78,6 +94,17 @@ public class SysRolePermissionRequestDto extends BaseStatusEntity implements Ser
 
  		public String getDataRuleIds(){
  		 		return this.dataRuleIds;
+ 		}
+ 		public void setOperateIp( String operateIp){
+ 		 		this.operateIp = operateIp ; 
+ 		 		}
+ 		public SysRolePermissionRequestDto toOperateIp( String operateIp){
+ 		 		this.operateIp = operateIp ; 
+ 		 		 return this ;
+ 		}
+
+ 		public String getOperateIp(){
+ 		 		return this.operateIp;
  		}
 
 

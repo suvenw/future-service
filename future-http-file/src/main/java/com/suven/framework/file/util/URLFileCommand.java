@@ -108,4 +108,19 @@ public class URLFileCommand implements IURLCommand {
      */
     public static final String oss_file_post_delete_list = "/upload/ossDeleteList";
 
+    /**
+     * 生成二维码上传到OSS
+     */
+    public static final String oss_file_post_qrCodeUploadOss = "/upload/qrCodeUploadOss";
+
+    /**
+     * 生成二维码带logo上传到OSS
+     */
+    public static final String oss_file_post_qrLogoUploadOss = "/upload/qrLogoUploadOss";
+    /**
+     * 生成二维码文件流
+     */
+    public static final String oss_file_post_qrLogoUploadImg = "/upload/qrLogoUploadImg";
+
+
 }

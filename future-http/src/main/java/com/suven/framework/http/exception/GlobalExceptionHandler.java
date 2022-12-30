@@ -11,11 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import com.suven.framework.http.data.vo.ResponseResultVo;
 import org.springframework.web.util.NestedServletException;
 
 import javax.servlet.http.HttpServletResponse;
@@ -61,7 +59,7 @@ public class GlobalExceptionHandler extends GlobalExceptionErrorResponse impleme
 	protected IResponseResult handleNoHandlerFoundException(NoHandlerFoundException e, HttpServletResponse response) {
 		IResponseResult result = getResultVo();
 		this.printExceptionErrorLogger(logger,e);
-		return this.write(result, SysResultCodeEnum.SYS_INVALID_REQUEST, response);
+		return this.write(result,SysResultCodeEnum.SYS_INVALID_REQUEST, response);
 	}
 
 	@ResponseStatus(HttpStatus.OK)

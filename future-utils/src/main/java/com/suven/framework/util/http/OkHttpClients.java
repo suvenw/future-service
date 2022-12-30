@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -118,6 +119,42 @@ public class OkHttpClients extends UrlParamSign {
      * @param url      请求url
      * @param params   需要附加的参数
      */
+    public static InputStream getHttpInputStream(String url,Object params) {
+        String getParam = null;
+        try {
+            if(null == url || "".equals(url)){
+                return null;
+            }
+            long start = System.currentTimeMillis();
+
+            OkHttpClient client = instance();
+            getParam = getValue(params);
+            getParam = getParam == null ? "": getParam;
+            String getUrl = toUTF8UriString(url + getParam);
+            logger.info("【getHttp】 request urlParam------>url:[{}], getParam[{}]  ", url,getParam);
+            Request.Builder requestBuilder = requestBuilder().url(getUrl);
+            //可以省略，默认是GET请求
+            requestBuilder.method("GET",null);
+            Request request = requestBuilder.build();
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful()) {
+                InputStream ret = response.body().byteStream();
+                logger.info("【getHttp({}ms)】 request urlParam------>{}{}  result------>{}", System.currentTimeMillis() - start, url,getParam,"Successful");
+                return ret;
+            }else {
+                logger.info("【getHttp({}ms)】 request urlParam------>{}{}  response.code------>{}", System.currentTimeMillis() - start, url,getParam, response.code());
+            }
+        } catch (IOException e) {
+            logger.warn("error http request  request urlParam------>{}{} ,  Exception message:{}", url, getParam==null?JsonUtils.toJson(params):getParam, e);
+        }
+        return null;
+    }
+    /**
+     * get请求
+     *
+     * @param url      请求url
+     * @param params   需要附加的参数
+     */
     public static <T>T postHttp(String url, Object params,Class<T> clazz) {
         String result = postHttp(url,params);
         if(null != result){
@@ -196,7 +233,8 @@ public class OkHttpClients extends UrlParamSign {
         String url = null;
         Object obj = null;
         Class cc = null;
-//        OkHttpClients.getAsynHttp(url,obj,cc);
+        OkHttpClients.getAsynHttp(url,obj,cc);
+
     }
     
   

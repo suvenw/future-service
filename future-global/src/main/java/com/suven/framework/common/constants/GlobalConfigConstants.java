@@ -9,7 +9,6 @@ public interface GlobalConfigConstants {
 	/**  ================ 1. System  Reflections or ComponentScan start param   ================ **/
 
 	public static final String SERVICE_NAME= "future-service";
-	public static final String POJECT_PATH = "top/suven/";
 	public static final String COMPONENT_SCAN_BASE_PACKAGES=  "com.suven";
 	public static final String MAPPER_SCAN_BASE_PACKAGES=  "com.suven.framework.*.mapper";
 
@@ -65,6 +64,10 @@ public interface GlobalConfigConstants {
 	public static final String TOP_THIRD_ALIYUN_CONFIG_NAME          = "top.server.sms.properties";
 	public static final String TOP_THIRD_ALIYUN_CONFIG               = "top.server.sms";
 
+	public static final String TOP_SHIRO_OAUTH_CONFIG_ENABLED       = "top.server.shiro.enabled";
+	public static final String TOP_SHIRO_OAUTH_CONFIG_NAME          = "top.server.shiro.properties";
+	public static final String TOP_SHIRO_OAUTH_CONFIG               = "top.server.shiro";
+
 
 
 	public static final String TOP_SPIDER_CONFIG_ENABLED              = "top.server.spider.enabled";
@@ -85,10 +88,15 @@ public interface GlobalConfigConstants {
 	/**  ================ 3. redis start param   ================ **/
 	public static final String REDIS_AUTO_CONFIG = "top.redis.cluster";
 	public static final String REDIS_AUTO_CONFIG_ENABLED = REDIS_AUTO_CONFIG + ".enabled";
+
 	public static final String REDIS_AUTO_CONFIG_ONE_ENABLED = REDIS_AUTO_CONFIG + "one.enabled";
 
 	public static final String REDIS_CONFIG_CLUSTER_SERVERS = REDIS_AUTO_CONFIG + ".servers";
 	public static final String REDIS_CONFIG_CLUSTER_PASSWORD = REDIS_AUTO_CONFIG + ".password";
+
+	public static final String SPRING_REDIS_AUTO_CONFIG = "spring.redis" ;
+	public static final String SPRING_REDIS_AUTO_CONFIG_ENABLED = SPRING_REDIS_AUTO_CONFIG + ".enabled";
+
 
 	/**  ================ 3. redis end param   ================ **/
 
@@ -105,11 +113,11 @@ public interface GlobalConfigConstants {
 	public static final String ROCKT_MQ_CONFIG_PREFIX  = SERVICE_MQ_CONFIG_PREFIX + ".rocketmq";
 	public static final String ROCKT_MQ_CONFIG_ENABLED = SERVICE_MQ_CONFIG_PREFIX + ".rocketmq.config.enabled";
 
-	public static final String ROCKET_MQ_PRODUCT_CONFIG_ENABLED =  "rocketmq.product.config.enabled";
-	public static final String ROCKET_MQ_CONSUMER_CONFIG_ENABLED =  "rocketmq.consumer.config.enabled";
+	public static final String ROCKET_MQ_PRODUCT_CONFIG_ENABLED =  "spring.rocketmq.producer.api.enabled";
+	public static final String ROCKET_MQ_CONSUMER_CONFIG_ENABLED =  "spring.rocketmq.consumer.api.enabled";
 
 
-	public static final String ROCKT_MQ_START_CONFIG_ENABLED = SERVICE_MQ_CONFIG_PREFIX+ ".rocketmq.start.config.enabled";
+	public static final String ROCKT_MQ_START_CONFIG_ENABLED = "spring.rocketmq.start.config.enabled";
 
 	/**  ================ 4. MQ end param   ================ **/
 

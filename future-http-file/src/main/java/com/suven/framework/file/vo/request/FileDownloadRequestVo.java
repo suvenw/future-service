@@ -2,9 +2,7 @@ package com.suven.framework.file.vo.request;
 
 
 import com.suven.framework.common.api.ApiDesc;
-import com.suven.framework.http.data.vo.RequestParserVo;
-
-import java.io.Serializable;
+import com.suven.framework.http.data.vo.RequestParserVo;import java.io.Serializable;
 
 public class FileDownloadRequestVo extends RequestParserVo implements Serializable{
 

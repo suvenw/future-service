@@ -1,8 +1,8 @@
 package com.suven.framework.file.util;
 
-import com.suven.framework.util.io.FileToByteArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.suven.framework.util.io.FileToByteArrayUtils;
 
 import java.io.File;
 import java.io.IOException;

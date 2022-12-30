@@ -23,7 +23,7 @@ echo " ${SERVICE_PATH}"
 
 # check the start.out log output file
 if [ ! -f "${SERVICE_PATH}/app.log" ]; then
-  echo "${SERVICE_PATH}/app.log"
+  touch "${SERVICE_PATH}/app.log "
 fi
 
 

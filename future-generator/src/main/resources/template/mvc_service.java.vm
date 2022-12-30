@@ -120,7 +120,7 @@ public interface ${className}Service {
      * @param  queryEnum
      * @return
      */
-    ${className}ResponseVo get${className}ByOne( ${className}QueryEnum queryEnum,${className}RequestVo ${paramName}RequestVo);
+    ${className}ResponseVo get${className}ByOne(${className}RequestVo ${paramName}RequestVo, ${className}QueryEnum queryEnum);
 
 
     /**

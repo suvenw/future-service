@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.suven.framework.generator.config.ProjectPathConfig;
 import com.suven.framework.generator.config.SysDataConfig;
 import com.suven.framework.generator.entity.*;
+import com.suven.framework.generator.temp.MybatisCodeEnum;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -47,12 +48,37 @@ public class GeneratorUtils {
 //
 //        return templates;
 //    }
-
     private final static String UTF_8 = "UTF-8";
-    private final static String js_successMsg = "that.$message.success(res.msg);";
-    private final static String js_warningMsg = "that.$message.warning(res.msg);";
+    private final static String js_messageWarning = "this.$message.warning";
+    private final static String js_successMsg = "that.$message.success(res.message);";
+    private final static String js_warningMsg = "that.$message.warning(res.message);";
     private final static String js_fileSuccessMsg = "this.$message.success(info.file.name+'文件上传成功');";
     private final static String js_fileWarningMsg = "this.$message.error(info.file.name+'文件上传失败');";
+
+    private final static String handleSubmit = "this.$refs.form.validate(valid=>{\n" +
+            "          if(valid){\n" +
+            "          this.confirmLoading = true;\n" +
+            "          let obj;\n" +
+            "          if(!this.model.id){\n" +
+            "          obj=postAction(this.url.add,this.model);\n" +
+            "          }else{\n" +
+            "          obj=postAction(this.url.edit,this.model);\n" +
+            "          }\n" +
+            "          obj.then((res)=>{\n" +
+            "          if(res.success){\n" +
+            "          this.$message.success(res.message);\n" +
+            "          this.$emit('ok');\n" +
+            "          }else{\n" +
+            "          this.$message.warning(res.message);\n" +
+            "          }\n" +
+            "          }).finally(() => {\n" +
+            "          this.confirmLoading = false;\n" +
+            "          this.close();\n" +
+            "          })\n" +
+            "          }else{\n" +
+            "          return false;\n" +
+            "          }\n" +
+            "          })";
 
     private static List<String> excludeFieldNameList = new ArrayList<>(Arrays.asList("id","createDate","modifyDate"));
 
@@ -153,6 +179,8 @@ public class GeneratorUtils {
         map.put("baseEntityNo",sysDataConfig.getBaseEntityNo().getId());
         map.put("baseEntity",sysDataConfig.getEntityClass());
         map.put("baseEntityDao",sysDataConfig.getEntityDao());
+        map.put("isLombok",sysDataConfig.getSysConfig().getIsLombok());
+        map.put("$message","$message");
 
 
 
@@ -161,11 +189,13 @@ public class GeneratorUtils {
         map.put("importExcelUrl","${window._CONFIG['domianURL']}/${this.url.importExcelUrl}");
         map.put("js_successMsg",js_successMsg);
         map.put("js_warningMsg",js_warningMsg);
+        map.put("js_messageWarning",js_messageWarning);
 
         map.put("js_fileSuccessMsg",js_fileSuccessMsg);
         map.put("js_fileWarningMsg",js_fileWarningMsg);
 
         map.put("modules", ProjectPathConfig.modules);
+        map.put("handleSubmit", handleSubmit);
 
         System.out.println(JSON.toJSONString(map));
 
@@ -176,6 +206,16 @@ public class GeneratorUtils {
         //获取配置模板类
         Class tempCodeEnum = sysDataConfig.getTempCodeEnumClass();
         Collection<CreateCodeEnum>  enumJavaList = sysDataConfig.getEnumMap(tempCodeEnum).values();
+//        3.MyBatisBaseEntityDao,4.MyBatisBaseCacheDao
+        if(tempCodeEnum.getSimpleName().equals(MybatisCodeEnum.class.getSimpleName()) ){
+            if("MyBatisBaseEntityDao".equals(sysDataConfig.getEntityDao())){
+                enumJavaList.remove(MybatisCodeEnum.RPC_CACHE_DAO);
+            }
+            if("MyBatisBaseCacheDao".equals(sysDataConfig.getEntityDao())){
+                enumJavaList.remove(MybatisCodeEnum.RPC_ENTITY_DAO);
+            }
+        }
+
         enumList.addAll(pageVueList);
         enumList.addAll(enumJavaList);
 
@@ -236,7 +276,9 @@ public class GeneratorUtils {
         pageFieldEntity.setAttrType(attrType);
         pageFieldEntity.setComments(entity.getComments())
                 .setShowType(PageShowTypeEnum.getId(entity.getShowType()))
-                .setIsKey(entity.isColumnKey() ? 1: 0).setQueryMode(QueryTypeEnum.getId(entity.getQueryMode())).setRegex(RegexEnum.getKey(entity.getRegex()));
+                .setIsKey(entity.isColumnKey() ? 1: 0)
+                .setQueryMode(QueryTypeEnum.getId(entity.getQueryMode()))
+                .setRegex(RegexEnum.getKey(entity.getRegex()));
         ;
         GeneratorGetSetBuild.convertGetSetBuildMethodFromPage(pageFieldEntity,className);
         return pageFieldEntity;

@@ -4,6 +4,7 @@ import com.suven.framework.common.api.ApiDesc;
 import com.suven.framework.common.api.ApiDoc;
 import com.suven.framework.common.api.DocumentConst;
 import com.suven.framework.common.constants.GlobalConfigConstants;
+import com.suven.framework.core.redis.IRedisClusterServer;
 import com.suven.framework.http.data.vo.RequestParserVo;
 import com.suven.framework.http.handler.OutputAesResponse;
 import com.suven.framework.http.handler.OutputAllResponse;
@@ -19,6 +20,7 @@ import com.suven.framework.util.createcode.swagger.SwaggerResultBean;
 import com.suven.framework.util.crypt.CryptUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,26 +28,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.*;
 
 
-/**
- * @Author 作者 : suven.wang
- * @CreateDate 创建时间: 2020-01-15
- * @WeeK 星期: 星期四
- * @Version 版本: v1.0.0
- * <pre>
- *
- *  @Description (说明):  架构基本使用接口,接口文档,错误码参数说明,公共参数说明,请求参数加密例子
- *
- * </pre>
- * <pre>
- * 修改记录
- *    修改后版本:     修改人：  修改日期:     修改内容:
- * </pre>
- * @Copyright: (c) 2021 gc by https://www.suven.top
- **/
-
 @ApiDoc(
-        group = DocumentConst.GLobal.API_DOC_BASE_GROUP,
-        groupDesc= DocumentConst.GLobal.API_DOC_BASE_DES,
+        group = DocumentConst.Global.API_DOC_BASE_GROUP,
+        groupDesc= DocumentConst.Global.API_DOC_BASE_DES,
         module = "API 接口公共文档", isApp = true
 )
 @Controller
@@ -60,8 +45,8 @@ public class FrameworkController {
     )
     @RequestMapping(value = SysURLCommand.sys_get_error_no, method = RequestMethod.GET)
     public void getSysMsgEnumError(OutputResponse out, RequestParserVo jsonParse)  {
-       Map<Integer, IResultCodeEnum> error =  IResultCodeEnum.MsgEnumType.getMsgTypeMap();
-       Collection<IResultCodeEnum> list =   error.values();
+        Map<Integer, IResultCodeEnum> error =  IResultCodeEnum.MsgEnumType.getMsgTypeMap();
+        Collection<IResultCodeEnum> list =   error.values();
         List<HttpMsgEnumError>  voList = new ArrayList<>();
         list.forEach(code ->{
             voList.add(HttpMsgEnumError.build().init(code.getCode(),code.getMsg()));
@@ -218,5 +203,34 @@ public class FrameworkController {
         out.write("success");
     }
 
+
+    @ApiDoc(
+            value = "接口服务基本例子-aes_test",
+            request = HttpRequestGetMessage.class,
+            response = long.class
+    )
+
+    @Autowired
+   private IRedisClusterServer iRedisClusterServer;
+
+    @RequestMapping(value = "/sys/testAesCache2", method = RequestMethod.GET)
+    public void getFrameworkAesCacheTest2(OutputAllResponse out, RequestParserVo jsonParse)  {
+        iRedisClusterServer.setex("test".getBytes(),"ok11111".getBytes(),10);
+       String data = iRedisClusterServer.get("test");
+        out.write(data);
+    }
+
+    @RequestMapping(value = "/sys/testAesCache3", method = RequestMethod.GET)
+    public void getFrameworkAesCacheTest3(OutputAllResponse out, RequestParserVo jsonParse)  {
+        Map<String, byte[]> kvMap = new HashMap<>();
+        kvMap.put("test1","ok11111".getBytes());
+        kvMap.put("test2","ok22222".getBytes());
+        kvMap.put("test3","ok33333".getBytes());
+        kvMap.put("test4","ok44444".getBytes());
+        kvMap.put("test5","ok555".getBytes());
+        iRedisClusterServer.mset(kvMap,30);
+        Map data = iRedisClusterServer.mget(String.class,"test",Arrays.asList(1,2,3,4,5),false);
+        out.write(data);
+    }
 
 }

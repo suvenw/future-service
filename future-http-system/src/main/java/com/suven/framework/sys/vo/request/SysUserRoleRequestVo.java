@@ -1,44 +1,49 @@
 package com.suven.framework.sys.vo.request;
 
 
+import java.io.Serializable;
+import java.util.Date;
 import com.suven.framework.common.api.ApiDesc;
-import com.suven.framework.http.data.vo.RequestParserVo;
+import com.suven.framework.http.data.vo.HttpRequestByIdPageVo;
+
 
 /**
-* @ClassName: SysUserRoleRequestVo.java
-* @Description: 用户角色表的数据交互处理类
-* @author xxx.xxx
-* @date   2019-10-18 12:35:25
-* @version V1.0.0
-* <p>
-    * ----------------------------------------------------------------------------
-    *  modifyer    modifyTime                 comment
-    *
-    * ----------------------------------------------------------------------------
-    * </p>
-*/
-public class SysUserRoleRequestVo extends RequestParserVo {
+ * @ClassName: SysUserRoleRequestVo.java
+ *
+ * @Author 作者 : suven
+ * @CreateDate 创建时间: 2022-02-28 17:00:29
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: 用户角色关系表 http业务接口交互数据请求参数实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+public class SysUserRoleRequestVo extends HttpRequestByIdPageVo{
 
 
-        private long id;
-        private int pageNo;
-        private int pageSize;
 
 
 
-
- 		/** userId 用户id  */
+ 		/** user_id 用户id  */
  		@ApiDesc(value = "用户id", required = 0)
  		private long userId;
 
- 		/** roleId 角色id  */
+ 		/** role_id 角色id  */
  		@ApiDesc(value = "角色id", required = 0)
  		private long roleId;
 
-        /** username 用户名称username  */
-        @ApiDesc(value = "用户名称username", required = 0)
-        private String username;
-
+		@ApiDesc(value = "登录账号", required = 0)
+		private String username;
 
 
 
@@ -46,12 +51,20 @@ public class SysUserRoleRequestVo extends RequestParserVo {
         return new SysUserRoleRequestVo();
     }
 
+	public String getUsername() {
+		return username;
+	}
 
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
+	public SysUserRoleRequestVo toUsername(String username) {
+		this.username = username;
+		return this;
+	}
 
-
-
- 		public void setUserId( long userId){
+	public void setUserId(long userId){
  		 		this.userId = userId ; 
  		 		}
  		public SysUserRoleRequestVo toUserId( long userId){
@@ -77,37 +90,7 @@ public class SysUserRoleRequestVo extends RequestParserVo {
 
 
 
-        public long getId() {
-            return id;
-        }
 
-        public void setId(long id) {
-            this.id = id;
-        }
 
-        public int getPageNo() {
-             return pageNo;
-        }
 
-        public  SysUserRoleRequestVo setPageNo(int pageNo) {
-            this.pageNo = pageNo;
-            return this;
-        }
-
-        public int getPageSize() {
-         return pageSize;
-        }
-
-        public  SysUserRoleRequestVo setPageSize(int pageSize) {
-            this.pageSize = pageSize;
-            return this;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
 }

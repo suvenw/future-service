@@ -2,18 +2,13 @@ package com.suven.framework.core.db;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.suven.framework.common.api.IBeanClone;
-import com.suven.framework.common.data.BaseEntity;
 import com.suven.framework.common.api.IBaseApi;
-import com.suven.framework.common.data.BaseStatusEntity;
+import com.suven.framework.common.api.IBeanClone;
 import org.apache.commons.collections.CollectionUtils;
-
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
@@ -195,14 +190,14 @@ public class IterableConverter {
             return Collections.emptyList();
         }
         List result =  list.stream().map(entity -> {
-            try {
-                return  clazz.newInstance().clone(entity);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }).collect(Collectors.toList());
-        return result;
+              try {
+                  return  clazz.newInstance().clone(entity);
+              } catch (Exception e) {
+                  e.printStackTrace();
+              }
+              return null;
+          }).collect(Collectors.toList());
+          return result;
     }
 
     /**

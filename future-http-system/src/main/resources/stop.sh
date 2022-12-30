@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "Input process name first"
 
-NAME='com.sixeco.im.ImHttpMain'
+NAME='com.suven.im.ImHttpMain'
 echo $NAME
 
 PID=`ps -ef | grep "$NAME" | grep -v "grep" | awk '{print $2}'`

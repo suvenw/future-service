@@ -5,13 +5,19 @@ import java.util.Map;
 
 public enum BaseEntityEnum {
 
-
-
     BASE_ENTITY(1, "BaseEntity","id,createDate,modifyDate","id,create_date,modify_date"),
     BASE_STATUS_ENTITY(2, "BaseStatusEntity","id,createDate,modifyDate,sort,status","id,create_date,modify_date,sort,status"),
     BASE_TIME_ENTITY(3, "BaseTimeEntity","id,createTime,updateTime","create_time,update_time"),
     BASE_BY_TIME_ENTITY(4, "BaseByTimeEntity","id,createTime,updateTime,createBy,updateBy","create_time,update_time,create_by,update_by"),
+
     BASE_ID_ENTITY(5, "BaseIdEntity","id","id"),
+
+    //碳账号对象
+    BASE_BY_DATE_ENTITY(6, "BaseByDateEntity","id,createDate,createdBy,lastModifiedDate,lastModifiedBy","id,create_date,created_by,last_modified_date,last_modified_by"),
+
+    //门店对像
+    BASE_COM_ENTITY(7, "BaseComEntity","id,createDate,modifyDate,companyId,storeCode","id,create_date,modify_date,company_id,store_code"),
+
     ;
 
     private int id;

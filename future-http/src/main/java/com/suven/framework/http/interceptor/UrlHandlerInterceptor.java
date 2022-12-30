@@ -2,10 +2,12 @@ package com.suven.framework.http.interceptor;//package com.suven.frame.server.In
 
 
 import com.suven.framework.http.handler.BaseHttpResponseWrite;
+import com.suven.framework.http.handler.BaseHttpResponseWriteHandlerConverter;
+import com.suven.framework.http.handler.IResponseHandler;
+import com.suven.framework.http.handler.OutputResponse;
 import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.common.enums.SysResultCodeEnum;
 import com.suven.framework.http.exception.SystemRuntimeException;
-import com.suven.framework.http.handler.OutputResponse;
 import com.suven.framework.http.processor.url.AnnoUrlExplain;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
@@ -52,12 +54,14 @@ public class UrlHandlerInterceptor extends BaseHandlerInterceptorAdapter impleme
 		response.setHeader("Accept",MediaType.APPLICATION_JSON_VALUE);
 		String url = request.getServletPath();
 		if(ALLOWED_URL_PARAM.contains(url)){
-			BaseHttpResponseWrite.build(response).writeSuccess();
+			BaseHttpResponseWrite write = BaseHttpResponseWrite.build(response);
+			write.writeSuccess();
 			return false;
 		}
 		if( !AnnoUrlExplain.urlSet.contains(url)){
 			IResultCodeEnum msgEnumType = SysResultCodeEnum.SYS_REQUEST_URL_NOT_FOUND.formatMsg(url);
-			BaseHttpResponseWrite.build(response).write(msgEnumType);
+			BaseHttpResponseWrite write = BaseHttpResponseWrite.build(response);
+			write.write(msgEnumType);
 			return false;
 		}
 		return true;

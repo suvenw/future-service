@@ -6,13 +6,20 @@ import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSException;
 import com.github.tobato.fastdfs.exception.FdfsUnsupportStorePathException;
+import com.suven.framework.common.enums.SystemMsgCodeEnum;
 import com.suven.framework.core.redis.RedisClusterServer;
 import com.suven.framework.file.common.UpLoadConstant;
 import com.suven.framework.file.config.FileConfigSetting;
 import com.suven.framework.file.util.OSSUploadUtil;
+import com.suven.framework.file.util.QRCodeUtil;
 import com.suven.framework.file.vo.response.FileHistoryResponseVo;
+import com.suven.framework.http.SysMsgEnumCache;
 import com.suven.framework.util.date.DateUtil;
+import com.suven.framework.util.http.OkHttpClients;
+import com.suven.framework.util.io.FileToByteArrayUtils;
+import com.suven.framework.util.random.RandomUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +38,17 @@ import com.suven.framework.http.exception.SystemRuntimeException;
 import com.suven.framework.http.handler.OutputResponse;
 import com.suven.framework.http.message.ParamMessage;
 
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
 
 import static com.suven.framework.file.util.FileMsgEnum.DELETE_FILE_PATH_IS_NULL;
 
 
-@ApiDoc(module = "文件存储阿里云OSS文件服务的相关api",group = "File-group",groupDesc = "阿里OSS文件存上传下载文档")
+@ApiDoc(module = "文件存储阿里云OSS文件服务的相关api",group = "File-group",groupDesc = "阿里云oss存储文件件上传下载文档")
 @Controller
 public class FileAliyunOssController {
 
@@ -110,8 +119,8 @@ public class FileAliyunOssController {
                 return;
             }
 			vo.setOssUrl(storePath);
-            vo.setPath(ossFileName);
-			vo.setFullPath(fileConfigSetting.getOss().getDomain()+"/"+ossFileName);
+//            vo.setPath(ossFileName);
+			vo.setPath(fileConfigSetting.getOss().getDomain()+"/"+ossFileName);
             vo.setDomain(fileConfigSetting.getOss().getDomain());
             output.write(vo);
         } catch (OSSException oe) {
@@ -212,8 +221,8 @@ public class FileAliyunOssController {
 					return;
 				}
 				vo.setOssUrl(storePath);
-              vo.setPath(ossFileName);
-				vo.setFullPath(fileConfigSetting.getOss().getDomain()+"/"+ossFileName);
+//              vo.setPath(ossFileName);
+				vo.setPath(fileConfigSetting.getOss().getDomain()+"/"+ossFileName);
 				vo.setDomain(fileConfigSetting.getOss().getDomain());
 				output.write(vo);
 				if (storePath == null) {
@@ -283,8 +292,8 @@ public class FileAliyunOssController {
 				return;
 			}
 			vo.setOssUrl(storePath);
-            vo.setPath(ossFileName);
-			vo.setFullPath(fileConfigSetting.getOss().getDomain()+"/"+ossFileName);
+//            vo.setPath(ossFileName);
+			vo.setPath(fileConfigSetting.getOss().getDomain()+"/"+ossFileName);
 			vo.setDomain(fileConfigSetting.getOss().getDomain());
 			output.write(vo);
 		} catch (OSSException oe) {
@@ -525,6 +534,122 @@ public class FileAliyunOssController {
 //		}
 //		ossClient.shutdown();
 //	}
+
+
+	@ApiDoc(
+			value = "生成二维码上传到OSS",
+			request = QRCodeUserInfoRequestVo.class,
+			response = FileUploadResponseVo.class
+	)
+	@RequestMapping(value = URLFileCommand.oss_file_post_qrCodeUploadOss, method = RequestMethod.POST)
+	public void qrCodeUploadOss(OutputResponse output, QRCodeUserInfoRequestVo vo) {
+		try {
+			logger.info("开始生成二维码上传到OSS");
+			//生成二维码的编码
+			int code = RandomUtils.num(100000, 999999);
+			//生成二维码
+			BufferedImage verifyImg = QRCodeUtil.drawLogoQRCode(vo.getQrUrl(), code);
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			String fileType = StringUtils.isEmpty(vo.getFileType()) ? "jpg" : vo.getFileType();
+			ImageIO.write(verifyImg, fileType, os);//输出图片流
+			ByteArrayInputStream inputStream = new ByteArrayInputStream(os.toByteArray());
+			//文件名称
+			String ossFileName = this.getOssFileName(vo.getOssPath(), vo.getFolderName(), fileType);
+			//上传文件到阿里云
+			String storePath = getOssFilePath(inputStream, fileType, vo.getOssKey(), ossFileName);
+			FileUploadResponseVo responseVo = FileUploadResponseVo.build().setStatus(0).setErrorMsg("OK");
+			if (null == storePath) {
+				logger.error("failed post file to cloud, urlPath:{}", ossFileName);
+				responseVo.setErrorEnum(UploadFileErrorEnum.UPLOAD_FILE_ERROR_TO_OSS);
+				responseVo.setPath(ossFileName);
+				output.write(vo);
+				return;
+			}
+			os.flush();
+			os.close();//关闭流
+			responseVo.setOssUrl(storePath);
+			responseVo.setPath(fileConfigSetting.getOss().getDomain() + "/" + ossFileName);
+			responseVo.setDomain(fileConfigSetting.getOss().getDomain());
+			output.write(responseVo);
+		} catch (Exception e) {
+			logger.error("qrCodeUploadOss Exception: ",e);
+			throw new SystemRuntimeException(FileMsgEnum.UPLOAD_FILE_EXCEPTION_FAIL);
+		}
+	}
+
+
+	@ApiDoc(
+			value = "生成二维码带logo上传到OSS",
+			request = QRCodeRequestVo.class,
+			response = FileUploadResponseVo.class
+	)
+	@RequestMapping(value = URLFileCommand.oss_file_post_qrLogoUploadOss, method = RequestMethod.POST)
+	public void qrCodeLogo(OutputResponse output, QRCodeRequestVo vo) {
+		try {
+			logger.info("开始生成二维码上传到OSS");
+			//生成二维码的编码
+			int code = RandomUtils.num(100000, 999999);
+
+			InputStream logoCodeStream  = OkHttpClients.getHttpInputStream(vo.getLogoCodeUrl(),null);
+			//生成二维码
+			BufferedImage verifyImg = QRCodeUtil.drawLogoQRCode(vo.getQrUrl(),code, logoCodeStream,vo.getWidth(),vo.getHeight());
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			String fileType = StringUtils.isEmpty(vo.getFileType()) ? "png" : vo.getFileType();
+			ImageIO.write(verifyImg, fileType, os);//输出图片流
+			ByteArrayInputStream inputStream = new ByteArrayInputStream(os.toByteArray());
+			//文件名称
+			String ossFileName = this.getOssFileName(vo.getOssPath(), null, fileType);
+			//上传文件到阿里云
+			String storePath = getOssFilePath(inputStream, fileType, vo.getOssKey(), ossFileName);
+			FileUploadResponseVo responseVo = FileUploadResponseVo.build().setStatus(0).setErrorMsg("OK");
+			if (null == storePath) {
+				logger.error("failed post file to cloud, urlPath:{}", ossFileName);
+				responseVo.setErrorEnum(UploadFileErrorEnum.UPLOAD_FILE_ERROR_TO_OSS);
+				responseVo.setPath(ossFileName);
+				output.write(vo);
+				return;
+			}
+			os.flush();
+			os.close();//关闭流
+			responseVo.setOssUrl(storePath);
+			responseVo.setPath(fileConfigSetting.getOss().getDomain() + "/" + ossFileName);
+			responseVo.setDomain(fileConfigSetting.getOss().getDomain());
+			output.write(responseVo);
+		} catch (Exception e) {
+			logger.error("qrCodeLogo Exception: ",e);
+			throw new SystemRuntimeException(FileMsgEnum.UPLOAD_FILE_EXCEPTION_FAIL);
+		}
+	}
+
+	@ApiDoc(
+			value = "生成二维码带logo上传到OSS",
+			request = QRCodeRequestVo.class,
+			response = String.class
+	)
+	@RequestMapping(value = URLFileCommand.oss_file_post_qrLogoUploadImg, method = RequestMethod.POST)
+	public void qrCodeBaseImg(HttpServletResponse response, QRCodeRequestVo vo) {
+		try {
+			logger.info("开始生成二维码上传到OSS");
+			//生成二维码的编码
+			int code = RandomUtils.num(100000, 999999);
+			String fileType = StringUtils.isEmpty(vo.getFileType()) ? "png" : vo.getFileType();
+			response.setContentType("image/"+fileType);//必须设置响应内容类型为图片，否则前台不识别
+
+			InputStream logoCodeStream  = OkHttpClients.getHttpInputStream(vo.getLogoCodeUrl(),null);
+			//生成二维码
+			BufferedImage verifyImg = QRCodeUtil.drawLogoQRCode(vo.getQrUrl(),code, logoCodeStream,vo.getWidth(),vo.getHeight());
+			OutputStream os = response.getOutputStream(); //获取文件输出流
+			ImageIO.write(verifyImg, fileType, os);//输出图片流
+			os.flush();
+			os.close();//关闭流
+		} catch (Exception e) {
+			logger.error("qrCodeBaseImg Exception: ",e);
+			throw new SystemRuntimeException(FileMsgEnum.UPLOAD_FILE_EXCEPTION_FAIL);
+		}
+	}
+
+
+
 
 
 }

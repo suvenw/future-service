@@ -152,30 +152,5 @@ public interface ProjectModuleParameter {
 
 
 
-    /** 只提供RPC 服务的以29010开始**/
 
-    String  MODULE_NAME_TASK                = "task" ;
-    int     PORT_RPC_TASK                   = 29010;
-    String  MODULE_RPC_TASK                 =  MODULE_RPC +  MODULE_NAME_TASK;
-
-
-    String  MODULE_NAME_SPIDER              = "spider" ;
-    int     PORT_RPC_SPIDER                 = 29020;
-    String  MODULE_RPC_SPIDER               =  MODULE_RPC +  MODULE_NAME_SPIDER;
-
-    /** 3d **/
-    String  MODULE_NAME_THREED              = "threed" ;
-    int     PORT_HTTP_THREED                = 9150;
-    String  MODULE_HTTP_THREED              =  MODULE_HTTP + MODULE_NAME_THREED;
-
-    int     PORT_RPC_THREED                 = 19150;
-    String  MODULE_RPC_THREED               =  MODULE_RPC + MODULE_NAME_THREED;
-
-    /** launcher **/
-    String  MODULE_NAME_LAUNCHER              = "launcher" ;
-    int     PORT_HTTP_LAUNCHER                = 9160;
-    String  MODULE_HTTP_LAUNCHER              =  MODULE_HTTP + MODULE_NAME_LAUNCHER;
-
-    int     PORT_RPC_LAUNCHER                 = 19160;
-    String  MODULE_RPC_LAUNCHER               =  MODULE_RPC + MODULE_NAME_LAUNCHER;
 }

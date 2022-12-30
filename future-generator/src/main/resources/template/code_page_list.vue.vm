@@ -1,23 +1,28 @@
 <template>
   <a-card :bordered="false">
 
-    <!-- 查询区域-->
+    <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
-      <a-form layout="inline">
+      <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
 
-#foreach($po in $queryList)
+  <!-- ======= 搜索菜单列表 begin ======= -->
+ #foreach($po in $queryList)
+## <template v-if="toggleSearchStatus">
+           <a-col :md="6" :sm="12">
+             <a-form-item label="$po.comments">
+               #if ($po.attrname !='id'  && $po.dataType==("datetime"))
+               <a-date-picker showTime format='YYYY-MM-DD HH:mm:ss' v-model="queryParam.$po.attrname" />
+             #else
+               <j-input placeholder="输入$po.comments" v-model="queryParam.$po.attrname"></j-input>
+             #end
+             </a-form-item>
+           </a-col>
+ #end
+
+  <!-- ======= 搜索菜单列表 end ======= -->
+
           <a-col :md="6" :sm="8">
-            <a-form-item label="$po.comments">
-              #if ($po.attrname !='id'  && $po.dataType==("datetime"))
-              <a-date-picker showTime format='YYYY-MM-DD HH:mm:ss' v-model="queryParam.$po.attrname" />
-            #else
-              <a-input placeholder="请输入$po.comments" v-model="queryParam.$po.attrname"></a-input>
-            #end
-            </a-form-item>
-          </a-col>
-#end
-          <a-col :md="6" :sm="8" >
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
               <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
@@ -33,31 +38,39 @@
     </div>
 
     <!-- 操作按钮区域 -->
-    <div class="table-operator">
-      <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
-      <a-button type="primary" icon="download" @click="handleExportXls('导出${description}')">导出</a-button>
-      <a-upload name="file" :showUploadList="false" :multiple="false"  :customRequest="customRequest"  @change="handleChange">
+    <div class="table-operator" style="border-top: 5px">
+      <a-button @click="handleAdd" type="primary" icon="plus" >添加</a-button>
+      <a-button type="primary" icon="download" @click="handleExportXls('导出')">导出</a-button>
+      <a-upload name="files" :showUploadList="false" :multiple="false" :headers="tokenHeader" :data="importData" :action="importExcelUrl" @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
+      <j-third-app-button biz-type="user" :selected-row-keys="selectedRowKeys" syncToApp syncToLocal @sync-finally="onSyncFinally"/>
+
       <a-dropdown v-if="selectedRowKeys.length > 0">
-        <a-menu slot="overlay">
-          <a-menu-item key="1" @click="batchDel"><a-icon type="delete"/>删除</a-menu-item>
+        <a-menu slot="overlay" @click="handleMenuClick">
+          <a-menu-item key="1">
+            <a-icon type="delete" @click="batchDel"/>
+            删除
+          </a-menu-item>
         </a-menu>
-        <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /></a-button>
+        <a-button style="margin-left: 8px">
+          批量操作
+          <a-icon type="down"/>
+        </a-button>
       </a-dropdown>
     </div>
 
     <!-- table区域-begin -->
     <div>
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
-        <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项
+        <i class="anticon anticon-info-circle ant-alert-icon"></i>已选择&nbsp;<a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项&nbsp;&nbsp;
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
 
       <a-table
         ref="table"
-        size="middle"
         bordered
+        size="middle"
         rowKey="id"
         :columns="columns"
         :dataSource="dataSource"
@@ -66,49 +79,73 @@
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         @change="handleTableChange">
 
+        <template slot="avatarslot" slot-scope="text, record, index">
+          <div class="anty-img-wrap">
+            <a-avatar shape="square" :src="getAvatarView(record.avatar)" icon="user"/>
+          </div>
+        </template>
+
         <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">编辑</a>
+          <a @click="handleEdit(record)" >编辑</a>
 
           <a-divider type="vertical" />
+
           <a-dropdown>
-            <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
+            <a class="ant-dropdown-link">
+              更多 <a-icon type="down"/>
+            </a>
+            <!-- 更多下拉区域-begin -->
             <a-menu slot="overlay">
               <a-menu-item>
                 <a href="javascript:;" @click="handleDetail(record)">详情</a>
               </a-menu-item>
+
               <a-menu-item>
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
                   <a>删除</a>
                 </a-popconfirm>
               </a-menu-item>
+
             </a-menu>
+             <!-- 更多下拉区域-end -->
           </a-dropdown>
         </span>
+
 
       </a-table>
     </div>
     <!-- table区域-end -->
+    <${moduleName}-modal ref="modalForm" @ok="modalFormOk"></${moduleName}-modal>
 
-    <!-- 表单区域 -->
-    <${classname}Modal ref="modalForm" @ok="modalFormOk"></${className}Modal>
   </a-card>
 </template>
 
 <script>
-  import ${classname}Modal from './${modules}/${classname}Modal'
+  import '@/assets/less/TableExpand.less'
+  import { filterObj } from '@/utils/util';
+  import {putAction,getFileAccessHttpUrl} from '@/api/manage';
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import { postAction,fileUpload } from '@/api/manage'
-
+  import JEllipsis from '@/components/jeecg/JEllipsis'
+  import store from '@/store/'
+  import ${moduleName}Modal from "./modules/${className}Modal";
+  import { duplicateCheck } from '@/api/api'
+  import JThirdAppButton from '@/components/jeecgbiz/thirdApp/JThirdAppButton'
   export default {
     name: "${classname}List",
     mixins:[JeecgListMixin],
     components: {
-      ${classname}Modal
+        ${moduleName}Modal,
+       JEllipsis,
+      JThirdAppButton
     },
-    data () {
+    data() {
       return {
-        description: '${description}管理页面',
-        // 表头
+        importData: {
+          userId: store.getters.userInfo.id
+        },
+        description: '${description}',
+        queryParam: {},
+        recycleBinVisible: false,
         columns: [
           {
             title: '#',
@@ -119,88 +156,73 @@
             customRender:function (t,r,index) {
               return parseInt(index)+1;
             }
-           },
+          },
+/**- ======= 业务菜单列表 begin ======= **/
           #foreach($po in $showList)
-           #if ($po.attrname !='id'){
+            #if ($po.attrname !='id')
+          {
             title: '$po.comments',
             align:"center",
             dataIndex: '$po.attrname'
            },
+             #end
            #end
-		   #end
+
+/**- ======= 业务菜单列表 end ======= **/
           {
             title: '操作',
             dataIndex: 'action',
-            align:"center",
-            scopedSlots: { customRender: 'action' },
+            scopedSlots: {customRender: 'action'},
+            align: "center",
+            width: 170
           }
+
         ],
-        confirmLoading: false,
-        //界面请求URL
-		url: {
+        superQueryFieldList: [
+
+        ],
+        url: {
           list: "/${moduleName}/${pathName}/list",
           detail: "/${moduleName}/${pathName}/detail",
           delete: "/${moduleName}/${pathName}/delete",
           deleteBatch: "/${moduleName}/${pathName}/delete",
-          exportXlsUrl: "${moduleName}/${pathName}/export",
-          importXlsUrl: "${moduleName}/${pathName}/import",
-       },
-        ipagination: {
-          pageSize: 10,
+          exportXlsUrl: "/${moduleName}/${pathName}/export",
+          importExcelUrl: "/${moduleName}/${pathName}/import"
         },
-    }
-  },
-  computed: {
-    iimportAction:function () {
-      return this.url.importXlsUrl;
+      }
     },
-  },
+    computed: {
+      importExcelUrl: function(){
+        return `${importExcelUrl}`;
+      }
+    },
     methods: {
-      //文件上传触发事件
-      handleChange (info) {
-        console.log(info.file);
-        if (info.file.status !== 'uploading') {
-          console.log(info.file, info.fileList);
-        }
-        if (info.file.status === 'done') {
-          ${js_fileSuccessMsg}
-        } else if (info.file.status === 'error') {
-          ${js_fileWarningMsg}
-        }
+      getAvatarView: function (avatar) {
+        return getFileAccessHttpUrl(avatar)
       },
-      //文件上传 自定义请求 进行上传
-      customRequest:function({ onSuccess, onError, file }) {
-        postAction(this.importAction,fileUpload(file)).then((res)=>{
-          if(res.code ==0){
-            onSuccess(null, file);
-          }else{
-            onError();
-          }
-        }).finally(() => {
-          this.confirmLoading = false;
-        })
+      getQueryParams(){
+        var param = Object.assign({}, this.queryParam,this.isorter);
+        param.field = this.getQueryField();
+        param.pageNo = this.ipagination.current;
+        param.pageSize = this.ipagination.pageSize;
+        delete param.createTimeRange; // 时间参数不传递后台
+        if (this.superQueryParams) {
+          param['superQueryParams'] = encodeURI(this.superQueryParams)
+          param['superQueryMatchType'] = this.superQueryMatchType
+        }
+        return filterObj(param);
       },
 
-
+      onSyncFinally({isToLocal}) {
+        // 同步到本地时刷新下数据
+        if (isToLocal) {
+          this.loadData()
+        }
+      }
     }
+
   }
 </script>
-<style lang="less" scoped>
-/** Button按钮间距 */
-  .ant-btn {
-    margin-left: 3px
-  }
-  .ant-card-body .table-operator{
-    margin-bottom: 18px;
-  }
-  .ant-table-tbody .ant-table-row td{
-    padding-top:15px;
-    padding-bottom:15px;
-  }
-  .anty-row-operator button{margin: 0 5px}
-  .ant-btn-danger{background-color: #ffffff}
-
-  .ant-modal-cust-warp{height: 100%}
-  .ant-modal-cust-warp .ant-modal-body{height:calc(100% - 110px) !important;overflow-y: auto}
-  .ant-modal-cust-warp .ant-modal-content{height:90% !important;overflow-y: hidden}
+<style scoped>
+  @import '~@assets/less/common.less';
 </style>

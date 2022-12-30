@@ -3,6 +3,7 @@ package com.suven.framework.sys.dto.request;
 
 import com.suven.framework.common.api.ApiDesc;
 import com.suven.framework.common.data.BaseStatusEntity;
+import com.suven.framework.common.data.BaseTimeEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,7 @@ import java.util.List;
     * ----------------------------------------------------------------------------
     * </p>
 */
-public class SysUserDepartRequestDto extends BaseStatusEntity implements Serializable{
+public class SysUserDepartRequestDto extends BaseTimeEntity implements Serializable{
 
 
         private Logger logger = LoggerFactory.getLogger(SysUserDepartRequestDto.class);
@@ -73,8 +74,10 @@ public class SysUserDepartRequestDto extends BaseStatusEntity implements Seriali
 		public List<Long> getUserIdList() {
 			return userIdList;
 		}
-
-		public SysUserDepartRequestDto setUserIdList(List<Long> userIdList) {
+	public void setUserIdList(List<Long> userIdList) {
+		this.userIdList = userIdList;
+	}
+		public SysUserDepartRequestDto toUserIdList(List<Long> userIdList) {
 			this.userIdList = userIdList;
 			return this;
 		}

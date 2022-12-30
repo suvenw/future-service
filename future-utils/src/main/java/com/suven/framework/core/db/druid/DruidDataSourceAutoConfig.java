@@ -28,12 +28,14 @@ import com.suven.framework.util.json.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -51,34 +53,59 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * DataSourceAutoConfiguration.class,
  *         DruidDataSourceAutoConfigure.class
  */
+/** EnableConfigurationProperties 使用指定配合文件生效**/
 @Configuration
 @ConditionalOnClass(DruidDataSource.class)
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class,
+        DruidDataSourceAutoConfigure.class, JdbcTemplateAutoConfiguration.class})
 @AutoConfigureBefore({DataSourceAutoConfiguration.class, DruidDataSourceAutoConfigure.class, DataSourceAutoConfig.class})
-@EnableConfigurationProperties({DruidStatProperties.class, DataSourceProperties.class})
+@EnableConfigurationProperties({DruidStatProperties.class, DataSourceProperties.class, DruidDataSourceConfigWrapper.class})
 @Import({DruidSpringAopConfiguration.class,
-    DruidStatViewServletConfiguration.class,
-    DruidWebStatFilterConfiguration.class,
-    DruidFilterConfiguration.class})
-public class DruidDataSourceAutoConfig {
+        DruidStatViewServletConfiguration.class,
+        DruidWebStatFilterConfiguration.class,
+        DruidFilterConfiguration.class})
+public class DruidDataSourceAutoConfig  implements  InitializingBean {
+
 
     private static final Logger logger = LoggerFactory.getLogger(DruidDataSourceAutoConfig.class);
 
 
-    @Autowired
-    private ApplicationContext applicationContext;
+
+    private ApplicationContext context;
+    private DruidDataSourceConfigWrapper properties;
+
+    public DruidDataSourceAutoConfig(ApplicationContext context, DruidDataSourceConfigWrapper propertiesMap) {
+        this.context = context;
+        this.properties = propertiesMap;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+
+    }
 
 
+    public DruidDataSource druidDataSourceInit(DataSourceConnectionInfo connectionInfo) {
+      return   properties.convertDruidDataSource(connectionInfo);
+    }
 
+    public DruidDataSource initWrapper(DruidDataSource dataSource ,DataSourceConnectionInfo dataSourceConnectionInfo) {
+        dataSource.setUrl(dataSourceConnectionInfo.getUrl());
+        dataSource.setUsername( dataSourceConnectionInfo.getUsername());
+        dataSource.setPassword(dataSourceConnectionInfo.getPassword());
+        dataSource.setDriverClassName(dataSourceConnectionInfo.getDriverClassName());
+        return dataSource;
+    }
 
-    @Bean("dataSource")
+    @Bean(name={"dataSource"})
     @ConditionalOnMissingBean
     public DataSource dataSource() {
-        logger.info("Init DruidDataSource");
+        logger.info("Init DruidDynamic DruidDataSource");
         DruidDynamicDataSource dataSource = DruidDynamicDataSource.getInstance();
         AtomicBoolean isPrimary = new AtomicBoolean(true);
         String defaultTargetDataSourceName = "";
 
-        Map<String, IDataSourceGroupProperties>  dataSourceGroupPropertiesMap = applicationContext.getBeansOfType(IDataSourceGroupProperties.class);
+        Map<String, IDataSourceGroupProperties>  dataSourceGroupPropertiesMap = context.getBeansOfType(IDataSourceGroupProperties.class);
         if (dataSourceGroupPropertiesMap == null){
             return null;
         }
@@ -99,8 +126,8 @@ public class DruidDataSourceAutoConfig {
             logger.info("Init DataSourceGroupProperties  ==:" + JsonUtils.toJson(group));
             DataSourceConnectionInfo info =   group.getMaster();
 
-            DruidDataSourceInitWrapper masterDatasource = new DruidDataSourceInitWrapper(info);
-            masterDatasource.afterPropertiesSet();
+            DruidDataSource masterDatasource =  this.druidDataSourceInit(info);
+
             /**注入到spring bean的名称生成规则；（模块文称+ master）*/
             String datasourceMasterBeanName = this.builderDatasourceBeanName(moduleName, DataSourceTypeEnum.MASTER.name().toLowerCase()) ;
 
@@ -108,25 +135,24 @@ public class DruidDataSourceAutoConfig {
             dataSource.putTargetDataSources(datasourceMasterBeanName,masterDatasource);
 
 
-          if("".equals(defaultTargetDataSourceName) || null == defaultTargetDataSourceName){
-              defaultTargetDataSourceName = datasourceMasterBeanName;
-          }
-           if( this.checkDefaultTargetDataSource(group,isPrimary)){
-               defaultTargetDataSourceName = datasourceMasterBeanName;
+            if("".equals(defaultTargetDataSourceName) || null == defaultTargetDataSourceName){
+                defaultTargetDataSourceName = datasourceMasterBeanName;
+            }
+            if( this.checkDefaultTargetDataSource(group,isPrimary)){
+                defaultTargetDataSourceName = datasourceMasterBeanName;
             }
 
             List<DataSourceConnectionInfo> list = group.getSlave();
             String slaveName =  DataSourceTypeEnum.SLAVE.name().toLowerCase();
             if(null == list || list.isEmpty()){
-               continue;
+                continue;
             }
             for(int i = 0; i< list.size();i++){
                 /**注入到spring bean的名称生成规则；（模块文称+ _slave + 序列号0,1,2,3...）*/
                 String datasourceSlaveBeanName = this.builderDatasourceBeanName(moduleName, slaveName,  i);
                 logger.info("datasourceSlaveBeanName == :" + datasourceSlaveBeanName);
 
-                DruidDataSourceInitWrapper slaveDatasource = new DruidDataSourceInitWrapper(info);
-                slaveDatasource.afterPropertiesSet();
+                DruidDataSource slaveDatasource =  this.druidDataSourceInit(info);
                 dataSource.putTargetDataSources(datasourceSlaveBeanName,slaveDatasource);
             }
         }
@@ -183,7 +209,7 @@ public class DruidDataSourceAutoConfig {
 
             DruidDatasourceGroup dbClass =  druidDatasourceGroupMap.get(dataSourceModuleName);
             if(dbClass != null){
-               String groupPropertiesName =  dataSourceModuleNameToPropertiesMap.get(dataSourceModuleName);
+                String groupPropertiesName =  dataSourceModuleNameToPropertiesMap.get(dataSourceModuleName);
                 StringBuilder sb = new StringBuilder();
                 sb.append(" Class DruidDataSourceAutoConfig method dataSource() ");
                 sb.append("\n Pass IDataSourceGroupProperties Class convert to  [").append(propertiesSimpleName).append("]");
@@ -200,5 +226,7 @@ public class DruidDataSourceAutoConfig {
         dataSourceModuleNameToPropertiesMap.clear();
         return druidDatasourceGroupMap;
     }
+
+
 
 }

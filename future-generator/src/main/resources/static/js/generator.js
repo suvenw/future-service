@@ -66,7 +66,7 @@ var vm = new Vue({
     data:{
         q:{
             mainPath: 'com.suven.framework',
-            packageName: 'com.suven.module',
+            packageName: 'com.suven.car',
             moduleName:'user',
             author: 'suven',
             email:'suvenw@163.com',

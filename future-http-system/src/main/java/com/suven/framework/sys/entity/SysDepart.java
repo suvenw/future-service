@@ -1,56 +1,74 @@
 package com.suven.framework.sys.entity;
 
+import com.suven.framework.common.data.BaseByTimeEntity;
 import com.suven.framework.common.api.ApiDesc;
-import com.suven.framework.common.data.BaseStatusEntity;
 import com.suven.framework.core.db.ext.DS;
 
+import java.util.Date;
+
 /**
- * @Title: SysDepart.java
- * @Description: 部门组织机构表的数据模型
- * @author xxx.xxx
- * @date   2019-10-18 12:35:25
- * @version V1.0.0
- * ----------------------------------------------------------------------------
- *  modifyer    modifyTime                 comment
- *
- * ----------------------------------------------------------------------------
- *
- */
-@DS("sys")
-public class SysDepart extends BaseStatusEntity {
+  * @ClassName: SysDepart.java
+  *
+  * @Author 作者 : suven
+  * @email 邮箱 : suvenw@163.com
+  * @CreateDate 创建时间: 2022-02-28 16:13:31
+  * @Version 版本: v1.0.0
+  * <pre>
+  *
+  *  @Description: 组织机构表 数据库表对应的实现类
+  *
+  * </pre>
+  * <pre>
+  * 修改记录
+  *    修改后版本:     修改人：  修改日期:     修改内容:
+  * ----------------------------------------------------------------------------
+  *
+  * ----------------------------------------------------------------------------
+  * </pre>
+  * @Copyright: (c) 2021 gc by https://www.suven.top
+  **/
+
+@DS(DataSourceModuleName.module_name_sys)
+public class SysDepart extends BaseByTimeEntity{
 
 private static final long serialVersionUID = 1L;
 
 
 
 
-
-
- 		/** parentId 父机构ID  */
+ 		/** parent_id 父机构ID  */
  		@ApiDesc(value = "父机构ID", required = 0)
  		private long parentId;
 
- 		/** departName 机构/部门名称  */
+ 		/** depart_name 机构/部门名称  */
  		@ApiDesc(value = "机构/部门名称", required = 0)
  		private String departName;
 
- 		/** departNameEn 英文名  */
+ 		/** depart_name_en 英文名  */
  		@ApiDesc(value = "英文名", required = 0)
  		private String departNameEn;
 
- 		/** departNameAbbr 缩写  */
+ 		/** depart_name_abbr 缩写  */
  		@ApiDesc(value = "缩写", required = 0)
  		private String departNameAbbr;
+
+ 		/** depart_order 排序  */
+ 		@ApiDesc(value = "排序", required = 0)
+ 		private int departOrder;
 
  		/** description 描述  */
  		@ApiDesc(value = "描述", required = 0)
  		private String description;
 
- 		/** orgType 机构类型 1一级部门 2子部门  */
- 		@ApiDesc(value = "机构类型 1一级部门 2子部门", required = 0)
- 		private int orgType;
+ 		/** org_category 机构类别 1公司，2组织机构，2岗位  */
+ 		@ApiDesc(value = "机构类别 1公司，2组织机构，2岗位", required = 0)
+ 		private String orgCategory;
 
- 		/** orgCode 机构编码  */
+ 		/** org_type 机构类型 1一级部门 2子部门  */
+ 		@ApiDesc(value = "机构类型 1一级部门 2子部门", required = 0)
+ 		private String orgType;
+
+ 		/** org_code 机构编码  */
  		@ApiDesc(value = "机构编码", required = 0)
  		private String orgCode;
 
@@ -66,23 +84,26 @@ private static final long serialVersionUID = 1L;
  		@ApiDesc(value = "地址", required = 0)
  		private String address;
 
- 		/** remarks 备注  */
+ 		/** memo 备注  */
  		@ApiDesc(value = "备注", required = 0)
- 		private String remarks;
-	@ApiDesc(value = "排序", required = 0)
-	private int sort;
+ 		private String memo;
 
-	public int getSort() {
-		return sort;
-	}
+ 		/** status 状态（1启用，0不启用）  */
+ 		@ApiDesc(value = "状态（1启用，0不启用）", required = 0)
+ 		private String status;
 
-	public void setSort(int sort) {
-		this.sort = sort;
-	}
-	public SysDepart toSort(int sort) {
-		this.sort = sort;
-		return this ;
-	}
+ 		/** del_flag 删除状态（0，正常，1已删除）  */
+ 		@ApiDesc(value = "删除状态（0，正常，1已删除）", required = 0)
+ 		private String delFlag;
+
+ 		/** qywx_identifier 对接企业微信的ID  */
+ 		@ApiDesc(value = "对接企业微信的ID", required = 0)
+ 		private String qywxIdentifier;
+
+
+
+
+
 
     public static SysDepart build(){
         return new SysDepart();
@@ -132,6 +153,17 @@ private static final long serialVersionUID = 1L;
  		public String getDepartNameAbbr(){
  		 		return this.departNameAbbr;
  		}
+ 		public void setDepartOrder( int departOrder){
+ 		 		this.departOrder = departOrder ; 
+ 		 		}
+ 		public SysDepart toDepartOrder( int departOrder){
+ 		 		this.departOrder = departOrder ; 
+ 		 		 return this ;
+ 		}
+
+ 		public int getDepartOrder(){
+ 		 		return this.departOrder;
+ 		}
  		public void setDescription( String description){
  		 		this.description = description ; 
  		 		}
@@ -143,15 +175,26 @@ private static final long serialVersionUID = 1L;
  		public String getDescription(){
  		 		return this.description;
  		}
- 		public void setOrgType( int orgType){
+ 		public void setOrgCategory( String orgCategory){
+ 		 		this.orgCategory = orgCategory ; 
+ 		 		}
+ 		public SysDepart toOrgCategory( String orgCategory){
+ 		 		this.orgCategory = orgCategory ; 
+ 		 		 return this ;
+ 		}
+
+ 		public String getOrgCategory(){
+ 		 		return this.orgCategory;
+ 		}
+ 		public void setOrgType( String orgType){
  		 		this.orgType = orgType ; 
  		 		}
- 		public SysDepart toOrgType( int orgType){
+ 		public SysDepart toOrgType( String orgType){
  		 		this.orgType = orgType ; 
  		 		 return this ;
  		}
 
- 		public int getOrgType(){
+ 		public String getOrgType(){
  		 		return this.orgType;
  		}
  		public void setOrgCode( String orgCode){
@@ -198,15 +241,48 @@ private static final long serialVersionUID = 1L;
  		public String getAddress(){
  		 		return this.address;
  		}
- 		public void setRemarks( String remarks){
- 		 		this.remarks = remarks ; 
+ 		public void setMemo( String memo){
+ 		 		this.memo = memo ; 
  		 		}
- 		public SysDepart toRemarks( String remarks){
- 		 		this.remarks = remarks ; 
+ 		public SysDepart toMemo( String memo){
+ 		 		this.memo = memo ; 
  		 		 return this ;
  		}
 
- 		public String getRemarks(){
- 		 		return this.remarks;
+ 		public String getMemo(){
+ 		 		return this.memo;
+ 		}
+ 		public void setStatus( String status){
+ 		 		this.status = status ; 
+ 		 		}
+ 		public SysDepart toStatus( String status){
+ 		 		this.status = status ; 
+ 		 		 return this ;
+ 		}
+
+ 		public String getStatus(){
+ 		 		return this.status;
+ 		}
+ 		public void setDelFlag( String delFlag){
+ 		 		this.delFlag = delFlag ; 
+ 		 		}
+ 		public SysDepart toDelFlag( String delFlag){
+ 		 		this.delFlag = delFlag ; 
+ 		 		 return this ;
+ 		}
+
+ 		public String getDelFlag(){
+ 		 		return this.delFlag;
+ 		}
+ 		public void setQywxIdentifier( String qywxIdentifier){
+ 		 		this.qywxIdentifier = qywxIdentifier ; 
+ 		 		}
+ 		public SysDepart toQywxIdentifier( String qywxIdentifier){
+ 		 		this.qywxIdentifier = qywxIdentifier ; 
+ 		 		 return this ;
+ 		}
+
+ 		public String getQywxIdentifier(){
+ 		 		return this.qywxIdentifier;
  		}
 }

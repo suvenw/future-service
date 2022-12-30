@@ -3,6 +3,7 @@ package com.suven.framework.core.redis.cluster;
 
 
 
+
 import redis.clients.jedis.*;
 
 import java.util.Collection;
@@ -12,7 +13,8 @@ import java.util.Map;
  * @author summerao
  *
  */
-public interface RedisClusterInterface extends JedisCommands, BasicCommands, BinaryJedisClusterCommands, MultiKeyJedisClusterCommands, JedisClusterScriptingCommands {
+public interface RedisClusterInterface extends JedisCommands, BasicCommands,
+		BinaryJedisClusterCommands, MultiKeyJedisClusterCommands, JedisClusterScriptingCommands {
 
 
 		/**

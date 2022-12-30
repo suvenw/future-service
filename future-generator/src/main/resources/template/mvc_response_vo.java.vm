@@ -34,9 +34,11 @@ import com.alibaba.excel.annotation.ExcelProperty;
  * @Copyright: (c) 2021 gc by https://www.suven.top
  **/
 
+#if( $isLombok==1)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+#end
 public class ${className}ResponseVo  extends ${baseEntity} implements Serializable {
 
 
@@ -58,8 +60,12 @@ $column.fieldAttrName
     #if( $column.fieldAttrName )
 
 $column.buildResponseVoName
-
+#if( $isLombok==0)
+    $column.setAttrName
+    $column.getAttrName
+#end
     #end
+
 
 #end
 

@@ -131,7 +131,7 @@ public class ${className}WebController {
             response = ${className}ResponseVo.class
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_list,method = RequestMethod.GET)
-    public   ResponseResultVo   list(  HttpServletRequest request){
+    public   Result   list(  HttpServletRequest request){
 
      ${className}RequestVo  ${paramName}RequestVo = HttpRequestParse.requestFrom(request,${className}RequestVo.class);
 
@@ -140,9 +140,9 @@ public class ${className}WebController {
          ${className}QueryEnum queryEnum =  ${className}QueryEnum.DESC_ID;
         ResponseResultList<${className}ResponseVo> resultList = ${paramName}Service.get${className}ByNextPage(page,queryEnum);
         if(null == resultList || resultList.getList().isEmpty() ){
-          return  ResponseResultVo.write( ResponseResultList.build());
+          return  Result.write( ResponseResultList.build());
         }
-       return ResponseResultVo.write( resultList);
+       return Result.write( resultList);
     }
 
 /**
@@ -163,16 +163,16 @@ public class ${className}WebController {
             response = ${className}ResponseVo.class
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_queryList,method = RequestMethod.GET)
-    public  ResponseResultVo    queryList(  HttpServletRequest request){
+    public  Result    queryList(  HttpServletRequest request){
 
      ${className}RequestVo  ${paramName}RequestVo = HttpRequestParse.requestFrom(request,${className}RequestVo.class);
 
         ${className}QueryEnum queryEnum =  ${className}QueryEnum.DESC_ID;
         List<${className}ResponseVo> resultList = ${paramName}Service.get${className}ListByQuery(${paramName}RequestVo,queryEnum);
         if(null == resultList || resultList.isEmpty() ){
-          return  ResponseResultVo.write( new ArrayList());
+          return  Result.write( new ArrayList());
         }
-        return ResponseResultVo.write( resultList);
+        return Result.write( resultList);
     }
 
 
@@ -194,15 +194,15 @@ public class ${className}WebController {
             response = Long.class
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_add,method = RequestMethod.POST)
-    public  ResponseResultVo  add( HttpServletRequest request){
+    public  Result  add( HttpServletRequest request){
            ${className}AddRequestVo ${paramName}AddRequestVo = HttpRequestParse.requestFrom(request,${className}AddRequestVo.class);
 
             ${className}ResponseVo ${paramName}ResponseVo =  ${paramName}Service.save${className}(${paramName}AddRequestVo);
         if(${paramName}ResponseVo == null){
-          return  ResponseResultVo.error("未知错误");
+          return  Result.error("未知错误");
 
         }
-       return ResponseResultVo.write( ${paramName}ResponseVo.getId());
+       return Result.write( ${paramName}ResponseVo.getId());
     }
     /**
      * @Title: 修改${description}信息
@@ -221,15 +221,15 @@ public class ${className}WebController {
             response = boolean.class
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_modify , method = RequestMethod.POST)
-    public  ResponseResultVo  modify( HttpServletRequest request){
+    public  Result  modify( HttpServletRequest request){
 
         ${className}AddRequestVo ${paramName}AddRequestVo = HttpRequestParse.requestFrom(request,${className}AddRequestVo.class);
 
         if(${paramName}AddRequestVo.getId() == 0){
-             return  ResponseResultVo.error("请求id不能为0");
+             return  Result.error("请求id不能为0");
         }
         boolean result =  ${paramName}Service.update${className}(${paramName}AddRequestVo);
-        return ResponseResultVo.write(result);
+        return Result.write(result);
     }
 
     /**
@@ -251,11 +251,11 @@ public class ${className}WebController {
             response = ${className}ResponseVo.class
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_detail,method = RequestMethod.GET)
-    public ResponseResultVo detail( HttpServletRequest request){
+    public Result detail( HttpServletRequest request){
           HttpRequestByIdVo idRequestVo = HttpRequestParse.requestFrom(request,HttpRequestByIdVo.class);
 
             ${className}ResponseVo vo = ${paramName}Service.get${className}ById(idRequestVo.getId());
-        return ResponseResultVo.write(vo);
+        return Result.write(vo);
     }
 
 
@@ -278,11 +278,11 @@ public class ${className}WebController {
             response = ${className}ResponseVo.class
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_edit , method = RequestMethod.GET)
-    public ResponseResultVo edit( HttpServletRequest request){
+    public Result edit( HttpServletRequest request){
       HttpRequestByIdVo idRequestVo = HttpRequestParse.requestFrom(request,HttpRequestByIdVo.class);
 
             ${className}ResponseVo vo = ${paramName}Service.get${className}ById(idRequestVo.getId());
-       return ResponseResultVo.write(vo);
+       return Result.write(vo);
 
     }
 
@@ -324,15 +324,15 @@ public class ${className}WebController {
             response = Integer.class
     )
     @RequestMapping(value = UrlCommand.${moduleName}_${paramName}_del,method = RequestMethod.POST)
-    public  ResponseResultVo  del( HttpServletRequest request){
+    public  Result  del( HttpServletRequest request){
 
       HttpRequestByIdListVo idRequestVo = HttpRequestParse.requestFrom(request,HttpRequestByIdListVo.class);
 
         if (idRequestVo.getIdList() == null || idRequestVo.getIdList().isEmpty()) {
-            return  ResponseResultVo.error("被删除数据条数为0");
+            return  Result.error("被删除数据条数为0");
         }
         int result = ${paramName}Service.del${className}ByIds(idRequestVo.getIdList());
-        return ResponseResultVo.write(result);
+        return Result.write(result);
     }
 
 

@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ${mainPath}.util.PageUtils;
 import ${mainPath}.core.db.ext.Query;
 import ${mainPath}.core.mybatis.${baseEntityDao};
+import  ${mainPath}.common.enums.SysResultCodeEnum;
+import  ${mainPath}.http.exception.SystemRuntimeException;
 
 import ${packageName}.${moduleName}.mapper.${className}Mapper;
 import ${packageName}.${moduleName}.entity.${className};
@@ -47,8 +49,7 @@ import java.util.List;
 @Service("${classname}Dao")
 public class ${className}Dao extends ${baseEntityDao}<${className}Mapper, ${className}> {
 
-    @Autowired
-    private ${className}Mapper  ${paramName}Mapper;
+
 
 
     /**
@@ -62,7 +63,8 @@ public class ${className}Dao extends ${baseEntityDao}<${className}Mapper, ${clas
             if(null == ${paramName}){
                 return  null;
            }
-          long id = ${paramName}Mapper.saveId(${paramName});
+
+        long id = this.getBaseMapper().saveId(${paramName});
           if (returnBool(id)){
                 return ${paramName};
           }
@@ -82,7 +84,7 @@ public class ${className}Dao extends ${baseEntityDao}<${className}Mapper, ${clas
                 if(null == ${paramName}){
                     return  null;
                }
-              long id = ${paramName}Mapper.saveToId(${paramName});
+              long id = this.getBaseMapper().saveToId(${paramName});
               if (returnBool(id)){
                     return ${paramName};
               }
@@ -98,9 +100,11 @@ public class ${className}Dao extends ${baseEntityDao}<${className}Mapper, ${clas
      * @date ${datetime}
      */
     public boolean saveBatchId(List<${className}> ${paramName}List){
-            if(null == ${paramName}List)
+            if(null == ${paramName}List){
                 return  false;
-           long id =  ${paramName}Mapper.saveBatch(${paramName}List);
+             }
+
+           long id =  this.getBaseMapper().saveBatch(${paramName}List);
            return returnBool(id);
 
     }
@@ -118,7 +122,7 @@ public class ${className}Dao extends ${baseEntityDao}<${className}Mapper, ${clas
 
         List<${className}> resDtoList = new ArrayList<>();
         if(queryWrapper == null){
-            return null;
+            queryWrapper = new QueryWrapper();
         }
 
         IPage<${className}> page = super.page(iPage, queryWrapper);
@@ -147,7 +151,7 @@ public class ${className}Dao extends ${baseEntityDao}<${className}Mapper, ${clas
 
         List<${className}> resDtoList = new ArrayList<>();
         if(queryWrapper == null){
-            return null;
+            queryWrapper = new QueryWrapper();
         }
 
         List<${className}> list = super.list(queryWrapper);
@@ -169,12 +173,12 @@ public class ${className}Dao extends ${baseEntityDao}<${className}Mapper, ${clas
      */
     public QueryWrapper<${className}> builderQueryEnum(${className}QueryEnum queryEnum,  Object queryObject){
            QueryWrapper<${className}> queryWrapper = new QueryWrapper<>();
-           if(queryEnum == null){
-               return null;
-           }
-           if(queryObject == null){
-               return null;
-           }
+            if(queryEnum == null){
+                throw  new SystemRuntimeException(SysResultCodeEnum.SYS_RESPONSE_QUERY_IS_NULL);
+            }
+            if(queryObject == null){
+                throw  new SystemRuntimeException(SysResultCodeEnum.SYS_RESPONSE_QUERY_IS_NULL);
+            }
             ${className}  ${paramName} = ${className}.build().clone(queryObject);
            switch (queryEnum){
                case DESC_ID :{

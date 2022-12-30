@@ -23,7 +23,10 @@ public class Constant {
 
 
     //TOKEN KEY
-    public static String X_ACCESS_TOKEN = "X-Access-Token";
+    public static final String X_ACCESS_TOKEN = "X-Access-Token";
+
+    //TOKEN KEY
+    public  static final String ACCESS_TOKEN = "token";
 
     public static final int CHECK_CODE_SECOND = 2 * 60;
 

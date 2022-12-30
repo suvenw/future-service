@@ -3,14 +3,10 @@ package com.suven.framework.core.db.druid;
 import com.suven.framework.core.db.*;
 import com.suven.framework.util.json.JsonUtils;
 import com.suven.framework.util.random.RandomUtils;
-import com.suven.framework.core.db.DataSourceGroup;
-import com.suven.framework.core.db.DataSourceHolder;
-import com.suven.framework.core.db.DataSourceTypeEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
-
 import java.util.*;
 
 
@@ -35,6 +31,7 @@ public class DruidDynamicDataSource extends AbstractRoutingDataSource {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 
+
 	private boolean isDefaultTargetDataSource = true;
 
 	private Map<String, DruidDatasourceGroup> map = new LinkedHashMap<>();
@@ -46,12 +43,12 @@ public class DruidDynamicDataSource extends AbstractRoutingDataSource {
 		return targetDataSources;
 	}
 
-	public Object getTargetDataSources(Object dataSourcesKey){
+	public Object getTargetDataSources(String dataSourcesKey){
 		return targetDataSources.get(dataSourcesKey);
 	}
 
 	/**注入到spring bean的名称生成规则；（模块文称+ master）*/
-	public Object putTargetDataSources(Object dataSourceKey, Object dataSourceValue){
+	public Object putTargetDataSources(String dataSourceKey, Object dataSourceValue){
 		return targetDataSources.putIfAbsent(dataSourceKey,dataSourceValue);
 	}
 
@@ -105,7 +102,8 @@ public class DruidDynamicDataSource extends AbstractRoutingDataSource {
 			}
 			String dataSourceKey = this.getDatasourceMap(ds.getGroupName(),ds.getDataType());
 
-			logger.info(" AbstractRoutingDataSource determineCurrentLookupKey DataSourceTypeEnum.SLAVE DataSourceGroup [{}]" ,dataSourceKey);
+//			logger.info(" AbstractRoutingDataSource determineCurrentLookupKey DataSourceTypeEnum  DataSourceGroup [{}]" ,dataSourceKey);
+			logger.info(" AbstractRoutingDataSource determineCurrentLookupKey DataSourceTypeEnum  " );
 			return dataSourceKey;
 		}catch (Exception e){
 			e.printStackTrace();
@@ -115,6 +113,8 @@ public class DruidDynamicDataSource extends AbstractRoutingDataSource {
 
 
 	}
+
+
 
 	private String getDatasourceMap(String moduleName, DataSourceTypeEnum dataSourceTypeEnum){
 		if(null == dataSourceTypeEnum){
@@ -132,13 +132,14 @@ public class DruidDynamicDataSource extends AbstractRoutingDataSource {
 			DruidDatasourceGroup dataSourceGroup =  map.get(moduleName);
 			List<DataSourceConnectionInfo>  slaveList = dataSourceGroup.getSlave();
 			if (null == slaveList || slaveList.isEmpty()) {
-				logger.info(" AbstractRoutingDataSource determineCurrentLookupKey DataSourceTypeEnum.SLAVE from MASTER DataSourceGroup [{}]" , JsonUtils.toJson(dataSourceGroup));
+//				logger.info(" AbstractRoutingDataSource determineCurrentLookupKey DataSourceTypeEnum.SLAVE from MASTER DataSourceGroup [{}]" , JsonUtils.toJson(dataSourceGroup));
+				logger.info(" AbstractRoutingDataSource determineCurrentLookupKey DataSourceTypeEnum.SLAVE from MASTER " );
 				return datasourceMasterBeanName;
 			}
 			int size = slaveList.size();
 			//随机获取;
-			int index = size == 1 ? 0 : RandomUtils.num(size);
-			String datasourceSlaveBeanName =builderString(moduleName, dataSourceSlaveName,  index);
+			int index = size == 1 ? 0 :RandomUtils.num(size);
+			String datasourceSlaveBeanName = builderString(moduleName, dataSourceSlaveName,  index);
 			return datasourceSlaveBeanName;
 		}
 	}

@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 
 /**
  * @Title: MyBatisBaseRedisClient.java
@@ -32,8 +34,8 @@ private static final Logger logger = LoggerFactory.getLogger(MyBatisMetaHandler.
      */
     @Override
     public void insertFill(MetaObject metaObject) {
-    //    this.setFieldValByName("createDate", new Date(), metaObject);
-    //    this.setFieldValByName("modifyDate", new Date(), metaObject);
+        this.setFieldValByName("createDate", new Date(), metaObject);
+        this.setFieldValByName("modifyDate", new Date(), metaObject);
     }
 
     /**

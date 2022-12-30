@@ -47,7 +47,7 @@ class LZWEncoder {
  int[] htab = new int[HSIZE];
  int[] codetab = new int[HSIZE];
 
- final int hsize = HSIZE; // for dynamic table sizing
+ int hsize = HSIZE; // for dynamic table sizing
 
  int free_ent = 0; // first unused entry
 
@@ -164,7 +164,7 @@ class LZWEncoder {
   // Set up the necessary values
   clear_flg = false;
   n_bits = g_init_bits;
-  maxcode = maxCode(n_bits);
+  maxcode = MAXCODE(n_bits);
 
   ClearCode = 1 << (init_bits - 1);
   EOFCode = ClearCode + 1;
@@ -240,7 +240,7 @@ class LZWEncoder {
   }
  }
  
- final int maxCode(int n_bits) {
+ final int MAXCODE(int n_bits) {
   return (1 << n_bits) - 1;
  }
  
@@ -278,14 +278,14 @@ class LZWEncoder {
   // then increase it, if possible.
   if (free_ent > maxcode || clear_flg) {
    if (clear_flg) {
-    maxcode = maxCode(n_bits = g_init_bits);
+    maxcode = MAXCODE(n_bits = g_init_bits);
     clear_flg = false;
    } else {
     ++n_bits;
     if (n_bits == maxbits)
      maxcode = maxmaxcode;
     else
-     maxcode = maxCode(n_bits);
+     maxcode = MAXCODE(n_bits);
    }
   }
 

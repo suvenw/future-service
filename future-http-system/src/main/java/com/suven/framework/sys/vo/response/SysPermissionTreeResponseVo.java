@@ -67,7 +67,7 @@ public class SysPermissionTreeResponseVo extends BaseStatusEntity implements Ser
     /**
      * 菜单排序
      */
-    private int sort;
+    private double sortNo;
 
     /**
      * 类型（0：一级菜单；1：子菜单 ；2：按钮权限）
@@ -152,7 +152,7 @@ public class SysPermissionTreeResponseVo extends BaseStatusEntity implements Ser
         this.perms = permission.getPerms();
         this.permsType = String.valueOf(permission.getPermsType());
         this.component = permission.getComponent();
-        this.createTime = permission.getCreateDate();
+        this.createTime = permission.getCreateTime();
         this.delFlag = permission.getDelFlag();
         this.description = permission.getDescription();
         this.icon = permission.getIcon();
@@ -160,8 +160,8 @@ public class SysPermissionTreeResponseVo extends BaseStatusEntity implements Ser
         this.menuType = permission.getMenuType();
         this.name = permission.getName();
         this.parentId = String.valueOf(permission.getParentId());
-        this.sort = permission.getSort();
-        this.updateTime = permission.getModifyDate();
+        this.sortNo = permission.getSortNo();
+        this.updateTime = permission.getUpdateTime();
         this.redirect = permission.getRedirect();
         this.url = permission.getUrl();
         this.hidden = permission.getHidden() == 1 ? true : false;
@@ -274,12 +274,27 @@ public class SysPermissionTreeResponseVo extends BaseStatusEntity implements Ser
         this.url = url;
     }
 
-    public int getSort() {
-        return sort;
+    public double getSortNo() {
+        return sortNo;
     }
 
-    public void setSortNo(int sortNo) {
-        this.sort = sort;
+    public void setSortNo(double sortNo) {
+        this.sortNo = sortNo;
+    }
+
+    public void setRoute(boolean route) {
+        isRoute = route;
+    }
+
+
+
+
+    public boolean isInternalOrExternal() {
+        return internalOrExternal;
+    }
+
+    public void setInternalOrExternal(boolean internalOrExternal) {
+        this.internalOrExternal = internalOrExternal;
     }
 
     public Integer getMenuType() {

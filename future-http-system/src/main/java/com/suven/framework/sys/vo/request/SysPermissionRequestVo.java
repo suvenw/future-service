@@ -1,35 +1,40 @@
 package com.suven.framework.sys.vo.request;
 
 
+import java.io.Serializable;
+import java.util.Date;
 import com.suven.framework.common.api.ApiDesc;
-import com.suven.framework.http.data.vo.RequestParserVo;
+import com.suven.framework.http.data.vo.HttpRequestByIdPageVo;
+
 
 /**
-* @ClassName: SysPermissionRequestVo.java
-* @Description: 菜单权限表的数据交互处理类
-* @author xxx.xxx
-* @date   2019-10-18 12:35:25
-* @version V1.0.0
-* <p>
-    * ----------------------------------------------------------------------------
-    *  modifyer    modifyTime                 comment
-    *
-    * ----------------------------------------------------------------------------
-    * </p>
-*/
-public class SysPermissionRequestVo extends RequestParserVo {
+ * @ClassName: SysPermissionRequestVo.java
+ *
+ * @Author 作者 : suven
+ * @CreateDate 创建时间: 2022-02-28 16:10:30
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: 菜单权限表 http业务接口交互数据请求参数实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+public class SysPermissionRequestVo extends HttpRequestByIdPageVo{
 
 
-        private long id;
-        private int pageNo;
-        private int pageSize;
 
 
 
-
-
-
- 		/** parentId 父id  */
+ 		/** parent_id 父id  */
  		@ApiDesc(value = "父id", required = 0)
  		private long parentId;
 
@@ -45,7 +50,7 @@ public class SysPermissionRequestVo extends RequestParserVo {
  		@ApiDesc(value = "组件", required = 0)
  		private String component;
 
- 		/** componentName 组件名字  */
+ 		/** component_name 组件名字  */
  		@ApiDesc(value = "组件名字", required = 0)
  		private String componentName;
 
@@ -53,7 +58,7 @@ public class SysPermissionRequestVo extends RequestParserVo {
  		@ApiDesc(value = "一级菜单跳转地址", required = 0)
  		private String redirect;
 
- 		/** menuType 菜单类型(0:一级菜单; 1:子菜单:2:按钮权限)  */
+ 		/** menu_type 菜单类型(0:一级菜单; 1:子菜单:2:按钮权限)  */
  		@ApiDesc(value = "菜单类型(0:一级菜单; 1:子菜单:2:按钮权限)", required = 0)
  		private int menuType;
 
@@ -61,11 +66,15 @@ public class SysPermissionRequestVo extends RequestParserVo {
  		@ApiDesc(value = "菜单权限编码", required = 0)
  		private String perms;
 
- 		/** permsType 权限策略1显示2禁用  */
+ 		/** perms_type 权限策略1显示2禁用  */
  		@ApiDesc(value = "权限策略1显示2禁用", required = 0)
- 		private int permsType;
+ 		private String permsType;
 
- 		/** alwaysShow 聚合子路由: 1是0否  */
+ 		/** sort_no 菜单排序  */
+ 		@ApiDesc(value = "菜单排序", required = 0)
+ 		private double sortNo;
+
+ 		/** always_show 聚合子路由: 1是0否  */
  		@ApiDesc(value = "聚合子路由: 1是0否", required = 0)
  		private int alwaysShow;
 
@@ -73,15 +82,15 @@ public class SysPermissionRequestVo extends RequestParserVo {
  		@ApiDesc(value = "菜单图标", required = 0)
  		private String icon;
 
- 		/** isRoute 是否路由菜单: 0:不是  1:是（默认值1）  */
+ 		/** is_route 是否路由菜单: 0:不是  1:是（默认值1）  */
  		@ApiDesc(value = "是否路由菜单: 0:不是  1:是（默认值1）", required = 0)
  		private int isRoute;
 
- 		/** isLeaf 是否叶子节点:    1:是   0:不是  */
+ 		/** is_leaf 是否叶子节点:    1:是   0:不是  */
  		@ApiDesc(value = "是否叶子节点:    1:是   0:不是", required = 0)
  		private int isLeaf;
 
- 		/** keepAlive 是否缓存该页面:    1:是   0:不是  */
+ 		/** keep_alive 是否缓存该页面:    1:是   0:不是  */
  		@ApiDesc(value = "是否缓存该页面:    1:是   0:不是", required = 0)
  		private int keepAlive;
 
@@ -89,21 +98,33 @@ public class SysPermissionRequestVo extends RequestParserVo {
  		@ApiDesc(value = "是否隐藏路由: 0否,1是", required = 0)
  		private int hidden;
 
+ 		/** hide_tab 是否隐藏tab: 0否,1是  */
+ 		@ApiDesc(value = "是否隐藏tab: 0否,1是", required = 0)
+ 		private int hideTab;
+
  		/** description 描述  */
  		@ApiDesc(value = "描述", required = 0)
  		private String description;
 
- 		/** delFlag 删除状态 0正常 1已删除  */
+
+
+
+
+ 		/** del_flag 删除状态 0正常 1已删除  */
  		@ApiDesc(value = "删除状态 0正常 1已删除", required = 0)
  		private int delFlag;
 
- 		/** ruleFlag 是否添加数据权限1是0否  */
+ 		/** rule_flag 是否添加数据权限1是0否  */
  		@ApiDesc(value = "是否添加数据权限1是0否", required = 0)
  		private int ruleFlag;
 
-		/** sort 排序  */
-		@ApiDesc(value = "排序", required = 0)
-		private int sort;
+ 		/** status 按钮权限状态(0无效1有效)  */
+ 		@ApiDesc(value = "按钮权限状态(0无效1有效)", required = 0)
+ 		private int status;
+
+ 		/** internal_or_external 外链菜单打开方式 0/内部打开 1/外部打开  */
+ 		@ApiDesc(value = "外链菜单打开方式 0/内部打开 1/外部打开", required = 0)
+ 		private int internalOrExternal;
 
 
 
@@ -112,10 +133,6 @@ public class SysPermissionRequestVo extends RequestParserVo {
     public static SysPermissionRequestVo build(){
         return new SysPermissionRequestVo();
     }
-
-
-
-
 
 
 
@@ -216,16 +233,28 @@ public class SysPermissionRequestVo extends RequestParserVo {
  		 		return this.perms;
  		}
 
- 		public void setPermsType( int permsType){
+ 		public void setPermsType( String permsType){
  		 		this.permsType = permsType ; 
  		 		}
- 		public SysPermissionRequestVo toPermsType( int permsType){
+ 		public SysPermissionRequestVo toPermsType( String permsType){
  		 		this.permsType = permsType ; 
  		 		 return this ;
  		}
 
- 		public int getPermsType(){
+ 		public String getPermsType(){
  		 		return this.permsType;
+ 		}
+
+ 		public void setSortNo( double sortNo){
+ 		 		this.sortNo = sortNo ; 
+ 		 		}
+ 		public SysPermissionRequestVo toSortNo( double sortNo){
+ 		 		this.sortNo = sortNo ; 
+ 		 		 return this ;
+ 		}
+
+ 		public double getSortNo(){
+ 		 		return this.sortNo;
  		}
 
  		public void setAlwaysShow( int alwaysShow){
@@ -253,10 +282,10 @@ public class SysPermissionRequestVo extends RequestParserVo {
  		}
 
  		public void setIsRoute( int isRoute){
- 		 		this.isRoute = isRoute ;
+ 		 		this.isRoute = isRoute ; 
  		 		}
  		public SysPermissionRequestVo toIsRoute( int isRoute){
- 		 		this.isRoute = isRoute ;
+ 		 		this.isRoute = isRoute ; 
  		 		 return this ;
  		}
 
@@ -300,6 +329,18 @@ public class SysPermissionRequestVo extends RequestParserVo {
  		 		return this.hidden;
  		}
 
+ 		public void setHideTab( int hideTab){
+ 		 		this.hideTab = hideTab ; 
+ 		 		}
+ 		public SysPermissionRequestVo toHideTab( int hideTab){
+ 		 		this.hideTab = hideTab ; 
+ 		 		 return this ;
+ 		}
+
+ 		public int getHideTab(){
+ 		 		return this.hideTab;
+ 		}
+
  		public void setDescription( String description){
  		 		this.description = description ; 
  		 		}
@@ -311,6 +352,10 @@ public class SysPermissionRequestVo extends RequestParserVo {
  		public String getDescription(){
  		 		return this.description;
  		}
+
+
+
+
 
  		public void setDelFlag( int delFlag){
  		 		this.delFlag = delFlag ; 
@@ -336,40 +381,31 @@ public class SysPermissionRequestVo extends RequestParserVo {
  		 		return this.ruleFlag;
  		}
 
+ 		public void setStatus( int status){
+ 		 		this.status = status ; 
+ 		 		}
+ 		public SysPermissionRequestVo toStatus( int status){
+ 		 		this.status = status ; 
+ 		 		 return this ;
+ 		}
+
+ 		public int getStatus(){
+ 		 		return this.status;
+ 		}
+
+ 		public void setInternalOrExternal( int internalOrExternal){
+ 		 		this.internalOrExternal = internalOrExternal ; 
+ 		 		}
+ 		public SysPermissionRequestVo toInternalOrExternal( int internalOrExternal){
+ 		 		this.internalOrExternal = internalOrExternal ; 
+ 		 		 return this ;
+ 		}
+
+ 		public int getInternalOrExternal(){
+ 		 		return this.internalOrExternal;
+ 		}
 
 
-        public long getId() {
-            return id;
-        }
 
-        public void setId(long id) {
-            this.id = id;
-        }
 
-        public int getPageNo() {
-             return pageNo;
-        }
-
-        public  SysPermissionRequestVo setPageNo(int pageNo) {
-            this.pageNo = pageNo;
-            return this;
-        }
-
-        public int getPageSize() {
-         return pageSize;
-        }
-
-        public  SysPermissionRequestVo setPageSize(int pageSize) {
-            this.pageSize = pageSize;
-            return this;
-        }
-
-		public int getSort() {
-			return sort;
-		}
-
-		public SysPermissionRequestVo setSort(int sort) {
-			this.sort = sort;
-			return this;
-		}
 }

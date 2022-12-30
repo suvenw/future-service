@@ -24,10 +24,6 @@ import java.util.concurrent.TimeUnit;
 @UrlRemote
 public class SysURLCommand implements IURLCommand {
 
-
-
-
-
     /** 架构使用例子接口 start**/
     public static final String sys_get_framework = "";
     public static final String sys_get_error_no = "/sys/errorNo";
@@ -48,11 +44,25 @@ public class SysURLCommand implements IURLCommand {
      **/
     @UrlRemote
     public static final String sys_login = "/sys/login";
+
+    /**
+     * 登录相关
+     **/
+    @UrlRemote
+    public static final String sys_loginToken = "/sys/loginToken";
+
     @UrlRemote
     public static final String sys_logout = "/sys/logout";
+
+
+    @UrlRemote
+    public static final String sys_get_random_image = "/sys/randomImage";
+
     @UrlRemote
     public static final String sys_get_check_code = "/sys/getCheckCode";
+
     public static final String sys_get_duplicate_check = "/sys/duplicate/check";
+
     public static final String sys_permission_list = "/sys/permission/list";
 
     public static final String sys_permission_get_system_menu_list = "/sys/permission/getSystemMenuList";
@@ -82,6 +92,7 @@ public class SysURLCommand implements IURLCommand {
     public static final String sys_user_add = "/sys/user/add";
 
     public static final String sys_user_del = "/sys/user/delete";
+
 
     public static final String sys_user_frozen_batch = "/sys/user/frozenBatch";
 

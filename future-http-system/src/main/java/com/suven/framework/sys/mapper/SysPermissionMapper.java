@@ -1,25 +1,66 @@
 package com.suven.framework.sys.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.suven.framework.sys.entity.SysPermission;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
-
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.SelectKey;
+import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * 菜单权限表
- * 
- * @author xxx.xxx
- * @email xxx@gmail.com
- * @date 2019-10-18 12:35:25
- */
+ * @ClassName: SysPermissionMapper.java
+ *
+ * @Author 作者 : suven
+ * @CreateDate 创建时间: 2022-02-28 16:10:30
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: 菜单权限表 的数据库sql编写实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
 @Mapper
 public interface SysPermissionMapper extends BaseMapper<SysPermission> {
 
-    @Update("update sys_permission set is_leaf=#{leaf} where id = #{id}")
-    int setMenuLeaf(@Param("id") long id, @Param("leaf") int leaf);
 
-    List<SysPermission> queryByUserId(@Param("userId")long userId);
+    final String SQL_INSERT = "INSERT INTO sys_permission ( parent_id, name, url, component, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_route, is_leaf, keep_alive, hidden, hide_tab, description, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external ) "
+				+ " VALUES( #{sysPermission.parentId},  #{sysPermission.name},  #{sysPermission.url},  #{sysPermission.component},  #{sysPermission.componentName},  #{sysPermission.redirect},  #{sysPermission.menuType},  #{sysPermission.perms},  #{sysPermission.permsType},  #{sysPermission.sortNo},  #{sysPermission.alwaysShow},  #{sysPermission.icon},  #{sysPermission.isRoute},  #{sysPermission.isLeaf},  #{sysPermission.keepAlive},  #{sysPermission.hidden},  #{sysPermission.hideTab},  #{sysPermission.description},  #{sysPermission.createBy},  #{sysPermission.createTime},  #{sysPermission.updateBy},  #{sysPermission.updateTime},  #{sysPermission.delFlag},  #{sysPermission.ruleFlag},  #{sysPermission.status},  #{sysPermission.internalOrExternal} ) ";
+
+	final String SQL_INSERT_ID = "INSERT INTO sys_permission (id, parent_id, name, url, component, component_name, redirect, menu_type, perms, perms_type, sort_no, always_show, icon, is_route, is_leaf, keep_alive, hidden, hide_tab, description, create_by, create_time, update_by, update_time, del_flag, rule_flag, status, internal_or_external) "
+              + " VALUES( #{sysPermission.id},  #{sysPermission.parentId},  #{sysPermission.name},  #{sysPermission.url},  #{sysPermission.component},  #{sysPermission.componentName},  #{sysPermission.redirect},  #{sysPermission.menuType},  #{sysPermission.perms},  #{sysPermission.permsType},  #{sysPermission.sortNo},  #{sysPermission.alwaysShow},  #{sysPermission.icon},  #{sysPermission.isRoute},  #{sysPermission.isLeaf},  #{sysPermission.keepAlive},  #{sysPermission.hidden},  #{sysPermission.hideTab},  #{sysPermission.description},  #{sysPermission.createBy},  #{sysPermission.createTime},  #{sysPermission.updateBy},  #{sysPermission.updateTime},  #{sysPermission.delFlag},  #{sysPermission.ruleFlag},  #{sysPermission.status},  #{sysPermission.internalOrExternal} ) ";
+
+    /** 插入sql语句实现,返回数据库id主键 **/
+    @Insert(SQL_INSERT)
+	@Options(keyColumn="id",keyProperty="id",useGeneratedKeys=true)
+	Long saveId(@Param("sysPermission")  SysPermission sysPermission);
+
+
+    /** 插入sql语句实现,返回数据库自定义id主键 **/
+    @Insert(SQL_INSERT_ID)
+	@SelectKey(statement="SELECT LAST_INSERT_ID()",
+			   keyProperty="id",
+			   resultType=Long.class,
+			   before = false)
+	Long saveToId(@Param("sysPermission") SysPermission sysPermission);
+
+
+    /** 批量插入sql语句实现,返回数据库自定义id主键 **/
+	Long saveBatch(List<SysPermission> sysPermission);
+
+
+	List<SysPermission> queryByUserId(@Param("userId")long userId);
+	
 }

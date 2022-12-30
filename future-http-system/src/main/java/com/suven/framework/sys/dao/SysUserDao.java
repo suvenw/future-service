@@ -1,142 +1,241 @@
 package com.suven.framework.sys.dao;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.suven.framework.common.enums.SysResultCodeEnum;
+import com.suven.framework.common.enums.SystemMsgCodeEnum;
+import com.suven.framework.http.exception.SystemRuntimeException;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.suven.framework.util.PageUtils;
 import com.suven.framework.core.db.ext.Query;
 import com.suven.framework.core.mybatis.MyBatisBaseEntityDao;
-import com.suven.framework.sys.dto.request.SysUserRequestDto;
-import com.suven.framework.sys.dto.response.SysUserResponseDto;
-import com.suven.framework.sys.entity.SysUser;
-import com.suven.framework.sys.entity.SysUserRole;
-import com.suven.framework.sys.mapper.SysPermissionMapper;
-import com.suven.framework.sys.mapper.SysUserMapper;
-import com.suven.framework.sys.mapper.SysUserRoleMapper;
-import com.suven.framework.util.PageUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.suven.framework.common.api.IBaseExcelData;
 
-import java.util.HashSet;
+import com.suven.framework.sys.mapper.SysUserMapper;
+import com.suven.framework.sys.entity.SysUser;
+import com.suven.framework.sys.dao.SysUserDao;
+import com.suven.framework.sys.dto.enums.SysUserQueryEnum;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+
+
+/**
+ * @ClassName: SysUserDao.java
+ *
+ * @Author 作者 : suven
+ * @CreateDate 创建时间: 2022-02-28 16:09:37
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: 用户表 的数据库查询逻辑实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
 
 
 @Service("sysUserDao")
-public class SysUserDao extends MyBatisBaseEntityDao<SysUserMapper, SysUser> {
-
-
-    @Autowired
-    private SysUserMapper sysUserMapper;
+public class SysUserDao extends MyBatisBaseEntityDao<SysUserMapper, SysUser> implements IBaseExcelData{
 
     @Autowired
-    private SysUserRoleMapper sysUserRoleMapper;
-
-    @Autowired
-    private SysPermissionMapper sysPermissionMapper;
-
+    private SysUserMapper  sysUserMapper;
 
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<SysUser> iPage = new Query<SysUser>().getPage(params);
+        IPage<SysUser>  iPage =  new Query<SysUser>().getPage(params);
 
-        QueryWrapper<SysUser> query = new QueryWrapper<>();
+        QueryWrapper<SysUser> query =  new QueryWrapper<>();
 
-        IPage<SysUser> page = this.page(iPage, query);
+        IPage<SysUser> page = this.page(iPage,query );
 
         return new PageUtils(page);
     }
 
-    public SysUser getUserByName(String username) {
-        return sysUserMapper.getUserByName(username);
+    /**
+     * 保存创建SysUser,并且保存到缓存中
+     * @param sysUser
+     * @author suven
+     * @date 2022-02-28 16:09:37
+     */
+
+    public SysUser saveId(SysUser sysUser){
+            if(null == sysUser){
+                return  null;
+           }
+          long id = sysUserMapper.saveId(sysUser);
+          if (returnBool(id)){
+                return sysUser;
+          }
+           return null;
+
+
     }
 
+     /**
+         * 保存创建SysUser,并且保存到缓存中
+         * @param sysUser
+         * @author suven
+         * @date 2022-02-28 16:09:37
+         */
 
-    public void addUserWithRole(SysUser user, String roles) {
-        this.save(user);
-        if (null != roles && !"".equals(roles)) {
-            String[] arr = roles.split(",");
-            for (String roleId : arr) {
-                int roleid = Integer.parseInt(roleId);
-                SysUserRole userRole = SysUserRole.build().toRoleId(roleid).toUserId(user.getId());
-                sysUserRoleMapper.insert(userRole);
-            }
+        public SysUser saveToId(SysUser sysUser){
+                if(null == sysUser){
+                    return  null;
+               }
+              long id = sysUserMapper.saveToId(sysUser);
+              if (returnBool(id)){
+                    return sysUser;
+              }
+               return null;
+
+
         }
-    }
-
-    public void editUserWithRole(SysUser user, String roles) {
-        this.updateById(user);
-        //先删后加
-        sysUserRoleMapper.delete(new QueryWrapper<SysUserRole>().lambda().eq(SysUserRole::getUserId, user.getId()));
-        if (null != roles && !"".equals(roles)) {
-            String[] arr = roles.split(",");
-            for (String roleId : arr) {
-                int roleid = Integer.parseInt(roleId);
-                SysUserRole userRole = SysUserRole.build().toRoleId(roleid).toUserId(user.getId());
-                sysUserRoleMapper.insert(userRole);
-            }
-        }
-    }
-
-
-    public List<String> getRole(String username) {
-        return sysUserRoleMapper.getRoleByUserName(username);
-    }
 
     /**
-     * 通过用户名获取用户角色集合
-     *
-     * @param username 用户名
-     * @return 角色集合
+     * 批量保存创建SysUser,并且保存到缓存中
+     * @param sysUserList
+     * @author suven
+     * @date 2022-02-28 16:09:37
      */
-    public Set<String> getUserRolesSet(String username) {
-        // 查询用户拥有的角色集合
-        List<String> roles = sysUserRoleMapper.getRoleByUserName(username);
-//        log.info("-------通过数据库读取用户拥有的角色Rules------username： " + username + ",Roles size: " + (roles == null ? 0 : roles.size()));
-        return new HashSet<>(roles);
+    public boolean saveBatchId(List<SysUser> sysUserList){
+            if(null == sysUserList)
+                return  false;
+           long id =  sysUserMapper.saveBatch(sysUserList);
+           return returnBool(id);
+
     }
 
 
-    // 根据部门Id查询
-    public IPage<SysUser> getUserByDepId(Page<SysUser> page, long departId, String username) {
-        return this.baseMapper.getUserByDepId(page, departId, username);
-    }
+    @Override
+    public void saveData(List<Object> list) {
+        List<SysUser> datas = new ArrayList<>();
+        list.forEach(e -> datas.add(SysUser.build().clone(e)));
+        this.saveBatch(datas, BATCH_SIZE);
+        }
+
+    /**
+     * 通过分页获取SysUser信息实现查找缓存和数据库的方法
+     * @param queryWrapper BasePage
+     * @return
+     * @author suven
+     * @date 2022-02-28 16:09:37
+     */
+    public List<SysUser> getListByPage(IPage<SysUser> iPage, QueryWrapper<SysUser> queryWrapper ){
 
 
-    // 根据角色Id查询
-    public IPage<SysUser> getUserByRoleId(Page<SysUser> page, long roleId, String username) {
-        this.slaveDataSource();
-        return this.baseMapper.getUserByRoleId(page, roleId, username);
-    }
+        List<SysUser> resDtoList = new ArrayList<>();
+        if(queryWrapper == null){
+            queryWrapper = new QueryWrapper();
+        }
+
+        IPage<SysUser> page = super.page(iPage, queryWrapper);
+        if(null == page){
+            return resDtoList;
+        }
+
+        List<SysUser>  list = page.getRecords();
+        if(null == list || list.isEmpty()){
+            return resDtoList;
+        }
 
 
-    public void updateUserDepart(String username, String orgCode) {
-        baseMapper.updateUserDepart(username, orgCode);
-    }
+        return list;
+
+        }
+    /**
+     * 通过分页获取SysUser信息实现查找缓存和数据库的方法
+     * @param queryWrapper QueryWrapper
+     * @return
+     * @author suven
+     * @date 2022-02-28 16:09:37
+     */
+    public List<SysUser> getListByQuery( QueryWrapper<SysUser> queryWrapper ){
 
 
-    public SysUser getUserByPhone(String phone) {
-        QueryWrapper<SysUser> query = new QueryWrapper<>();
-        query.eq("phone",phone);
-        return this.getOne(query,false);
-    }
+        List<SysUser> resDtoList = new ArrayList<>();
+        if(queryWrapper == null){
+            queryWrapper = new QueryWrapper();
+        }
 
+        List<SysUser> list = super.list(queryWrapper);
+        if(null == list){
+            return resDtoList;
+        }
 
-    public SysUser getUserByEmail(String email) {
-        return this.baseMapper.getUserByEmail(email);
-    }
+        return list;
 
+        }
 
+    /**
+     * 通过枚举实现SysUser不同数据库的条件查询的逻辑实现的方法
+     * @param queryEnum RedGroupDeviceQueryShipEnum
+     * @param queryObject 参数对象实现
+     * @return
+     * @author suven
+     * @date 2022-02-28 16:09:37
+     */
+    public QueryWrapper<SysUser> builderQueryEnum(SysUserQueryEnum queryEnum,  Object queryObject){
+           QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+           if(queryEnum == null){
+              throw new SystemRuntimeException(SysResultCodeEnum.SYS_RESPONSE_QUERY_IS_NULL);
+           }
+           if(queryObject == null){
+               return queryWrapper;
+           }
+            SysUser  sysUser = SysUser.build().clone(queryObject);
+           switch (queryEnum){
+               case DESC_ID :{
+                   if(StringUtils.isNoneBlank(sysUser.getUsername())){
+                       queryWrapper.eq("username",sysUser.getUsername());
+                   }
+                   if(StringUtils.isNoneBlank(sysUser.getPhone())){
+                       queryWrapper.eq("phone",sysUser.getPhone());
+                   }
+                   if(sysUser.getSex() >0){
+                       queryWrapper.eq("sex",sysUser.getSex());
+                   }
+                   if(sysUser.getStatus() >0){
+                       queryWrapper.eq("status",sysUser.getStatus());
+                   }
+                   if(StringUtils.isNoneBlank(sysUser.getRealname())){
+                       queryWrapper.eq("realname",sysUser.getRealname());
+                   }
+                   queryWrapper.orderByDesc("id");
+                   break;
+               }
+               case USER_NAME :{
+                   queryWrapper.eq("username",sysUser.getUsername());
+                   break;
+               }
+               case USER_NAME_OR_PHONE :{
+                   queryWrapper.eq("username",sysUser.getUsername());
+                   queryWrapper.or().eq("phone",sysUser.getUsername());
+                   break;
+               }
+               default:
+                   break;
+           }
+          return queryWrapper;
+       }
 
-
-
-    public IPage<SysUser> getUserByUserIds(Page<SysUser> page, List<Long> userIds, String userName) {
-        this.slaveDataSource();
-        return this.baseMapper.getUserByUserIds(page, userIds, userName);
-    }
-
-    public IPage<SysUserResponseDto> getPageList(Page<SysUserResponseDto> page, SysUserRequestDto userReqDto) {
-        this.slaveDataSource();
-        return this.baseMapper.getPageList(page,userReqDto);
+    public List<SysUser> getSysUserRoleId(Page<SysUser> iPage, long roleId, String username) {
+        IPage<SysUser> sysUserIPage =  sysUserMapper.getUserByRoleId(iPage,roleId,username);
+        return sysUserIPage.getRecords();
     }
 }

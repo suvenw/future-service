@@ -58,6 +58,11 @@ public interface IResultCodeEnum {
 		return msgEnum;
 	}
 
+	default public IResultCodeEnum formatMsg(Object... msgContent) {
+		IResultCodeEnum msgEnum = MsgEnumType.format(this,msgContent);
+		return msgEnum;
+	}
+
 	static class MsgEnumType implements IResultCodeEnum {
 
 		private int errCode = 1100001;
@@ -68,8 +73,8 @@ public interface IResultCodeEnum {
 			this.errMsg = errMsg;
 		}
 
-		public static IResultCodeEnum format(IResultCodeEnum enumType, String... msgContent){
-			String msg =  String.format(enumType.getMsg(), Arrays.asList(msgContent));
+		public static IResultCodeEnum format(IResultCodeEnum enumType, Object... msgContent){
+			String msg =  String.format(enumType.getMsg(), msgContent);
 			return new MsgEnumType(enumType.getCode(),msg);
 
 		}

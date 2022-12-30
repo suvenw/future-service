@@ -1,11 +1,11 @@
 package com.suven.framework;
 
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.context.annotation.ComponentScan;
 import com.suven.framework.common.constants.GlobalConfigConstants;
 import com.suven.framework.http.inters.IProjectModule;
 import com.suven.framework.http.inters.ProjectModuleEnum;
 import com.suven.framework.http.jetty.AbstractJettyAppServer;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.context.annotation.ComponentScan;
 
 
 @MapperScan(basePackages="com.suven.framework.*.mapper",sqlSessionFactoryRef = "sqlSessionFactory")
@@ -19,6 +19,6 @@ public class SysMain extends AbstractJettyAppServer {
 
     @Override
     protected IProjectModule getServiceName() {
-        return ProjectModuleEnum.HTTP_SYSTEM;
+        return ProjectModuleEnum.HTTP_DEFAULT;
     }
 }

@@ -33,14 +33,14 @@ public abstract class BaseRedisClient<T extends IBaseApi> {
 	public Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	private RedisClusterServer redisClusterServer;
+	private IRedisClusterServer redisClusterServer;
 
 	/**
 	 * 方便后面增加其它需求;
 	 * 
 	 * @return
 	 */
-	public RedisClusterServer getRedisClusterServer() {
+	public IRedisClusterServer getRedisClusterServer() {
 		return this.redisClusterServer;
 	}
 

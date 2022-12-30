@@ -33,22 +33,24 @@ import ${mainPath}.http.data.vo.HttpRequestByIdVo;
  * @Copyright: (c) 2021 gc by https://www.suven.top
  **/
 
+#if( $isLombok==1)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ${className}AddRequestVo extends HttpRequestByIdVo  implements Serializable{
+#end
+public class ${className}AddRequestVo extends HttpRequestByIdVo {
 
 
 
 
 #foreach ($column in $addList)
-#if( $column.fieldAttrName )
-$column.docAttrName
-$column.fieldAttrName
-#end
+    #if( $column.fieldAttrName )
+        $column.explainAttrName
+        $column.docAttrName
+        $column.fieldAttrName
+    #end
 
 #end
-
 
 
 
@@ -60,15 +62,16 @@ $column.fieldAttrName
 
 
 #foreach ($column in $addList)
-#if( $column.fieldAttrName )
+    #if( $column.fieldAttrName )
+        $column.buildRequestAddVoName
+        #if( $isLombok==0)
+            $column.setAttrName
+            $column.getAttrName
+        #end
+    #end
 
-$column.buildRequestAddVoName
 #end
-
-#end
-
-
-
 
 
 }
+

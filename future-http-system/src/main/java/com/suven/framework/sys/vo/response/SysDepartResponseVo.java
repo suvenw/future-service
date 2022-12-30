@@ -1,309 +1,329 @@
 package com.suven.framework.sys.vo.response;
 
 
-import com.suven.framework.common.api.ApiDesc;
-import com.suven.framework.common.api.ApiDoc;
-import com.suven.framework.common.data.BaseStatusEntity;
-import com.suven.framework.sys.entity.SysDepart;
-
 import java.io.Serializable;
+import java.util.Date;
+
+import com.suven.framework.common.data.BaseByTimeEntity;
+import com.suven.framework.common.api.ApiDesc;
+import com.alibaba.excel.annotation.ExcelProperty;
 
 /**
- * @author xxx.xxx
- * @version V1.0.0
- * <p>
- * ----------------------------------------------------------------------------
- * modifyer    modifyTime                 comment
- * <p>
- * ----------------------------------------------------------------------------
- * </p>
  * @ClassName: SysDepartResponseVo.java
- * @Description: 部门组织机构表的数据交互处理类
- * @date 2019-10-18 12:35:25
- */
-public class SysDepartResponseVo extends BaseStatusEntity implements Serializable {
+ *
+ * @Author 作者 : suven
+ * @CreateDate 创建时间: 2022-02-28 16:33:38
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: 组织机构表 http业务接口交互数据返回参数实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+public class SysDepartResponseVo  extends BaseByTimeEntity implements Serializable {
 
 
-    /**
-     * parentId 父机构ID
-     */
-    @ApiDesc(value = "父机构ID", required = 0)
-    private long parentId;
-
-    /**
-     * departName 机构/部门名称
-     */
-    @ApiDesc(value = "机构/部门名称", required = 0)
-    private String departName;
-
-    /**
-     * departNameEn 英文名
-     */
-    @ApiDesc(value = "英文名", required = 0)
-    private String departNameEn;
-
-    /**
-     * departNameAbbr 缩写
-     */
-    @ApiDesc(value = "缩写", required = 0)
-    private String departNameAbbr;
-
-    /**
-     * description 描述
-     */
-    @ApiDesc(value = "描述", required = 0)
-    private String description;
-
-    /**
-     * orgType 机构类型 1一级部门 2子部门
-     */
-    @ApiDesc(value = "机构类型 1一级部门 2子部门", required = 0)
-    private int orgType;
-
-    /**
-     * orgCode 机构编码
-     */
-    @ApiDesc(value = "机构编码", required = 0)
-    private String orgCode;
-
-    /**
-     * mobile 手机号
-     */
-    @ApiDesc(value = "手机号", required = 0)
-    private String mobile;
-
-    /**
-     * fax 传真
-     */
-    @ApiDesc(value = "传真", required = 0)
-    private String fax;
-
-    /**
-     * address 地址
-     */
-    @ApiDesc(value = "地址", required = 0)
-    private String address;
-
-    /**
-     * remarks 备注
-     */
-    @ApiDesc(value = "备注", required = 0)
-    private String remarks;
 
 
-    public static SysDepartResponseVo build() {
+ 		/** parent_id 父机构ID  */
+ 		@ApiDesc(value = "父机构ID", required = 0)
+ 		@ExcelProperty(value = "父机构ID")
+ 		private long parentId;
+
+ 		/** depart_name 机构/部门名称  */
+ 		@ApiDesc(value = "机构/部门名称", required = 0)
+ 		@ExcelProperty(value = "机构/部门名称")
+ 		private String departName;
+
+ 		/** depart_name_en 英文名  */
+ 		@ApiDesc(value = "英文名", required = 0)
+ 		@ExcelProperty(value = "英文名")
+ 		private String departNameEn;
+
+ 		/** depart_name_abbr 缩写  */
+ 		@ApiDesc(value = "缩写", required = 0)
+ 		@ExcelProperty(value = "缩写")
+ 		private String departNameAbbr;
+
+ 		/** depart_order 排序  */
+ 		@ApiDesc(value = "排序", required = 0)
+ 		@ExcelProperty(value = "排序")
+ 		private int departOrder;
+
+ 		/** description 描述  */
+ 		@ApiDesc(value = "描述", required = 0)
+ 		@ExcelProperty(value = "描述")
+ 		private String description;
+
+ 		/** org_category 机构类别 1公司，2组织机构，2岗位  */
+ 		@ApiDesc(value = "机构类别 1公司，2组织机构，2岗位", required = 0)
+ 		@ExcelProperty(value = "机构类别 1公司，2组织机构，2岗位")
+ 		private int orgCategory;
+
+ 		/** org_type 机构类型 1一级部门 2子部门  */
+ 		@ApiDesc(value = "机构类型 1一级部门 2子部门", required = 0)
+ 		@ExcelProperty(value = "机构类型 1一级部门 2子部门")
+ 		private int orgType;
+
+ 		/** org_code 机构编码  */
+ 		@ApiDesc(value = "机构编码", required = 0)
+ 		@ExcelProperty(value = "机构编码")
+ 		private String orgCode;
+
+ 		/** mobile 手机号  */
+ 		@ApiDesc(value = "手机号", required = 0)
+ 		@ExcelProperty(value = "手机号")
+ 		private String mobile;
+
+ 		/** fax 传真  */
+ 		@ApiDesc(value = "传真", required = 0)
+ 		@ExcelProperty(value = "传真")
+ 		private String fax;
+
+ 		/** address 地址  */
+ 		@ApiDesc(value = "地址", required = 0)
+ 		@ExcelProperty(value = "地址")
+ 		private String address;
+
+ 		/** memo 备注  */
+ 		@ApiDesc(value = "备注", required = 0)
+ 		@ExcelProperty(value = "备注")
+ 		private String memo;
+
+ 		/** status 状态（1启用，0不启用）  */
+ 		@ApiDesc(value = "状态（1启用，0不启用）", required = 0)
+ 		@ExcelProperty(value = "状态（1启用，0不启用）")
+ 		private int status;
+
+ 		/** del_flag 删除状态（0，正常，1已删除）  */
+ 		@ApiDesc(value = "删除状态（0，正常，1已删除）", required = 0)
+ 		@ExcelProperty(value = "删除状态（0，正常，1已删除）")
+ 		private int delFlag;
+
+ 		/** qywx_identifier 对接企业微信的ID  */
+ 		@ApiDesc(value = "对接企业微信的ID", required = 0)
+ 		@ExcelProperty(value = "对接企业微信的ID")
+ 		private String qywxIdentifier;
+
+
+
+
+
+
+    public static SysDepartResponseVo build(){
         return new SysDepartResponseVo();
     }
 
+    
+     		public void setParentId( long parentId){
+ 		 		this.parentId = parentId ; 
+ 		 		}
+ 		public SysDepartResponseVo toParentId( long parentId){
+ 		 		this.parentId = parentId ; 
+ 		 		 return this ;
+ 		}
 
-    public void setParentId(long parentId) {
-        this.parentId = parentId;
-    }
+ 		public long getParentId(){
+ 		 		return this.parentId;
+ 		}
+    
+     		public void setDepartName( String departName){
+ 		 		this.departName = departName ; 
+ 		 		}
+ 		public SysDepartResponseVo toDepartName( String departName){
+ 		 		this.departName = departName ; 
+ 		 		 return this ;
+ 		}
 
-    public SysDepartResponseVo toParentId(long parentId) {
-        this.parentId = parentId;
-        return this;
-    }
+ 		public String getDepartName(){
+ 		 		return this.departName;
+ 		}
+    
+     		public void setDepartNameEn( String departNameEn){
+ 		 		this.departNameEn = departNameEn ; 
+ 		 		}
+ 		public SysDepartResponseVo toDepartNameEn( String departNameEn){
+ 		 		this.departNameEn = departNameEn ; 
+ 		 		 return this ;
+ 		}
 
-    public long getParentId() {
-        return this.parentId;
-    }
+ 		public String getDepartNameEn(){
+ 		 		return this.departNameEn;
+ 		}
+    
+     		public void setDepartNameAbbr( String departNameAbbr){
+ 		 		this.departNameAbbr = departNameAbbr ; 
+ 		 		}
+ 		public SysDepartResponseVo toDepartNameAbbr( String departNameAbbr){
+ 		 		this.departNameAbbr = departNameAbbr ; 
+ 		 		 return this ;
+ 		}
 
-    public void setDepartName(String departName) {
-        this.departName = departName;
-    }
+ 		public String getDepartNameAbbr(){
+ 		 		return this.departNameAbbr;
+ 		}
+    
+     		public void setDepartOrder( int departOrder){
+ 		 		this.departOrder = departOrder ; 
+ 		 		}
+ 		public SysDepartResponseVo toDepartOrder( int departOrder){
+ 		 		this.departOrder = departOrder ; 
+ 		 		 return this ;
+ 		}
 
-    public SysDepartResponseVo toDepartName(String departName) {
-        this.departName = departName;
-        return this;
-    }
+ 		public int getDepartOrder(){
+ 		 		return this.departOrder;
+ 		}
+    
+     		public void setDescription( String description){
+ 		 		this.description = description ; 
+ 		 		}
+ 		public SysDepartResponseVo toDescription( String description){
+ 		 		this.description = description ; 
+ 		 		 return this ;
+ 		}
 
-    public String getDepartName() {
-        return this.departName;
-    }
+ 		public String getDescription(){
+ 		 		return this.description;
+ 		}
+    
+     		public void setOrgCategory( int orgCategory){
+ 		 		this.orgCategory = orgCategory ; 
+ 		 		}
+ 		public SysDepartResponseVo toOrgCategory( int orgCategory){
+ 		 		this.orgCategory = orgCategory ; 
+ 		 		 return this ;
+ 		}
 
-    public void setDepartNameEn(String departNameEn) {
-        this.departNameEn = departNameEn;
-    }
+ 		public int getOrgCategory(){
+ 		 		return this.orgCategory;
+ 		}
+    
+     		public void setOrgType( int orgType){
+ 		 		this.orgType = orgType ; 
+ 		 		}
+ 		public SysDepartResponseVo toOrgType( int orgType){
+ 		 		this.orgType = orgType ; 
+ 		 		 return this ;
+ 		}
 
-    public SysDepartResponseVo toDepartNameEn(String departNameEn) {
-        this.departNameEn = departNameEn;
-        return this;
-    }
+ 		public int getOrgType(){
+ 		 		return this.orgType;
+ 		}
+    
+     		public void setOrgCode( String orgCode){
+ 		 		this.orgCode = orgCode ; 
+ 		 		}
+ 		public SysDepartResponseVo toOrgCode( String orgCode){
+ 		 		this.orgCode = orgCode ; 
+ 		 		 return this ;
+ 		}
 
-    public String getDepartNameEn() {
-        return this.departNameEn;
-    }
+ 		public String getOrgCode(){
+ 		 		return this.orgCode;
+ 		}
+    
+     		public void setMobile( String mobile){
+ 		 		this.mobile = mobile ; 
+ 		 		}
+ 		public SysDepartResponseVo toMobile( String mobile){
+ 		 		this.mobile = mobile ; 
+ 		 		 return this ;
+ 		}
 
-    public void setDepartNameAbbr(String departNameAbbr) {
-        this.departNameAbbr = departNameAbbr;
-    }
+ 		public String getMobile(){
+ 		 		return this.mobile;
+ 		}
+    
+     		public void setFax( String fax){
+ 		 		this.fax = fax ; 
+ 		 		}
+ 		public SysDepartResponseVo toFax( String fax){
+ 		 		this.fax = fax ; 
+ 		 		 return this ;
+ 		}
 
-    public SysDepartResponseVo toDepartNameAbbr(String departNameAbbr) {
-        this.departNameAbbr = departNameAbbr;
-        return this;
-    }
+ 		public String getFax(){
+ 		 		return this.fax;
+ 		}
+    
+     		public void setAddress( String address){
+ 		 		this.address = address ; 
+ 		 		}
+ 		public SysDepartResponseVo toAddress( String address){
+ 		 		this.address = address ; 
+ 		 		 return this ;
+ 		}
 
-    public String getDepartNameAbbr() {
-        return this.departNameAbbr;
-    }
+ 		public String getAddress(){
+ 		 		return this.address;
+ 		}
+    
+     		public void setMemo( String memo){
+ 		 		this.memo = memo ; 
+ 		 		}
+ 		public SysDepartResponseVo toMemo( String memo){
+ 		 		this.memo = memo ; 
+ 		 		 return this ;
+ 		}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+ 		public String getMemo(){
+ 		 		return this.memo;
+ 		}
+    
+     		public void setStatus( int status){
+ 		 		this.status = status ; 
+ 		 		}
+ 		public SysDepartResponseVo toStatus( int status){
+ 		 		this.status = status ; 
+ 		 		 return this ;
+ 		}
 
-    public SysDepartResponseVo toDescription(String description) {
-        this.description = description;
-        return this;
-    }
+ 		public int getStatus(){
+ 		 		return this.status;
+ 		}
+    
+     		public void setDelFlag( int delFlag){
+ 		 		this.delFlag = delFlag ; 
+ 		 		}
+ 		public SysDepartResponseVo toDelFlag( int delFlag){
+ 		 		this.delFlag = delFlag ; 
+ 		 		 return this ;
+ 		}
 
-    public String getDescription() {
-        return this.description;
-    }
+ 		public int getDelFlag(){
+ 		 		return this.delFlag;
+ 		}
+    
+     		public void setQywxIdentifier( String qywxIdentifier){
+ 		 		this.qywxIdentifier = qywxIdentifier ; 
+ 		 		}
+ 		public SysDepartResponseVo toQywxIdentifier( String qywxIdentifier){
+ 		 		this.qywxIdentifier = qywxIdentifier ; 
+ 		 		 return this ;
+ 		}
 
-    public void setOrgType(int orgType) {
-        this.orgType = orgType;
-    }
-
-    public SysDepartResponseVo toOrgType(int orgType) {
-        this.orgType = orgType;
-        return this;
-    }
-
-    public int getOrgType() {
-        return this.orgType;
-    }
-
-    public void setOrgCode(String orgCode) {
-        this.orgCode = orgCode;
-    }
-
-    public SysDepartResponseVo toOrgCode(String orgCode) {
-        this.orgCode = orgCode;
-        return this;
-    }
-
-    public String getOrgCode() {
-        return this.orgCode;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
-
-    public SysDepartResponseVo toMobile(String mobile) {
-        this.mobile = mobile;
-        return this;
-    }
-
-    public String getMobile() {
-        return this.mobile;
-    }
-
-    public void setFax(String fax) {
-        this.fax = fax;
-    }
-
-    public SysDepartResponseVo toFax(String fax) {
-        this.fax = fax;
-        return this;
-    }
-
-    public String getFax() {
-        return this.fax;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public SysDepartResponseVo toAddress(String address) {
-        this.address = address;
-        return this;
-    }
-
-    public String getAddress() {
-        return this.address;
-    }
-
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
-    }
-
-    public SysDepartResponseVo toRemarks(String remarks) {
-        this.remarks = remarks;
-        return this;
-    }
-
-    public String getRemarks() {
-        return this.remarks;
-    }
-
-
-    /**
-     * * 部门表 封装树结构的部门的名称的实体类
-     */
-    @ApiDoc(module = "部门名返回类")
-    public static class DepartTreeRespVo extends BaseStatusEntity implements Serializable {
-        private static final long serialVersionUID = 1L;
-
-        // 主键ID
-        @ApiDesc("部门表ID")
-        private long key;
-
-        // 主键ID
-        @ApiDesc("部门表ID")
-        private long value;
-
-        // 部门名称
-        @ApiDesc("部门名称")
-        private String title;
-
-        public static DepartTreeRespVo build() {
-            return new DepartTreeRespVo();
-        }
-
-        /**
-         * 该方法为用户部门的实现类所使用
-         *
-         * @param sysDepart
-         * @return
-         */
-        public DepartTreeRespVo convertByUserDepart(SysDepart sysDepart) {
-            this.key = sysDepart.getId();
-            this.value = sysDepart.getId();
-            this.title = sysDepart.getDepartName();
-            return this;
-        }
+ 		public String getQywxIdentifier(){
+ 		 		return this.qywxIdentifier;
+ 		}
+    
+    
+    
+    
+    
 
 
-        public long getKey() {
-            return key;
-        }
 
-        public DepartTreeRespVo setKey(long key) {
-            this.key = key;
-            return this;
-        }
 
-        public long getValue() {
-            return value;
-        }
-
-        public DepartTreeRespVo setValue(long value) {
-            this.value = value;
-            return this;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public DepartTreeRespVo setTitle(String title) {
-            this.title = title;
-            return this;
-        }
-    }
 
 
 }

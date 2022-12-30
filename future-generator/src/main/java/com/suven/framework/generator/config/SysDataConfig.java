@@ -71,6 +71,9 @@ public class SysDataConfig {
         return true;
     }
 
+    public LinkedHashMap<Integer, ProjectPathConfig> getPathMap() {
+        return pathMap;
+    }
 
     public List<ProjectPathConfig> getList(){
         return new ArrayList<>(pathMap.values());
@@ -91,26 +94,19 @@ public class SysDataConfig {
 
     public Class getTempCodeEnumClass(){
         String tempEnum =  sysConfig.getTempEnum();
-        Map<String,Class<?>>  map = TemplateCodeEnum.getTemplateEnum();
-        if(map != null && map.get(tempEnum) != null){
-            return  map.get(tempEnum);
+        if("JdbcCodeCacheEnum".equalsIgnoreCase(tempEnum)){
+            return  JdbcCodeCacheEnum.class;
+        }else if("JdbcCodeStatusEnum".equalsIgnoreCase(tempEnum)){
+            return JdbcCodeStatusEnum.class;
+        }else if("MybatisCodeEnum".equalsIgnoreCase(tempEnum)){
+            return MybatisCodeEnum.class;
+        }else if("MvcCodeEnum".equalsIgnoreCase(tempEnum)){
+            return MvcCodeEnum.class;
+        }else if("SimpMvcCodeEnum".equalsIgnoreCase(tempEnum)){
+            return SimpMvcCodeEnum.class;
         }else {
             throw new RRException("不支持当前模板：" + tempEnum);
         }
-
-//        if("JdbcCodeCacheEnum".equalsIgnoreCase(tempEnum)){
-//            return  JdbcCodeCacheEnum.class;
-//        }else if("JdbcCodeStatusEnum".equalsIgnoreCase(tempEnum)){
-//            return JdbcCodeStatusEnum.class;
-//        }else if("MybatisCodeEnum".equalsIgnoreCase(tempEnum)){
-//            return MybatisCodeEnum.class;
-//        }else if("MvcCodeEnum".equalsIgnoreCase(tempEnum)){
-//            return MvcCodeEnum.class;
-//        }else if("SimpMvcCodeEnum".equalsIgnoreCase(tempEnum)){
-//            return SimpMvcCodeEnum.class;
-//        }else {
-//            throw new RRException("不支持当前模板：" + tempEnum);
-//        }
     }
 
     public String getEntityClass(){

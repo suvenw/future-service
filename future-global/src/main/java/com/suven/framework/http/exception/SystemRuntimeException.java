@@ -45,14 +45,10 @@ public class SystemRuntimeException extends RuntimeException{
 	}
 
     public SystemRuntimeException(IResultCodeEnum error, String... errParam)  {
-		super(error.getMsg());
+		super(null == errParam ? error.getMsg() : String.format(error.getMsg(), errParam));
 		this.errorCode =  error.getCode();
-		if(null == errParam){
-			this.errorMessage = error.getMsg();
-		}else {
-			Object[] param = Arrays.asList(errParam).toArray();
-			this.errorMessage = String.format(error.getMsg(), param);
-		}
+		this.errorMessage = super.getMessage();
+		this.error = error;
 
     }
 	public SystemRuntimeException setResponse(Object response) {

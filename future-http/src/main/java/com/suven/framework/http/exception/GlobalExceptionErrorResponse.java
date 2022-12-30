@@ -2,10 +2,11 @@ package com.suven.framework.http.exception;
 
 import com.suven.framework.common.enums.SysResultCodeEnum;
 import com.suven.framework.http.data.vo.IResponseResult;
-import com.suven.framework.http.inters.IResultCodeEnum;
-import com.suven.framework.http.message.HttpRequestPostMessage;
-import com.suven.framework.http.message.ParamMessage;
 import com.suven.framework.util.constants.Env;
+import com.suven.framework.http.data.vo.ResponseResultVo;
+import com.suven.framework.http.inters.IResultCodeEnum;
+import com.suven.framework.http.message.ParamMessage;
+import com.suven.framework.http.message.HttpRequestPostMessage;
 import com.suven.framework.util.json.JsonFormatTool;
 import com.suven.framework.util.json.JsonUtils;
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ public class GlobalExceptionErrorResponse {
 
     private static Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    protected IResponseResult write(IResponseResult result, Object message, HttpServletResponse response) {
+    protected IResponseResult write( IResponseResult result,Object message, HttpServletResponse response) {
 
         response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.setHeader("Accept",MediaType.APPLICATION_JSON_VALUE);

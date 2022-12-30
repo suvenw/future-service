@@ -40,8 +40,8 @@ var vm = new Vue({
 	data:{
 		q:{
 			tableName: null,
-            mainPath: 'com.sixeco.framework',
-            packageName: 'com.sixeco.car',
+            mainPath: 'com.suven.framework',
+            packageName: 'com.suven.car',
             moduleName:'user',
             author: 'suven',
             email:'suvenw@163.com',

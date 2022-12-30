@@ -3,14 +3,20 @@ package com.suven.framework.http.data.vo;
 import com.alibaba.fastjson.JSONObject;
 import com.suven.framework.common.api.ApiDesc;
 import com.suven.framework.common.enums.SystemMsgCodeEnum;
+import org.apache.commons.lang3.ClassUtils;
 
 import java.io.Serializable;
 
 /**
- *   接口返回数据格式
- * @author scott
- * @email jeecgos@163.com
- * @date  2019年1月19日
+ * @Title: ResponseResultVo.java
+ * @author Joven.wang
+ * @date   2019-10-18 12:35:25
+ * @version V1.0
+ *  <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * </pre>
+ * @Description: (说明) http 接口返回拉口的统一封装对象类;
  */
 @ApiDesc(value= "接口返回对象")
 public class SystemResultVo<T> implements IResponseResult<T>,Serializable {
@@ -54,6 +60,11 @@ public class SystemResultVo<T> implements IResponseResult<T>,Serializable {
 		r.setCode(SystemMsgCodeEnum.SYS_SC_OK_200.getCode());
 		return r;
 	}
+	@Override
+	public IResponseResult buildResultVo(T result){
+		return buildResultVo(true,SystemMsgCodeEnum.SYS_SC_OK_200.getCode(),SystemMsgCodeEnum.SYS_SC_OK_200.getMsg(),result);
+	}
+
 
 
 	@Override
@@ -84,17 +95,10 @@ public class SystemResultVo<T> implements IResponseResult<T>,Serializable {
 		this.code = code;
 		this.message = message;
 		this.success = success;
-		if(null != result){
-			this.result = this.initData(result);
-		}
-
+		this.result = initData(result);
 		return this;
 	}
 
-	@Override
-	public IResponseResult buildResultVo(T result){
-		return buildResultVo(true,SystemMsgCodeEnum.SYS_SC_OK_200.getCode(),SystemMsgCodeEnum.SYS_SC_OK_200.getMsg(),result);
-	}
 
 	public boolean isSuccess() {
 		return success;
@@ -135,4 +139,6 @@ public class SystemResultVo<T> implements IResponseResult<T>,Serializable {
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
+
+
 }

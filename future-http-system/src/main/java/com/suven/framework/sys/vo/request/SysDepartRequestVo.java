@@ -1,59 +1,72 @@
 package com.suven.framework.sys.vo.request;
 
 
+import java.io.Serializable;
+import java.util.Date;
 import com.suven.framework.common.api.ApiDesc;
-import com.suven.framework.http.data.vo.RequestParserVo;
+import com.suven.framework.http.data.vo.HttpRequestByIdPageVo;
+
 
 /**
-* @ClassName: SysDepartRequestVo.java
-* @Description: 部门组织机构表的数据交互处理类
-* @author xxx.xxx
-* @date   2019-10-18 12:35:25
-* @version V1.0.0
-* <p>
-    * ----------------------------------------------------------------------------
-    *  modifyer    modifyTime                 comment
-    *
-    * ----------------------------------------------------------------------------
-    * </p>
-*/
-public class SysDepartRequestVo extends RequestParserVo {
+ * @ClassName: SysDepartRequestVo.java
+ *
+ * @Author 作者 : suven
+ * @CreateDate 创建时间: 2022-02-28 16:33:38
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: 组织机构表 http业务接口交互数据请求参数实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * ----------------------------------------------------------------------------
+ *
+ * ----------------------------------------------------------------------------
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+public class SysDepartRequestVo extends HttpRequestByIdPageVo{
 
 
-        private long id;
-        private int pageNo;
-        private int pageSize;
 
 
 
-
-
-
- 		/** parentId 父机构ID  */
+ 		/** parent_id 父机构ID  */
  		@ApiDesc(value = "父机构ID", required = 0)
  		private long parentId;
 
- 		/** departName 机构/部门名称  */
+ 		/** depart_name 机构/部门名称  */
  		@ApiDesc(value = "机构/部门名称", required = 0)
  		private String departName;
 
- 		/** departNameEn 英文名  */
+ 		/** depart_name_en 英文名  */
  		@ApiDesc(value = "英文名", required = 0)
  		private String departNameEn;
 
- 		/** departNameAbbr 缩写  */
+ 		/** depart_name_abbr 缩写  */
  		@ApiDesc(value = "缩写", required = 0)
  		private String departNameAbbr;
+
+ 		/** depart_order 排序  */
+ 		@ApiDesc(value = "排序", required = 0)
+ 		private int departOrder;
 
  		/** description 描述  */
  		@ApiDesc(value = "描述", required = 0)
  		private String description;
 
- 		/** orgType 机构类型 1一级部门 2子部门  */
+ 		/** org_category 机构类别 1公司，2组织机构，2岗位  */
+ 		@ApiDesc(value = "机构类别 1公司，2组织机构，2岗位", required = 0)
+ 		private int orgCategory;
+
+ 		/** org_type 机构类型 1一级部门 2子部门  */
  		@ApiDesc(value = "机构类型 1一级部门 2子部门", required = 0)
  		private int orgType;
 
- 		/** orgCode 机构编码  */
+ 		/** org_code 机构编码  */
  		@ApiDesc(value = "机构编码", required = 0)
  		private String orgCode;
 
@@ -69,13 +82,25 @@ public class SysDepartRequestVo extends RequestParserVo {
  		@ApiDesc(value = "地址", required = 0)
  		private String address;
 
- 		/** remarks 备注  */
+ 		/** memo 备注  */
  		@ApiDesc(value = "备注", required = 0)
- 		private String remarks;
+ 		private String memo;
 
-		/** sort 排序  */
-		@ApiDesc(value = "排序", required = 0)
-		private int sort;
+ 		/** status 状态（1启用，0不启用）  */
+ 		@ApiDesc(value = "状态（1启用，0不启用）", required = 0)
+ 		private int status;
+
+ 		/** del_flag 删除状态（0，正常，1已删除）  */
+ 		@ApiDesc(value = "删除状态（0，正常，1已删除）", required = 0)
+ 		private int delFlag;
+
+ 		/** qywx_identifier 对接企业微信的ID  */
+ 		@ApiDesc(value = "对接企业微信的ID", required = 0)
+ 		private String qywxIdentifier;
+
+
+
+
 
 
 
@@ -84,10 +109,6 @@ public class SysDepartRequestVo extends RequestParserVo {
     public static SysDepartRequestVo build(){
         return new SysDepartRequestVo();
     }
-
-
-
-
 
 
 
@@ -140,6 +161,18 @@ public class SysDepartRequestVo extends RequestParserVo {
  		 		return this.departNameAbbr;
  		}
 
+ 		public void setDepartOrder( int departOrder){
+ 		 		this.departOrder = departOrder ; 
+ 		 		}
+ 		public SysDepartRequestVo toDepartOrder( int departOrder){
+ 		 		this.departOrder = departOrder ; 
+ 		 		 return this ;
+ 		}
+
+ 		public int getDepartOrder(){
+ 		 		return this.departOrder;
+ 		}
+
  		public void setDescription( String description){
  		 		this.description = description ; 
  		 		}
@@ -150,6 +183,18 @@ public class SysDepartRequestVo extends RequestParserVo {
 
  		public String getDescription(){
  		 		return this.description;
+ 		}
+
+ 		public void setOrgCategory( int orgCategory){
+ 		 		this.orgCategory = orgCategory ; 
+ 		 		}
+ 		public SysDepartRequestVo toOrgCategory( int orgCategory){
+ 		 		this.orgCategory = orgCategory ; 
+ 		 		 return this ;
+ 		}
+
+ 		public int getOrgCategory(){
+ 		 		return this.orgCategory;
  		}
 
  		public void setOrgType( int orgType){
@@ -212,52 +257,59 @@ public class SysDepartRequestVo extends RequestParserVo {
  		 		return this.address;
  		}
 
- 		public void setRemarks( String remarks){
- 		 		this.remarks = remarks ; 
+ 		public void setMemo( String memo){
+ 		 		this.memo = memo ; 
  		 		}
- 		public SysDepartRequestVo toRemarks( String remarks){
- 		 		this.remarks = remarks ; 
+ 		public SysDepartRequestVo toMemo( String memo){
+ 		 		this.memo = memo ; 
  		 		 return this ;
  		}
 
- 		public String getRemarks(){
- 		 		return this.remarks;
+ 		public String getMemo(){
+ 		 		return this.memo;
+ 		}
+
+ 		public void setStatus( int status){
+ 		 		this.status = status ; 
+ 		 		}
+ 		public SysDepartRequestVo toStatus( int status){
+ 		 		this.status = status ; 
+ 		 		 return this ;
+ 		}
+
+ 		public int getStatus(){
+ 		 		return this.status;
+ 		}
+
+ 		public void setDelFlag( int delFlag){
+ 		 		this.delFlag = delFlag ; 
+ 		 		}
+ 		public SysDepartRequestVo toDelFlag( int delFlag){
+ 		 		this.delFlag = delFlag ; 
+ 		 		 return this ;
+ 		}
+
+ 		public int getDelFlag(){
+ 		 		return this.delFlag;
+ 		}
+
+ 		public void setQywxIdentifier( String qywxIdentifier){
+ 		 		this.qywxIdentifier = qywxIdentifier ; 
+ 		 		}
+ 		public SysDepartRequestVo toQywxIdentifier( String qywxIdentifier){
+ 		 		this.qywxIdentifier = qywxIdentifier ; 
+ 		 		 return this ;
+ 		}
+
+ 		public String getQywxIdentifier(){
+ 		 		return this.qywxIdentifier;
  		}
 
 
 
-        public long getId() {
-            return id;
-        }
 
-        public void setId(long id) {
-            this.id = id;
-        }
 
-        public int getPageNo() {
-             return pageNo;
-        }
 
-        public  SysDepartRequestVo setPageNo(int pageNo) {
-            this.pageNo = pageNo;
-            return this;
-        }
 
-        public int getPageSize() {
-         return pageSize;
-        }
 
-        public  SysDepartRequestVo setPageSize(int pageSize) {
-            this.pageSize = pageSize;
-            return this;
-        }
-
-		public int getSort() {
-			return sort;
-		}
-
-		public SysDepartRequestVo setSort(int sort) {
-			this.sort = sort;
-			return this;
-		}
 }

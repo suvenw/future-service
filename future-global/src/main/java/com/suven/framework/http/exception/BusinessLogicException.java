@@ -36,10 +36,9 @@ public class BusinessLogicException extends Exception {
 
     public BusinessLogicException(IResultCodeEnum error, String... errParam) {
         super(error.getMsg());
-        Object[] param = Arrays.asList(errParam).toArray();
         this.error = error;
         this.errorCode = error.getCode();
-        this.errorMessage = String.format(error.getMsg(), param);
+        this.errorMessage = String.format(error.getMsg(), errParam);
     }
 
 

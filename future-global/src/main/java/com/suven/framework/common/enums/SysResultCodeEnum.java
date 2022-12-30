@@ -37,6 +37,8 @@ public enum SysResultCodeEnum implements IResultCodeEnum {
 	SYS_PROJECT_MAINTAIN(1100003,"服务维护中！"),
 	SYS_LOGIN_CODE_FAIL(1100005, "验证码失效。"),
 	SYS_RESPONSE_RESULT_IS_NULL(1100006, "系统规范模板类不能为空。"),
+	SYS_RESPONSE_QUERY_IS_NULL(1100007, "查询条件对象不能为空。"),
+	SYS_NOT_HAVE_PERMISSION(1100008, "无权限操作！%s"),
 
 
 	/** 业务类型　２０－４０ **/
@@ -73,6 +75,9 @@ public enum SysResultCodeEnum implements IResultCodeEnum {
 	SYS_USER_BAND_FAIL(1100049, "用户已被封禁。"),
 	SYS_USER_FAIL(1100050, "用户不存在。"),
 	SYS_TOKEN_FAIL(1100051, "Token已经失效。"),
+	SYS_USER_ROLE_EXISTS(1100052, "角色编码已存在。"),
+	SYS_USER_NAME_PHONE_EXISTS(1100053, "用户名或手机号已存在！"),
+
 
 
 	MQ_ROCKET_CONFIG_IS_NULL(1100081,"系统引入ROCKET_MQ但未配置相关信息"),

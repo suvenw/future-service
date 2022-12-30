@@ -6,8 +6,6 @@ package com.suven.framework.http.handler;
 
 import com.suven.framework.http.data.vo.IResponseResult;
 import com.suven.framework.http.data.vo.ResponseResultVo;
-import com.suven.framework.http.inters.IResultCodeEnum;
-import com.suven.framework.http.message.ParamMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  * 修改记录
  *    修改后版本:     修改人：  修改日期:     修改内容:
  * </pre>
- * @Description: (说明) http 接口统一请求返回结果,逻辑实现业务类;
+ * @Description: (说明) http 接口统一请求返回结果,返回结果实现写到redis 缓存中,逻辑实现业务类;
  */
 public class BaseHttpResponseWrite extends BaseHttpResponseWriteHandlerConverter implements IResponseHandler {
 
@@ -59,8 +57,5 @@ public class BaseHttpResponseWrite extends BaseHttpResponseWriteHandlerConverter
     public IResponseResult getResultVo() {
         return ResponseResultVo.build();
     }
-
-
-
 
 }

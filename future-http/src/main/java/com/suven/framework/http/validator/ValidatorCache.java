@@ -47,21 +47,22 @@ public abstract class ValidatorCache<V> {
             .build(new CacheLoader<String, V>() {
                 @Override
                 public V load(String cacheKey) throws Exception {
+                    logger.warn("ListenableFuture<Boolean> reload --------- ");
                     return  validator();
                 }
 
-                @Override
-                public ListenableFuture<V> reload(String cacheKey, V oldValue) throws Exception {
-                    logger.warn("ListenableFuture<Boolean> reload --------- ");
-                    return refreshPools.submit(new Callable<V>() {
-
-                        @Override
-                        public V call() throws Exception {
-                            logger.warn("ListenableFuture<Boolean> Boolean call +++++++++++");
-                            return  validator();
-                        }
-                    });
-                }
+//                @Override
+//                public ListenableFuture<V> reload(String cacheKey, V oldValue) throws Exception {
+//                    logger.warn("ListenableFuture<Boolean> reload --------- ");
+//                    return refreshPools.submit(new Callable<V>() {
+//
+//                        @Override
+//                        public V call() throws Exception {
+//                            logger.warn("ListenableFuture<Boolean> Boolean call +++++++++++");
+//                            return  validator();
+//                        }
+//                    });
+//                }
             });
 
 

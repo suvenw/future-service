@@ -3,14 +3,16 @@ package com.suven.framework.file.config;
 
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
-import com.suven.framework.common.constants.GlobalConfigConstants;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import com.suven.framework.common.constants.GlobalConfigConstants;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.suven.framework.common.constants.GlobalConfigConstants.*;
 
 
 /**
@@ -19,7 +21,7 @@ import java.util.Map;
 @Configuration
 @ConditionalOnProperty(name = GlobalConfigConstants.TOP_SERVER_FILE_OSS_ENABLED,  matchIfMissing = true)
 //@NacosConfigurationProperties( groupId= SERVICE_NAME , dataId = TOP_SERVER_FILE_OSS_NAME,prefix= TOP_SERVER_FILE_OSS_CONFIG, type = ConfigType.PROPERTIES, autoRefreshed = true)
-@ConfigurationProperties(value = GlobalConfigConstants.TOP_SERVER_FILE_OSS_CONFIG)
+@ConfigurationProperties(value = TOP_SERVER_FILE_OSS_CONFIG)
 public class FileConfigSetting {
 
 
@@ -40,7 +42,7 @@ public class FileConfigSetting {
     private FileOSSConfig oss = new FileOSSConfig();
 
     @Bean("ossClient")
-    @ConditionalOnProperty(name= GlobalConfigConstants.TOP_SERVER_FILE_OSS_ENABLED,matchIfMissing = false)
+    @ConditionalOnProperty(name= TOP_SERVER_FILE_OSS_ENABLED,matchIfMissing = false)
     public OSS buildOSS(){
         OSS ossClient = new OSSClientBuilder().build(oss.endpoint, oss.accessKeyId, oss.accessKeySecret);
         return ossClient;

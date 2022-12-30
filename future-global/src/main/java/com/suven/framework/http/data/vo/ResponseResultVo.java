@@ -35,26 +35,6 @@ public class ResponseResultVo<T> implements IResponseResult<T>, Serializable {
 	}
 
 
-	public static ResponseResultVo write(Object data){
-		return  ok(data);
-	}
-	public static ResponseResultVo ok(Object data){
-		ResponseResultVo  vo = new ResponseResultVo();
-		vo.buildResultVo(true,0,"",data);
-		return  vo;
-	}
-	public static ResponseResultVo error(IResultCodeEnum enumType){
-		ResponseResultVo  vo = new ResponseResultVo();
-		vo.buildResultVo(enumType.getCode(),enumType.getMsg());
-        return  vo;
-    }
-	public static ResponseResultVo error(String errorMessage){
-		ResponseResultVo  vo = new ResponseResultVo();
-		vo.buildResultVo(405,errorMessage);
-		return  vo;
-	}
-
-
 	@Override
 	public int code() {
 		return code;
@@ -85,7 +65,7 @@ public class ResponseResultVo<T> implements IResponseResult<T>, Serializable {
 	public IResponseResult buildResultVo(boolean success, int code, String message, Object result) {
 		this.code = code;
 		this.msg = message;
-		setData(result);
+		this.data = this.initData(result);
 		return this;
 	}
 
@@ -107,14 +87,6 @@ public class ResponseResultVo<T> implements IResponseResult<T>, Serializable {
 	public Object getData() {
 		return data;
 	}
-
-	public void setData(Object data) {
-		if(data == null){
-			return;
-		}
-		this.data = this.initData(data);
-	}
-
 
 
 

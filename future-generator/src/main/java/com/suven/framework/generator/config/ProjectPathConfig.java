@@ -48,8 +48,9 @@ public class ProjectPathConfig implements IProjectPathConfig{
         return sysProjectPath;
     }
 
-    public void setSysProjectPath(String sysProjectPath) {
+    public ProjectPathConfig setSysProjectPath(String sysProjectPath) {
         this.sysProjectPath = sysProjectPath;
+        return this;
     }
 
     public String getRpcProjectPath() {

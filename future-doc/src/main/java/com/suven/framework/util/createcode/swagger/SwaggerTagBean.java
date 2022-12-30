@@ -2,6 +2,9 @@ package com.suven.framework.util.createcode.swagger;
 
 import com.suven.framework.common.api.ApiDoc;
 
+/**
+ * 界面展示对象;名称,描述,分组模块名称,分组描述
+ */
 public class SwaggerTagBean {
     private String name;
     private String description;

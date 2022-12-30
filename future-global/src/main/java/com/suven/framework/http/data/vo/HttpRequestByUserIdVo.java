@@ -4,9 +4,10 @@ import com.suven.framework.common.api.ApiDesc;
 
 public class HttpRequestByUserIdVo extends RequestParserVo {
 
-    @ApiDesc(value= "用户id " )
+    @ApiDesc(value= "用户id")
     private long userId;
 
+    @ApiDesc(value= "id")
     private long id;
 
 

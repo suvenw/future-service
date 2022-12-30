@@ -149,7 +149,9 @@ public class HttpDoSFilter extends DoSFilter {
 	public String checkDos(VerifyDosStatus dos) {
 		if(! ENV_IS_SERVER)
 			return getRandomNum(dos);
-			
+		if(null == dos){
+			return getRandomNum();
+		}
 		if (null != dos) {
 			if (dos.getUserId() > 0 ) {
 				return "USER_ID:"+dos.getUserId();
@@ -182,12 +184,17 @@ public class HttpDoSFilter extends DoSFilter {
 	}
 	
 	private String getRandomNum(VerifyDosStatus dos){
-		int baseInt = 1000000;
-		String rs =  String.valueOf(RandomUtils.nextInt(baseInt))
-				+ RandomUtils.nextInt(baseInt);
+		String rs = getRandomNum();
 		logger.warn("Request type's not get and userId,token,device is blank, random num is [{}], " +
 						"request url is [{}], request ip is [{}]",
 				rs, dos.getUrl(), dos.getClientIp());
+		return rs;
+	}
+
+	private String getRandomNum(){
+		int baseInt = 1000000;
+		String rs =  String.valueOf(RandomUtils.nextInt(baseInt))
+				+ RandomUtils.nextInt(baseInt);
 		return rs;
 	}
 

@@ -186,14 +186,14 @@ public class HttpRequestRemote implements IRequestRemote {
 	}
 
 	/**
-	 * @return 返回 isPostReq。
+	 * @return 返回 isPostRequest。
 	 */
 	public boolean isPostRequest() {
 		return isPostRequest;
 	}
 
 	/**
-	 * @param isPostRequest 设置 isPostRequest。
+	 * @param isPostRequest 设置 isPostReq。
 	 */
 	public void setPostRequest(boolean isPostRequest) {
 		this.isPostRequest = isPostRequest;

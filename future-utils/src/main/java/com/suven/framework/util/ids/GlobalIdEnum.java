@@ -25,6 +25,7 @@ public enum GlobalIdEnum implements IGlobalId {
         THREE(13,1,"第三方服务"),
         MARKET(14,1,"应用市场"),
         LOG(15,1,"日志"),
+        DEPOT(16,1,"资源库")
         ;
         private int workerId;//最大到32
         private int dataCenterId;//最大到32

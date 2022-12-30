@@ -61,7 +61,7 @@ $column.fieldAttrName
 
 #foreach ($column in $columns)
 #if( $column.fieldAttrName )
-$column.buildResponseDtoName
+$column.buildResponseVoName
 #if( $isLombok==0)
 $column.setAttrName
 $column.getAttrName

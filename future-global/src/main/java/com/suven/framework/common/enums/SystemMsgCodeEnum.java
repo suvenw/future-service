@@ -1,6 +1,5 @@
 package com.suven.framework.common.enums;
 
-
 import com.suven.framework.http.inters.IResultCodeEnum;
 
 /**
@@ -22,7 +21,7 @@ import com.suven.framework.http.inters.IResultCodeEnum;
 public enum SystemMsgCodeEnum implements IResultCodeEnum {
 	/** {@code 200 OK} (HTTP/1.0 - RFC 1945) */
 	SYS_SC_OK_200 (200, "成功"),
-	SYS_SC_INTERNAL_SERVER_ERROR_500(500,"Token已经失效"),
+	SYS_ERROR_500(500,"%s"),
 	SYS_TOKEN_FAIL(501, "Token已经失效。"),
 	SYS_LOGIN_CODE_FAIL(510, "验证码失效,访问权限认证未通过。"),
 	SYS_USER_FAIL(511, "用户不存在。"),

@@ -7,7 +7,6 @@ import com.suven.framework.core.redis.RedisClusterServer;
 import com.suven.framework.core.redis.RedisKeys;
 import com.suven.framework.core.redis.RedisUtil;
 import com.suven.framework.http.interceptor.IHandlerValidator;
-import com.suven.framework.sys.utils.JwtUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

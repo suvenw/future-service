@@ -1,10 +1,10 @@
 package com.suven.framework;
 
+import org.springframework.context.annotation.ComponentScan;
 import com.suven.framework.common.constants.GlobalConfigConstants;
 import com.suven.framework.http.inters.IProjectModule;
 import com.suven.framework.http.inters.ProjectModuleEnum;
 import com.suven.framework.http.jetty.AbstractJettyAppServer;
-import org.springframework.context.annotation.ComponentScan;
 
 
 @ComponentScan(basePackages={GlobalConfigConstants.COMPONENT_SCAN_BASE_PACKAGES})

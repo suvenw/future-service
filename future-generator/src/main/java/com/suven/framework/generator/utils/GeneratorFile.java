@@ -4,6 +4,8 @@ import com.suven.framework.generator.config.ProjectPathConfig;
 import com.suven.framework.generator.config.SysDataConfig;
 import com.suven.framework.generator.entity.ClassConfigEntity;
 import com.suven.framework.generator.entity.TableEntity;
+import com.suven.framework.generator.temp.CreateCodeEnum;
+import com.suven.framework.generator.temp.VuePageEnum;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -12,11 +14,20 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.suven.framework.generator.temp.CreateCodeEnum;
-import com.suven.framework.generator.temp.VuePageEnum;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -81,10 +92,34 @@ public class GeneratorFile {
 
     public static void writeGeneratorClassFile(Map<String, Object> map, List<CreateCodeEnum> templates, ClassConfigEntity classEntity, TableEntity tableEntity, SysDataConfig sysDataConfig ){
         VelocityContext context = new VelocityContext(map);
+
+        String imitationBean = sysDataConfig.getSysConfig().getImitationBean();
+        Map<String, String> imitationBeanMap;
+        if (StringUtils.isNotBlank(imitationBean)) {
+            List<String> imitationBeanExtList = templates.stream()
+                    .map(CreateCodeEnum::getExt)
+                    .map(m -> imitationBean+m)
+                    .collect(Collectors.toList());
+            FindRelevancyBeanFileVisitor fv = new FindRelevancyBeanFileVisitor(imitationBeanExtList, imitationBean);
+            try {
+                Files.walkFileTree(Paths.get(sysDataConfig.getProjectPathConfig().getBaseProjectPath()), fv);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            imitationBeanMap = fv.getImitationBeanMap();
+        }else {
+            imitationBeanMap = Collections.emptyMap();
+        }
+
         for (CreateCodeEnum codeEnum : templates) {
             try {
                 String template = ProjectPathConfig.templates + codeEnum.getTemp();
-                String outfile = getGeneratorJavaClassAndPagePath(codeEnum,sysDataConfig,classEntity,tableEntity);
+                String outfile;
+                if (imitationBeanMap.containsKey(codeEnum.getExt())) {
+                    outfile = imitationBeanMap.get(codeEnum.getExt()) + Constant.separator + tableEntity.getClassName() + codeEnum.getExt();
+                }else {
+                    outfile = getGeneratorJavaClassAndPagePath(codeEnum, sysDataConfig, classEntity, tableEntity);
+                }
                 if(outfile == null){
                     continue;
                 }
@@ -151,7 +186,7 @@ public class GeneratorFile {
         //组合生成对应实现类;
         String projectRootPath = getProjectRootPath(codeEnum.getIndex(),sysDataConfig);
         //环境目录_项目目录_包目录_模块目录_类名称;
-        String packageName =  classEntity.getPackageName().replaceAll("\\.", Constant.separator);
+        String packageName =  classEntity.getPackageName().replaceAll("\\.", Matcher.quoteReplacement(File.separator));
         String classPath =   packageName + Constant.separator +classEntity.getModuleName()
                 + Constant.separator + codeEnum.getPath() + tableEntity.getClassName() + codeEnum.getExt();
         String outputFilePath =   projectRootPath + classPath;
@@ -172,7 +207,7 @@ public class GeneratorFile {
 
     public static String getZipJavaClassFilePath(CreateCodeEnum codeEnum, ClassConfigEntity classEntity, TableEntity tableEntity){
         String packagePath = ProjectPathConfig.srcMainJava;
-        String packageName =  classEntity.getPackageName().replaceAll("\\.", Constant.separator);
+        String packageName =  classEntity.getPackageName().replaceAll("\\.", Matcher.quoteReplacement(File.separator));
         String outFilePath = packageName + Constant.separator + classEntity.getModuleName()+ codeEnum.getPath();
         outFilePath = outFilePath.replace("\\.", Constant.separator);
         packagePath += outFilePath + tableEntity.getClassName()  + codeEnum.getExt();

@@ -130,7 +130,7 @@ public class ${className}ServiceImpl  implements ${className}Service {
      */
     @Override
     public boolean saveBatch${className}(Collection<${className}RequestDto> entityList, int batchSize) {
-        if(null == entityList || entityList.size() !=  batchSize){
+        if(null == entityList || batchSize <= 0){
             return false;
         }
         List<${className}> list = new ArrayList<>();
@@ -141,7 +141,7 @@ public class ${className}ServiceImpl  implements ${className}Service {
 
     @Override
     public boolean saveOrUpdateBatch${className}(Collection<${className}RequestDto> entityList, int batchSize) {
-        if(null == entityList || entityList.size() != batchSize ){
+        if(null == entityList || batchSize <= 0){
             return false;
         }
         List<${className}> list = new ArrayList<>();
@@ -153,7 +153,7 @@ public class ${className}ServiceImpl  implements ${className}Service {
 
     @Override
     public boolean updateBatchById(Collection<${className}RequestDto> entityList, int batchSize) {
-        if(null == entityList || entityList.size() != batchSize ){
+        if(null == entityList || batchSize <= 0 ){
             return false;
         }
         List<${className}> list = new ArrayList<>();
@@ -242,9 +242,6 @@ public class ${className}ServiceImpl  implements ${className}Service {
               return null;
           }
            QueryWrapper<${className}> queryWrapper = ${paramName}Dao.builderQueryEnum( queryEnum, ${paramName}RequestDto);
-           if(null == queryWrapper ){
-                return null;
-            }
             //分页对象        PageHelper
            Page<${className}> iPage = new Page<>(0, 1);
            iPage.setSearchCount(false);
@@ -270,9 +267,7 @@ public class ${className}ServiceImpl  implements ${className}Service {
   public List<${className}ResponseDto> get${className}ListByQuery( Object  paramObject, ${className}QueryEnum queryEnum){
 
       QueryWrapper<${className}> queryWrapper = ${paramName}Dao.builderQueryEnum( queryEnum, paramObject);
-      if(null == queryWrapper ){
-            return null;
-      }
+
       List<${className}>  list = ${paramName}Dao.getListByQuery(queryWrapper);
       if(null == list ){
           list = new ArrayList<>();
@@ -294,9 +289,6 @@ public class ${className}ServiceImpl  implements ${className}Service {
     public List<${className}ResponseDto> get${className}ListByPage(BasePage page,${className}QueryEnum queryEnum){
 
         QueryWrapper<${className}> queryWrapper =${paramName}Dao.builderQueryEnum(queryEnum,  page.getParamObject());
-        if(null == queryWrapper ){
-             return null;
-         }
         //分页对象        PageHelper
         Page<${className}> iPage = new Page<>(page.getPageNo(), page.getPageSize());
         iPage.setSearchCount(false);
@@ -323,9 +315,6 @@ public class ${className}ServiceImpl  implements ${className}Service {
 
         ResponseResultList<${className}ResponseDto> responseResultList = ResponseResultList.build();
         QueryWrapper<${className}> queryWrapper = ${paramName}Dao.builderQueryEnum(queryEnum,  page.getParamObject());
-         if(null == queryWrapper ){
-             return responseResultList;
-         }
         //分页对象        PageHelper
         Page<${className}> iPage = new Page<>(page.getPageNo(), page.getPageSize());
         iPage.setSearchCount(false);
@@ -349,10 +338,7 @@ public class ${className}ServiceImpl  implements ${className}Service {
     @Override
     public ResponseResultList<${className}ResponseDto> get${className}ByNextPage(BasePage page,${className}QueryEnum queryEnum){
         ResponseResultList<${className}ResponseDto> responseResultList = ResponseResultList.build();
-        QueryWrapper<${className}> queryWrapper = ${paramName}Dao.builderQueryEnum(queryEnum,  page.getParamObject());
-        if(null == queryWrapper ){
-             return responseResultList;
-        }
+        QueryWrapper<${className}> queryWrapper = ${paramName}Dao.builderQueryEnum(queryEnum,  page.getParamObject());;
         //分页对象        PageHelper
         Page<${className}> iPage = new Page<>(page.getPageNo(), page.getPageSize());
         iPage.setSearchCount(true);
@@ -366,6 +352,23 @@ public class ${className}ServiceImpl  implements ${className}Service {
         return responseResultList;
 
     }
+
+     /**
+     * 通过分页获取SysDepart信息列表,实现查找缓存和数据库的方法,并且查询总页数
+     * @param idList Collection<Long>
+     * @return
+     * @author suven
+     * @date 2022-02-28 16:13:31
+     */
+    @Override
+    public List<${className}ResponseDto> get${className}ByIdList(Collection<Long> idList){
+
+        Collection<${className}> dbList =  this.${paramName}Dao.listByIds(idList);
+        List<${className}ResponseDto>  responseDtoList = IterableConverter.convertList(dbList,${className}ResponseDto.class);
+        return responseDtoList;
+    }
+
+
 #if( $column.baseEntityNo==2 )
 
     /**
@@ -405,7 +408,7 @@ public class ${className}ServiceImpl  implements ${className}Service {
         }
         ${className} ${paramName} = ${className}.build().toStatus(TbStatusEnum.DISABLE.index());
 
-        //修改条件
+        //修改条件s
         UpdateWrapper<${className}> updateWrapper = new UpdateWrapper<>();
         updateWrapper.in( "id",idList);
 
@@ -425,7 +428,7 @@ public class ${className}ServiceImpl  implements ${className}Service {
             return false;
         }
         ${className} ${paramName} = ${className}.build().toSort(sort);
-        //修改条件
+        //修改条件s
         UpdateWrapper<${className}> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id",id);
         boolean result = ${paramName}Dao.update( ${paramName},updateWrapper);
@@ -449,7 +452,7 @@ public class ${className}ServiceImpl  implements ${className}Service {
             ${className}  ${paramName} = ${className} .build().toSort(sortList.get(i));
             ${paramName}.toId(idList.get(i));
             ${paramName}List.add(${paramName});
-            //修改条件
+            //修改条件s
 //            UpdateWrapper< ${className}> updateWrapper = new UpdateWrapper<>();
 //           updateWrapper.eq("id",idList.get(i));
 //            ${paramName}Dao.update(${paramName},updateWrapper);

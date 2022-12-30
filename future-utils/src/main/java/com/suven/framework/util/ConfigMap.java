@@ -88,7 +88,7 @@ public class ConfigMap {
             is = ConfigMap.initMap(list);
         }
         Config config = ConfigMap.updateKey(prefixKey,111,100);
-//        System.out.print(config.toString());
+        System.out.print(config.toString());
         
     }
 

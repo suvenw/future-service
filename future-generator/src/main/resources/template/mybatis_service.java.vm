@@ -156,6 +156,17 @@ public interface ${className}Service {
     ResponseResultList<${className}ResponseDto> get${className}ByQueryPage(BasePage page,${className}QueryEnum queryEnum);
 
 
+    /**
+     * 通过idList聚合 查找${description}信息列表的方法
+     * @param idList Collection<Long>
+     * @return
+     * @author ${author}
+     * @date ${datetime}
+     */
+
+    List<${className}ResponseDto> get${className}ByIdList(Collection<Long> idList);
+
+
 #if( $column.baseEntityNo==2 )
     /**
      * @Title: 启用${description}信息

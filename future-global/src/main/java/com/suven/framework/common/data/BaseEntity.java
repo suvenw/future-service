@@ -8,7 +8,12 @@ import com.suven.framework.common.api.ApiDesc;
 import com.suven.framework.common.api.IBaseApi;
 import com.suven.framework.common.api.IBeanClone;
 
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -26,13 +31,16 @@ public class BaseEntity extends BaseBeanClone implements IBaseApi, IBeanClone {
     private static final long serialVersionUID = -5102197522565173276L;
 
     @ApiDesc(value =  "对应的业务主键值")
+    @ExcelIgnore
     private long id; //表主键id;
     //	private long globalId; //全局id 用于分表分库使用
     @ApiDesc(value =  "创建时间")
     @TableField(value = "create_date", fill = FieldFill.INSERT)
+    @ExcelProperty("创建时间")
     private Date createDate; //创建时间;
     @ApiDesc(value =  "修改时间")
     @TableField(value = "modify_date", fill = FieldFill.INSERT_UPDATE)
+    @ExcelProperty("修改时间")
     private Date modifyDate; //修改时间;
 
 

@@ -24,12 +24,13 @@ import javax.servlet.http.HttpServletResponse;
  * </pre>
  * @Description: (说明) http 接口统一请求返回结果,返回结果实现写到redis 缓存中,逻辑实现业务类;
  */
-public class OutputSystem extends BaseHttpResponseWrite {
+public class OutputSystem extends BaseHttpResponseWrite  implements IResponseHandler {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
 
 
+    /** 重新返回结果结构体对象,否则返回默认值:ResponseResultVo 对象结构 **/
     @Override
     public IResponseResult getResultVo() {
         return SystemResultVo.build();

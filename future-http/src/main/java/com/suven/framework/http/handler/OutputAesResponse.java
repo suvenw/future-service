@@ -23,9 +23,10 @@ import javax.servlet.http.HttpServletResponse;
  * </pre>
  * @Description: (说明) http 接口统一请求返回结果,返回结果实现写到redis 缓存中,逻辑实现业务类;
  */
-public class OutputAesResponse extends BaseHttpResponseWrite{
+public class OutputAesResponse extends BaseHttpResponseWrite  {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+
 
 
 

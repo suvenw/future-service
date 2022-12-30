@@ -1,0 +1,206 @@
+<template>
+  <a-card :bordered="false">
+
+    <!-- 查询区域 -->
+    <div class="table-page-search-wrapper">
+      <a-form layout="inline" @keyup.enter.native="searchQuery">
+        <a-row :gutter="24">
+
+ <!-- ======= 搜索菜单列表 begin ======= -->
+#foreach($po in $queryList)
+          <a-col :md="6" :sm="12">
+            <a-form-item label="$po.comments">
+              #if ($po.attrname !='id'  && $po.dataType==("datetime"))
+              <a-date-picker showTime format='YYYY-MM-DD HH:mm:ss' v-model="queryParam.$po.attrname" />
+            #else
+              <j-input placeholder="输入$po.comments" v-model="queryParam.$po.attrname"></j-input>
+            #end
+            </a-form-item>
+          </a-col>
+#end
+
+ <!-- ======= 搜索菜单列表 end ======= -->
+
+          <a-col :md="6" :sm="8">
+            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
+              <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
+              <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
+              <a @click="handleToggleSearch" style="margin-left: 8px">
+                {{ toggleSearchStatus ? '收起' : '展开' }}
+                <a-icon :type="toggleSearchStatus ? 'up' : 'down'"/>
+              </a>
+            </span>
+          </a-col>
+
+        </a-row>
+      </a-form>
+    </div>
+
+    <!-- 操作按钮区域 -->
+    <div class="table-operator" style="border-top: 5px">
+      <a-button @click="handleAdd" type="primary" icon="plus" >添加${description}</a-button>
+      <a-button type="primary" icon="download" @click="handleExportXls('导出${description}')">导出</a-button>
+      <a-upload name="files" :showUploadList="false" :multiple="false" :headers="tokenHeader" :data="importData" :action="importExcelUrl" @change="handleImportExcel">
+        <a-button type="primary" icon="import">导入</a-button>
+      </a-upload>
+      <j-third-app-button :selected-row-keys="selectedRowKeys" syncToApp syncToLocal @sync-finally="onSyncFinally"/>
+      <a-dropdown v-if="selectedRowKeys.length > 0">
+        <a-menu slot="overlay" @click="handleMenuClick">
+          <a-menu-item key="1">
+            <a-icon type="delete" @click="batchDel"/>
+            删除
+          </a-menu-item>
+        </a-menu>
+        <a-button style="margin-left: 8px">
+          批量操作
+          <a-icon type="down"/>
+        </a-button>
+      </a-dropdown>
+      <!-- <j-super-query :fieldList="superQueryFieldList" @handleSuperQuery="handleSuperQuery"/> -->
+    </div>
+
+    <!-- table区域-begin -->
+    <div>
+      <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
+        <i class="anticon anticon-info-circle ant-alert-icon"></i>已选择&nbsp;<a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项&nbsp;&nbsp;
+        <a style="margin-left: 24px" @click="onClearSelected">清空</a>
+      </div>
+
+      <a-table
+        ref="table"
+        bordered
+        size="middle"
+        rowKey="id"
+        :columns="columns"
+        :dataSource="dataSource"
+        :pagination="ipagination"
+        :loading="loading"
+        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+        @change="handleTableChange">
+
+        <template slot="avatarslot" slot-scope="text, record, index">
+          <div class="anty-img-wrap">
+            <a-avatar shape="square" :src="getAvatarView(record.avatar)" icon="user"/>
+          </div>
+        </template>
+
+        <span slot="action" slot-scope="text, record">
+          <a @click="handleEdit(record)" >编辑</a>
+
+          <a-divider type="vertical" />
+
+          <a-dropdown>
+            <a class="ant-dropdown-link">
+              更多 <a-icon type="down"/>
+            </a>
+            <!-- 更多下拉区域-begin -->
+            <a-menu slot="overlay">
+              <a-menu-item>
+                <a href="javascript:;" @click="handleDetail(record)">详情</a>
+              </a-menu-item>
+
+              <a-menu-item>
+                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+                  <a>删除</a>
+                </a-popconfirm>
+              </a-menu-item>
+
+            </a-menu>
+             <!-- 更多下拉区域-end -->
+          </a-dropdown>
+        </span>
+
+
+      </a-table>
+    </div>
+    <!-- table区域-end -->
+    <${classname}-modal ref="modalForm" @ok="modalFormOk"></${className}-modal>
+
+  </a-card>
+</template>
+
+<script>
+  import ${classname}Modal from './${modules}/${classname}Modal'
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+  import {putAction,getFileAccessHttpUrl} from '@/api/manage';
+  import {frozenBatch} from '@/api/api'
+  import store from '@/store/'
+  export default {
+    name: "${classname}List",
+    mixins:[JeecgListMixin],
+    components: {
+      ${classname}Modal
+    },
+    data() {
+      return {
+        importData: {
+          userId: store.getters.userInfo.id
+        },
+        description: '这是用户管理页面',
+        queryParam: {},
+        recycleBinVisible: false,
+        columns: [
+          {
+            title: '#',
+            dataIndex: '',
+            key:'rowIndex',
+            width:60,
+            align:"center",
+            customRender:function (t,r,index) {
+              return parseInt(index)+1;
+            }
+          },
+          #foreach($po in $showList)
+            #if ($po.attrname !='id')
+          {
+              title: '$po.comments',
+              align:"center",
+              dataIndex: '$po.attrname'
+             },
+             #end
+           #end
+          {
+            title: '操作',
+            dataIndex: 'action',
+            scopedSlots: {customRender: 'action'},
+            align: "center",
+            width: 170
+          }
+
+        ],
+        superQueryFieldList: [
+
+        ],
+        url: {
+          list: "/${moduleName}/${pathName}/list",
+          detail: "/${moduleName}/${pathName}/detail",
+          delete: "/${moduleName}/${pathName}/delete",
+          deleteBatch: "/${moduleName}/${pathName}/delete",
+          exportXlsUrl: "/${moduleName}/${pathName}/export",
+          importExcelUrl: "/${moduleName}/${pathName}/import"
+        },
+      }
+    },
+    computed: {
+      importExcelUrl: function(){
+        return `${importExcelUrl}`;
+      }
+    },
+    methods: {
+      getAvatarView: function (avatar) {
+        return getFileAccessHttpUrl(avatar)
+      },
+
+      onSyncFinally({isToLocal}) {
+        // 同步到本地时刷新下数据
+        if (isToLocal) {
+          this.loadData()
+        }
+      },
+    }
+
+  }
+</script>
+<style scoped>
+  @import '~@assets/less/common.less';
+</style>

@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 public class TopStringUtils extends StringUtils {
 	private static final Random RANDOM = new Random();
 	private static final char SEPARATOR = '_';
+	private static final char CENTRE = '-';
 	private static final String CHARSET_NAME = "UTF-8";
 
 	private static Logger logger = LoggerFactory.getLogger(TopStringUtils.class);

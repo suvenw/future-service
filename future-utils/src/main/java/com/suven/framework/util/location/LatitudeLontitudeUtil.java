@@ -133,7 +133,7 @@ public class LatitudeLontitudeUtil {
     	return where;
     }
     public static double formatDouble(double doubles){//格式化数据，保留6个小数
-        BigDecimal bg = BigDecimal.valueOf(doubles);
+        BigDecimal bg = new BigDecimal(doubles);  
         double f1 = bg.setScale(6, BigDecimal.ROUND_HALF_UP).doubleValue();  
         return f1;
     }

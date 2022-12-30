@@ -122,7 +122,7 @@ public class QRCodeUtil2 {
             ImageOutputStream imOut = ImageIO.createImageOutputStream(os);
             ImageIO.write(bm,format,imOut);
 //            is = new ByteArrayInputStream(os.toByteArray());
-            final FileOutputStream fos1=new FileOutputStream(file);
+            FileOutputStream fos1=new FileOutputStream(file);
             fos1.write(os.toByteArray());
         }
 //        String uploadFile = OssUtils.uploadFile(is,format);

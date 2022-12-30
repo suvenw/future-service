@@ -2,26 +2,34 @@
 package com.suven.framework.generator.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.suven.framework.generator.config.ProjectPathConfig;
+import com.suven.framework.generator.config.SysConfig;
+import com.suven.framework.generator.config.SysDataConfig;
 import com.suven.framework.generator.entity.ClassConfigEntity;
+import com.suven.framework.generator.entity.CodeCreateInfo;
 import com.suven.framework.generator.entity.ColumnBean;
 import com.suven.framework.generator.entity.ColumnClassEntity;
 import com.suven.framework.generator.entity.DatabaseEnum;
+import com.suven.framework.generator.service.SysGeneratorService;
 import com.suven.framework.generator.utils.DateUtils;
 import com.suven.framework.generator.utils.PageUtils;
 import com.suven.framework.generator.utils.Query;
 import com.suven.framework.generator.utils.ResultVo;
-import org.springframework.web.bind.annotation.*;
-import com.suven.framework.generator.config.ProjectPathConfig;
-import com.suven.framework.generator.config.SysConfig;
-import com.suven.framework.generator.config.SysDataConfig;
-import com.suven.framework.generator.service.SysGeneratorService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 代码生成器
@@ -195,4 +203,34 @@ public class SysGeneratorController {
 		return ResultVo.ok();
 	}
 
+
+	@ResponseBody
+	@RequestMapping(value = "/sys/generator/codeCreate2",method = RequestMethod.POST)
+	public ResultVo codeCreate2(@RequestBody CodeCreateInfo codeCreateInfo) throws IOException{
+
+		List<ColumnClassEntity> list = sysGeneratorService.queryColumns(codeCreateInfo.getTables());
+		List<ColumnBean> entityList = new ArrayList<>();
+		list.forEach(e -> {
+			entityList.add(ColumnBean.build(e));
+		});
+
+		if (codeCreateInfo.getSysConfig() != null) {
+			sysDataConfig.updateSysConfig(codeCreateInfo.getSysConfig());
+		}
+
+		sysDataConfig.getPathMap().clear();
+		// 兼容以前, 只要BaseProjectPath即可
+		sysDataConfig.put(1, ProjectPathConfig.build().setId(1).setUserNme(codeCreateInfo.getAuthor()).setIsUse(1)
+				.setBaseProjectPath(codeCreateInfo.getBaseProjectPath())
+				.setRpcProjectPath(codeCreateInfo.getRpcProjectPath())
+				.setHttpProjectPath(codeCreateInfo.getHttpProjectPath())
+				.setSysProjectPath(codeCreateInfo.getSysProjectPath())
+				.setApiProjectPath(codeCreateInfo.getApiProjectPath())
+				.setTemplatesPath(codeCreateInfo.getTemplatesPath())
+				.setHtmlPath(codeCreateInfo.getHtmlPath()))
+		;
+
+		sysGeneratorService.generatorCodeToFileByPage(codeCreateInfo,entityList);
+		return ResultVo.ok();
+	}
 }

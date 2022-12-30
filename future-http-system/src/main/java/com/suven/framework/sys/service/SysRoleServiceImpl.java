@@ -1,146 +1,215 @@
 package com.suven.framework.sys.service;
 
 
+import com.suven.framework.sys.dto.response.SysDepartResponseDto;
+import com.suven.framework.sys.entity.SysDepart;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.apache.commons.lang3.StringUtils;
-import org.databene.commons.CollectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.io.InputStream;
+
+
+import com.suven.framework.sys.entity.SysRole;
+import com.suven.framework.sys.dao.SysRoleDao;
+import com.suven.framework.sys.dto.request.SysRoleRequestDto;
+import com.suven.framework.sys.dto.response.SysRoleResponseDto;
+import com.suven.framework.sys.dto.enums.SysRoleQueryEnum;
+
+import com.suven.framework.core.db.IterableConverter;
+import com.suven.framework.core.mybatis.MyBatisUtils;
+import com.suven.framework.core.db.ext.Query;
 import com.suven.framework.common.data.BasePage;
 import com.suven.framework.common.enums.ResultEnum;
-import com.suven.framework.core.db.ext.Query;
 import com.suven.framework.http.data.vo.ResponseResultList;
-import com.suven.framework.sys.dao.SysRoleDao;
-import com.suven.framework.sys.dto.request.RoleRequestDto;
-import com.suven.framework.sys.dto.response.RoleResponseDto;
-import com.suven.framework.sys.entity.SysRole;
 import com.suven.framework.util.PageUtils;
+import com.suven.framework.util.excel.ExcelUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+
+
+
+
 
 
 /**
- * @author xxx.xxx
- * @version V1.0.0
- * <p>
+ * @ClassName: SysRoleServiceImpl.java
+ *
+ * @Author 作者 : suven
+ * @CreateDate 创建时间: 2022-02-28 16:10:43
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: 角色表 RPC业务接口逻辑实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
  * ----------------------------------------------------------------------------
- * modifyer    modifyTime                 comment
- * <p>
+ *
  * ----------------------------------------------------------------------------
- * </p>
- * @ClassName: RoleDao.java
- * @Description: 角色表的数据交互处理类
- * @date 2019-11-21 15:22:59
- */
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
 @Service
-public class SysRoleServiceImpl implements SysRoleService {
+public class SysRoleServiceImpl  implements SysRoleService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private SysRoleDao sysRoleDao;
-
-
+    private SysRoleDao  sysRoleDao;
 
 
 
     /**
      * 保存角色表同时更新数据库和缓存的实现方法
-     *
-     * @param roleRequestDto RoleResponseDto
+     * @param sysRoleRequestDto SysRoleResponseDto
      * @return
      */
-    public RoleResponseDto saveRole(RoleRequestDto roleRequestDto) {
-        if (roleRequestDto == null) {
+    @Override
+    public SysRoleResponseDto saveSysRole(SysRoleRequestDto sysRoleRequestDto){
+        if(sysRoleRequestDto== null){
             return null;
         }
-        SysRole role = SysRole.build().clone(roleRequestDto);
-        boolean result = sysRoleDao.save(role);
-        if (!result) {
+        Date date = new Date();
+        SysRole sysRole = SysRole.build().clone(sysRoleRequestDto);
+        sysRole.toCreateTime(date);
+        sysRole.toUpdateTime(date);
+        boolean result = sysRoleDao.save(sysRole);
+        if(!result){
             return null;
         }
-        RoleResponseDto roleResponseDto = RoleResponseDto.build().clone(role);
-        return roleResponseDto;
+        SysRoleResponseDto sysRoleResponseDto = SysRoleResponseDto.build().clone(sysRole);
+        return sysRoleResponseDto;
 
 
     }
 
-    public boolean saveBatchRole(Collection<RoleRequestDto> entityList, int batchSize) {
-        if (null == entityList || entityList.size() != batchSize) {
+    /**
+     * 保存角色表同时更新数据库和缓存的实现方法,同时保存Id主键到对象中
+     * @param sysRoleRequestDto SysRoleResponseDto
+     * @return
+     */
+    @Override
+    public SysRoleResponseDto saveIdSysRole(SysRoleRequestDto sysRoleRequestDto){
+        if(sysRoleRequestDto== null){
+            return null;
+        }
+        SysRole sysRole = SysRole.build().clone(sysRoleRequestDto);
+        Date date = new Date();
+        sysRole.toCreateTime(date);
+        sysRole.toUpdateTime(date);
+        sysRole = sysRoleDao.saveId(sysRole);
+        if(null == sysRole){
+            return null;
+        }
+        SysRoleResponseDto sysRoleResponseDto = SysRoleResponseDto.build().clone(sysRole);
+        return sysRoleResponseDto;
+
+
+    }
+    /**
+     * 保存角色表同时更新数据库和缓存的实现方法,同时保存Id主键到对象中
+     * @param entityList SysRoleRequestDto集合
+     * @return
+     */
+    @Override
+    public boolean saveBatchIdSysRole(Collection<SysRoleRequestDto> entityList) {
+        if(null == entityList ){
             return false;
         }
         List<SysRole> list = new ArrayList<>();
         entityList.forEach(e -> list.add(SysRole.build().clone(e)));
-        boolean result = sysRoleDao.saveBatch(list, batchSize);
+        boolean result = sysRoleDao.saveBatchId(list);
+        return result;
+    }
+    /**
+     * 批量保存角色表同时更新数据库和缓存的实现方法
+     * @param entityList SysRoleRequestDto集合
+     * @return
+     */
+    @Override
+    public boolean saveBatchSysRole(Collection<SysRoleRequestDto> entityList, int batchSize) {
+        if(null == entityList || entityList.size() !=  batchSize){
+            return false;
+        }
+        List<SysRole> list = new ArrayList<>();
+        entityList.forEach(e -> list.add(SysRole.build().clone(e)));
+        boolean result = sysRoleDao.saveBatch(list,batchSize);
+        return result;
+    }
+
+    @Override
+    public boolean saveOrUpdateBatchSysRole(Collection<SysRoleRequestDto> entityList, int batchSize) {
+        if(null == entityList || entityList.size() != batchSize ){
+            return false;
+        }
+        List<SysRole> list = new ArrayList<>();
+        entityList.forEach(e -> list.add(SysRole.build().clone(e)));
+        boolean result = sysRoleDao.saveOrUpdateBatch(list,batchSize);
         return result;
     }
 
 
-    public boolean saveOrUpdateBatchRole(Collection<RoleRequestDto> entityList, int batchSize) {
-        if (null == entityList || entityList.size() != batchSize) {
+    @Override
+    public boolean updateBatchById(Collection<SysRoleRequestDto> entityList, int batchSize) {
+        if(null == entityList || entityList.size() != batchSize ){
             return false;
         }
         List<SysRole> list = new ArrayList<>();
         entityList.forEach(e -> list.add(SysRole.build().clone(e)));
-        boolean result = sysRoleDao.saveOrUpdateBatch(list, batchSize);
-        return result;
-    }
-
-
-    public boolean updateBatchById(Collection<RoleRequestDto> entityList, int batchSize) {
-        if (null == entityList || entityList.size() != batchSize) {
-            return false;
-        }
-        List<SysRole> list = new ArrayList<>();
-        entityList.forEach(e -> list.add(SysRole.build().clone(e)));
-        boolean result = sysRoleDao.updateBatchById(list, batchSize);
+        boolean result =  sysRoleDao.updateBatchById(list,batchSize);
         return result;
     }
 
     /**
      * 更新角色表同时更新数据库和缓存的实现方法
-     *
-     * @param roleRequestDto RoleResponseDto
+     * @param sysRoleRequestDto  SysRoleResponseDto
      * @return
      */
-    public boolean updateRole(RoleRequestDto roleRequestDto) {
+    @Override
+    public boolean updateSysRole(SysRoleRequestDto sysRoleRequestDto){
 
-        if (null == roleRequestDto) {
-            return false;
-        }
+          if(null ==  sysRoleRequestDto){
+              return false;
+          }
 
-        SysRole role = SysRole.build().clone(roleRequestDto);
-
-        return sysRoleDao.updateById(role);
+        SysRole sysRole = SysRole.build().clone(sysRoleRequestDto);
+        sysRole.setUpdateTime(new Date());
+        return sysRoleDao.updateById(sysRole);
 
 
     }
 
 
+
+
+
+
+
     /**
      * 通过主键ID删除对象信息实现缓存和数据库,同时删除的方法
-     *
-     * @param idList
+     * @param  idList
      * @return
      */
-    public int delRoleByIds(List<Long> idList) {
+    @Override
+    public int delSysRoleByIds(List<Long> idList){
         boolean result = false;
-        if (null == idList) {
+        if(null == idList){
             return ResultEnum.FAIL.id();
         }
-        if (idList.size() == 1) {
+        if( idList.size() == 1) {
             result = sysRoleDao.removeById(idList.get(0));
-        } else {
-            result = sysRoleDao.removeByIds(idList);
+        }else {
+            result =  sysRoleDao.removeByIds(idList);
         }
-        if (result) {
+        if(result){
             return ResultEnum.SUCCESS.id();
         }
         return ResultEnum.FAIL.id();
@@ -150,181 +219,186 @@ public class SysRoleServiceImpl implements SysRoleService {
 
     /**
      * 通过主键ID更新对象角色表实现缓存和数据库更新的方法
-     *
-     * @param roleId
+     * @param  sysRoleId
      * @return
      */
-    public RoleResponseDto getRoleById(long roleId) {
-        if (roleId < 0) {
+    @Override
+    public SysRoleResponseDto getSysRoleById(long sysRoleId){
+        if(sysRoleId < 0 ){
             return null;
         }
-        SysRole role = sysRoleDao.getById(roleId);
-        if (role == null) {
+        SysRole sysRole =  sysRoleDao.getById(sysRoleId);
+        if(sysRole == null){
             return null;
         }
-        RoleResponseDto roleResponseDto = RoleResponseDto.build().clone(role);
+        SysRoleResponseDto sysRoleResponseDto = SysRoleResponseDto.build().clone(sysRole);
 
-        return roleResponseDto;
+        return sysRoleResponseDto ;
 
     }
 
+    /**
+     * 通过参数limit0,1获取对象角色表的查询方法
+     * @param  queryEnum
+     * @return
+     */
+     @Override
+     public   SysRoleResponseDto getSysRoleByOne( SysRoleQueryEnum queryEnum,SysRoleRequestDto sysRoleRequestDto){
+          if(sysRoleRequestDto == null ){
+              return null;
+          }
+           QueryWrapper<SysRole> queryWrapper = sysRoleDao.builderQueryEnum( queryEnum, sysRoleRequestDto);
+            //分页对象        PageHelper
+           Page<SysRole> iPage = new Page<>(0, 1);
+           iPage.setSearchCount(false);
+           List<SysRole>  list = sysRoleDao.getListByPage(iPage,queryWrapper);
+           if(null == list || list.isEmpty()){
+                 return null;
+           }
+           SysRole sysRole = list.get(0);
+           SysRoleResponseDto sysRoleResponseDto = SysRoleResponseDto.build().clone(sysRole);
+
+            return sysRoleResponseDto ;
+       }
+
+
+ /**
+   * 通过条件查询SysRole信息列表,实现查找缓存和数据库的方法,但不统计总页数
+   * @param paramObject Object
+   * @return
+   * @author suven
+   * @date 2022-02-28 16:10:43
+   */
+  @Override
+  public List<SysRoleResponseDto> getSysRoleListByQuery( Object  paramObject, SysRoleQueryEnum queryEnum){
+
+      QueryWrapper<SysRole> queryWrapper = sysRoleDao.builderQueryEnum( queryEnum, paramObject);
+
+      List<SysRole>  list = sysRoleDao.getListByQuery(queryWrapper);
+      if(null == list ){
+          list = new ArrayList<>();
+      }
+      List<SysRoleResponseDto>  resDtoList =  IterableConverter.convertList(list,SysRoleResponseDto.class);
+      return resDtoList;
+
+  }
+
 
     /**
-     * 通过分页获取Role信息实现查找缓存和数据库的方法
-     *
-     * @param basePage BasePage
+     * 通过分页获取SysRole信息列表,实现查找缓存和数据库的方法,但不统计总页数
+     * @param page BasePage
      * @return
-     * @author xinye
-     * @date 2019-11-21 15:22:59
+     * @author suven
+     * @date 2022-02-28 16:10:43
      */
-    public List<RoleResponseDto> getRoleByPage( ResponseResultList<RoleResponseDto> responseResultList,BasePage basePage) {
+    @Override
+    public List<SysRoleResponseDto> getSysRoleListByPage(BasePage page,SysRoleQueryEnum queryEnum){
 
-
-        List<RoleResponseDto> resDtoList = new ArrayList<>();
-        if (basePage == null) {
-            return resDtoList;
-        }
+        QueryWrapper<SysRole> queryWrapper =sysRoleDao.builderQueryEnum(queryEnum,  page.getParamObject());
         //分页对象        PageHelper
-        IPage<SysRole> iPage = new Page<>(basePage.getPageNo(), basePage.getRealPageSize());
-        QueryWrapper<SysRole> queryWrapper = checkQueryCondition(basePage);
-        IPage<SysRole> page = sysRoleDao.page(iPage, queryWrapper);
-        if (null == page) {
-            return resDtoList;
-        }
-
-        List<SysRole> list = page.getRecords();
-        ;
-        if (null == list || list.isEmpty()) {
-            return resDtoList;
-        }
-        list.forEach(role -> {
-            RoleResponseDto roleResponseDto = RoleResponseDto.build().clone(role);
-
-            resDtoList.add(roleResponseDto);
-        });
-        responseResultList.setTotal((int)iPage.getTotal());
-        return resDtoList;
-    }
-
-    /**
-     * 查询条件
-     */
-    public QueryWrapper<SysRole> checkQueryCondition(BasePage basePage) {
-        QueryWrapper<SysRole> queryWrapper = new QueryWrapper<>();
-        RoleRequestDto param = (RoleRequestDto) basePage.getParamObject();
-        if (!StringUtils.isEmpty(param.getRoleName())) {
-            queryWrapper.like("role_name", param.getRoleName());
-        }
-        if (param.getCreateDateBegin()!=null) {
-            queryWrapper.ge("create_date",param.getCreateDateBegin());
-        }
-        if (param.getCreateDateEnd()!=null) {
-            queryWrapper.le("create_date",param.getCreateDateEnd());
-        }
-        return queryWrapper;
-    }
-
-    /**
-     * 通过分页获取Role信息实现查找缓存和数据库的方法
-     *
-     * @param basePage BasePage
-     * @return
-     * @author xinye
-     * @date 2019-11-21 15:22:59
-     */
-    public ResponseResultList<RoleResponseDto> getRoleByNextPage(BasePage basePage) {
-        ResponseResultList<RoleResponseDto> responseResultList = ResponseResultList.build();
-        List<RoleResponseDto> list = this.getRoleByPage(responseResultList,basePage);
-        if (null == list) {
+        Page<SysRole> iPage = new Page<>(page.getPageNo(), page.getPageSize());
+        iPage.setSearchCount(false);
+        List<SysRole>  list = sysRoleDao.getListByPage(iPage,queryWrapper);
+        if(null == list ){
             list = new ArrayList<>();
         }
-        responseResultList.toList(list);
+        List<SysRoleResponseDto>  resDtoList =  IterableConverter.convertList(list,SysRoleResponseDto.class);
+        return resDtoList;
+
+    }
+
+
+
+   /**
+     * 通过分页获取SysRole 角色表信息实现查找缓存和数据库的方法,不查总页数
+     * @param page BasePage
+     * @return
+     * @author suven
+     * @date 2022-02-28 16:10:43
+     */
+    @Override
+    public ResponseResultList<SysRoleResponseDto> getSysRoleByQueryPage(BasePage page,SysRoleQueryEnum queryEnum){
+
+        ResponseResultList<SysRoleResponseDto> responseResultList = ResponseResultList.build();
+        QueryWrapper<SysRole> queryWrapper = sysRoleDao.builderQueryEnum(queryEnum,  page.getParamObject());
+        //分页对象        PageHelper
+        Page<SysRole> iPage = new Page<>(page.getPageNo(), page.getPageSize());
+        iPage.setSearchCount(false);
+        List<SysRole>  list = sysRoleDao.getListByPage(iPage,queryWrapper);
+        if(null == list ){
+            list = new ArrayList<>();
+        }
+        List<SysRoleResponseDto>  resDtoList =  IterableConverter.convertList(list,SysRoleResponseDto.class);
+        boolean isNext =  page.isNextPage(resDtoList);
+        responseResultList.toIsNextPage(isNext).toList(resDtoList);
+        return responseResultList;
+    }
+
+    /**
+     * 通过分页获取SysRole信息列表,实现查找缓存和数据库的方法,并且查询总页数
+     * @param page BasePage
+     * @return
+     * @author suven
+     * @date 2022-02-28 16:10:43
+     */
+    @Override
+    public ResponseResultList<SysRoleResponseDto> getSysRoleByNextPage(BasePage page,SysRoleQueryEnum queryEnum){
+        ResponseResultList<SysRoleResponseDto> responseResultList = ResponseResultList.build();
+        QueryWrapper<SysRole> queryWrapper = sysRoleDao.builderQueryEnum(queryEnum,  page.getParamObject());;
+        //分页对象        PageHelper
+        Page<SysRole> iPage = new Page<>(page.getPageNo(), page.getPageSize());
+        iPage.setSearchCount(true);
+        List<SysRole>  list = sysRoleDao.getListByPage(iPage,queryWrapper);
+        if(null == list ){
+            list = new ArrayList<>();
+        }
+        List<SysRoleResponseDto>  resDtoList =  IterableConverter.convertList(list,SysRoleResponseDto.class);
+        boolean isNext =  page.isNextPage(resDtoList);
+        responseResultList.toIsNextPage(isNext).toList(resDtoList).toTotal((int)iPage.getTotal());
         return responseResultList;
 
     }
 
-    public PageUtils queryPage(Map<String, Object> params) {
-        IPage iPage = new Query<SysRole>().getPage(params);
-        QueryWrapper<SysRole> queryWrapper = new QueryWrapper<>();
-        IPage<SysRole> page = sysRoleDao.page(iPage, queryWrapper);
-        return new PageUtils(page);
-    }
-
-    /**
-     * 查询角色列表
-     * @return
-     */
-    @Override
-    public List<SysRole> list() {
-        QueryWrapper<SysRole> queryWrapper = new QueryWrapper<>();
-        return sysRoleDao.list(queryWrapper);
-    }
 
 
     /**
      * 保存角色表同时更新数据库和缓存的实现方法
-     *
      * @return
      */
-    public SysRole setRole() {
-        SysRole role = new SysRole();
+    public SysRole  setSysRole(){
+        SysRole sysRole = new SysRole();
         /**
-         //role.setCreateDate (Date createDate);
-         //role.setModifyDate (Date modifyDate);
-         //role.setStatus (int status);
-         //role.setSort (int sort);
-         //role.setRoleName (String roleName);
-         //role.setRoleCode (String roleCode);
-         //role.setDescription (String description);
-         **/
+ 			//sysRole.setRoleName (String roleName);
+ 			//sysRole.setRoleCode (String roleCode);
+ 			//sysRole.setDescription (String description);
+ 			//sysRole.setCreateBy (String createBy);
+ 			//sysRole.setCreateTime (Date createTime);
+ 			//sysRole.setUpdateBy (String updateBy);
+ 			//sysRole.setUpdateTime (Date updateTime);
+		**/
 
-        return role;
+        return sysRole;
     }
 
-    public RoleResponseDto getRoleByCode(String code) {
-        if (StringUtils.isBlank(code)) {
-            return null;
-        }
-
-        BasePage basePage = BasePage.build().toPageNo(0).toPageSize(1);
-        IPage<SysRole> iPage = new Page<>(basePage.getPageNo(), basePage.getRealPageSize());
-        QueryWrapper<SysRole> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(SysRole::getRoleCode, code);
-        IPage<SysRole> page = sysRoleDao.page(iPage, queryWrapper);
-        if (null == page) {
-            return null;
-        }
-
-        SysRole role = page.getRecords().get(0);
-        if (role == null) {
-            return null;
-        }
-
-        RoleResponseDto roleResponseDto = RoleResponseDto.build().clone(role);
-
-        return roleResponseDto;
-
+    @Override
+    public boolean saveData(InputStream initialStream) {
+        return ExcelUtils.readExcel(initialStream,sysRoleDao, SysRole.class,0);
     }
 
     /**
-     * 通过主键ID集合更新对象角色表实现缓存和数据库更新的方法
-     * @param  sysRoleIds
+     * 通过分页获取SysRoleResponseDto信息列表,实现查找缓存和数据库的方法,并且查询总页数
+     * @param idList Collection<Long>
      * @return
+     * @author suven
+     * @date 2022-02-28 16:13:31
      */
-    public  List<RoleResponseDto>  getSysRoleByIds(List sysRoleIds){
-        if(CollectionUtil.isEmpty(sysRoleIds)){
-            return null;
-        }
-        List<SysRole> sysRoleList = sysRoleDao.getListByIds(sysRoleIds);
-        if(sysRoleList == null){
-            return null;
-        }
-        List<RoleResponseDto> roleDtos = new ArrayList<>();
-        sysRoleList.forEach(s ->{
-            RoleResponseDto sysRoleResponseDto = RoleResponseDto.build().clone(s);
-            roleDtos.add(sysRoleResponseDto);
-        });
-        return roleDtos ;
+    @Override
+    public List<SysRoleResponseDto> getSysDepartByIdList(Collection<Long> idList){
 
+        Collection<SysRole> dbList =  this.sysRoleDao.listByIds(idList);
+        List<SysRoleResponseDto>  responseDtoList = IterableConverter.convertList(dbList,SysRoleResponseDto.class);
+        return responseDtoList;
     }
+
+
 }

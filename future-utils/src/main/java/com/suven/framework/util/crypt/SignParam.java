@@ -1,6 +1,5 @@
 package com.suven.framework.util.crypt;
 
-import com.suven.framework.common.constants.GlobalConfigConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.suven.framework.util.json.JsonUtils;
@@ -27,7 +26,7 @@ public class SignParam {
 
 	public static Logger logger =LoggerFactory.getLogger(SignParam.class);
 
-	public static final String TOP_SERVER_APPKEY = GlobalConfigConstants.TOP_SERVER_APPKEY;//"H@s0zSix!fiNger8";
+	public static final String TOP_SERVER_APPKEY = "H@s0zSix!fiNger8";
 	/**
 	 * 获取签名 客户端,用于传输公共参数,作用是参数改篡改,用于前端的方法
 	 * @param head 为公共参数对象属性

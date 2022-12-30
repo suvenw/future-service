@@ -133,7 +133,7 @@ public class HttpRequestPostMessage extends HttpRequestGetMessage {
 
 	@Override
 	public String toString() {
-		return "HttpRequestPostMessage{" +
+		return "RequestMessage{" +
 				"userId=" + userId +
 				", appId=" + appId +
 				", accessToken='" + accessToken + '\'' +

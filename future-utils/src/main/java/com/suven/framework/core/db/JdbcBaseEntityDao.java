@@ -1,7 +1,6 @@
 package com.suven.framework.core.db;
 
 import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -197,7 +196,7 @@ public abstract class JdbcBaseEntityDao<T extends IBaseApi>  {
 		if(colle.size() > dataSource.LISTS_PARTITON_SIZE){
 			/*** 如果大于100条,则查用分页查询;返回结果值; */
 			List<List<Long>> partition = Lists.partition(new ArrayList<>(colle),  dataSource.LISTS_PARTITON_SIZE);
-			if(CollectionUtils.isNotEmpty(partition)){
+			if(null !=partition && !partition.isEmpty()){
 				for(List<Long> colles : partition ){
 					List<T>  dbList = dataSource.queryByInToList(clazz,sql, rowMapper, colles,values);
 					if(null != dbList && !dbList.isEmpty()){
@@ -225,7 +224,7 @@ public abstract class JdbcBaseEntityDao<T extends IBaseApi>  {
 			return new HashMap<>(1);
 		}
 		//从db中批量查找作品信息;
-		Map<Long,T> map = IterableConverter.converterMap(list);
+		Map<Long,T> map = IterableConverter.convertMap(list);
 		return map;
 	}
 

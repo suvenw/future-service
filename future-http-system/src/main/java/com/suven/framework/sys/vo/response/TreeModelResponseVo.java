@@ -92,6 +92,25 @@ public class TreeModelResponseVo implements Serializable {
 		this.slotTitle =  permission.getName();
 		this.value = String.valueOf(permission.getId());
 		this.isLeaf = permission.getIsLeaf()== 1?true:false;
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("title", "hasDatarule");
+		this.scopedSlots = map;
+		this.label = permission.getName();
+		if(permission.getIsLeaf() != 1) {
+			this.children = new ArrayList<TreeModelResponseVo>();
+		}
+
+	}
+
+
+	public TreeModelResponseVo(SysPermissionResponseDto permission,boolean flag) {
+		this.key = String.valueOf(permission.getId());
+		this.icon = permission.getIcon();
+		this.parentId = String.valueOf(permission.getParentId());
+		this.title = permission.getName();
+		this.slotTitle =  permission.getName();
+		this.value = String.valueOf(permission.getId());
+		this.isLeaf = permission.getIsLeaf()== 1?true:false;
 		this.label = permission.getName();
 		if(permission.getIsLeaf() != 1) {
 			this.children = new ArrayList<TreeModelResponseVo>();

@@ -14,7 +14,6 @@ import com.suven.framework.util.crypt.CryptUtil;
 import com.suven.framework.util.json.JsonFormatTool;
 import com.suven.framework.util.json.JsonUtils;
 import com.suven.framework.util.random.RandomUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -38,12 +37,37 @@ public abstract class BaseHttpResponseHandlerConverter {
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
-
+//	/**
+//	 * 返回码。
+//	 */
+//	public int code;
+//	/**
+//	 * 返回信息。
+//	 */
+//	public String msg = "";
    protected IResultCodeEnum errorCodeEnum;
 
     protected HttpServletResponse response;
 
+//
+//	/**
+//	 * 返回前端数据前处理。
+//	 * @param errParam
+//	 */
+//    protected   void returnErrorBeforeConverter(IResultCodeEnum codeEnum ,String... errParam){
+//		if(errParam == null || errParam.length <=0){
+//			return ;
+//		}
+//		Object[] param = Arrays.asList(errParam).toArray();
+//		String msg = String.format(codeEnum.getMsg(), param);
+//		codeEnum.cloneMsg(msg);
+//		this.msg = msg;
+//	}
+//
 
+	public HttpServletResponse getResponse(){
+		return this.response;
+	}
 
 	/**
 	 * 将返回结果数据,或错误信息,组合成统一规范的实现类,返回到前端的实现逻辑

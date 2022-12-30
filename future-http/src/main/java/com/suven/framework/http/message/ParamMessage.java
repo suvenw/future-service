@@ -70,7 +70,7 @@ public class ParamMessage {
 
     public static String getJsonParseString(){
         Map result = json.get();
-        return JsonUtils.toJson(result);
+       return JsonUtils.toJson(result);
     }
     public static Map getJsonParseMap(){
         Map result = json.get();
@@ -87,7 +87,7 @@ public class ParamMessage {
 
     public static void setResponseResult(IResponseResult responseResult) {
         if(responseResult == null){
-            return;
+           return;
         }
         baseResponseResultType.set(responseResult);
     }
@@ -97,9 +97,9 @@ public class ParamMessage {
         if(remote == null){
             return;
         }
-        try{
-            UrlExplain.excludeParam(url,paramMap);
-            json.set(paramMap);
+      try{
+          UrlExplain.excludeParam(url,paramMap);
+          json.set(paramMap);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -121,7 +121,6 @@ public class ParamMessage {
         redisCacheResponseVo.remove();
         baseResponseResultType.remove();
     }
-
 
 }
 

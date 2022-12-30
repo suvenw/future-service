@@ -1,44 +1,55 @@
 package com.suven.framework.sys.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.suven.framework.common.data.BaseByTimeEntity;
 import com.suven.framework.common.api.ApiDesc;
-import com.suven.framework.common.data.BaseStatusEntity;
 import com.suven.framework.core.db.ext.DS;
 
+import java.util.Date;
+
 /**
- * @Title: Role.java
- * @Description: 角色表的数据模型
- * @author xxx.xxx
- * @date   2019-11-21 15:22:59
- * @version V1.0.0
- * ----------------------------------------------------------------------------
- *  modifyer    modifyTime                 comment
- *
- * ----------------------------------------------------------------------------
- *
- */
-@DS("sys")
-@TableName(value = "sys_role")
-public class SysRole extends BaseStatusEntity {
+  * @ClassName: SysRole.java
+  *
+  * @Author 作者 : suven
+  * @email 邮箱 : suvenw@163.com
+  * @CreateDate 创建时间: 2022-02-28 16:10:43
+  * @Version 版本: v1.0.0
+  * <pre>
+  *
+  *  @Description: 角色表 数据库表对应的实现类
+  *
+  * </pre>
+  * <pre>
+  * 修改记录
+  *    修改后版本:     修改人：  修改日期:     修改内容:
+  * ----------------------------------------------------------------------------
+  *
+  * ----------------------------------------------------------------------------
+  * </pre>
+  * @Copyright: (c) 2021 gc by https://www.suven.top
+  **/
+
+@DS(DataSourceModuleName.module_name_sys)
+public class SysRole extends BaseByTimeEntity{
 
 private static final long serialVersionUID = 1L;
 
 
 
-
-
-
- 		/** roleName 角色名称  */
+ 		/** role_name 角色名称  */
  		@ApiDesc(value = "角色名称", required = 0)
  		private String roleName;
 
- 		/** roleCode 角色编码  */
+ 		/** role_code 角色编码  */
  		@ApiDesc(value = "角色编码", required = 0)
  		private String roleCode;
 
  		/** description 描述  */
  		@ApiDesc(value = "描述", required = 0)
  		private String description;
+
+
+
+
 
 
     public static SysRole build(){
@@ -48,7 +59,7 @@ private static final long serialVersionUID = 1L;
  		public void setRoleName( String roleName){
  		 		this.roleName = roleName ; 
  		 		}
- 		public SysRole toRoleName(String roleName){
+ 		public SysRole toRoleName( String roleName){
  		 		this.roleName = roleName ; 
  		 		 return this ;
  		}
@@ -59,7 +70,7 @@ private static final long serialVersionUID = 1L;
  		public void setRoleCode( String roleCode){
  		 		this.roleCode = roleCode ; 
  		 		}
- 		public SysRole toRoleCode(String roleCode){
+ 		public SysRole toRoleCode( String roleCode){
  		 		this.roleCode = roleCode ; 
  		 		 return this ;
  		}
@@ -70,7 +81,7 @@ private static final long serialVersionUID = 1L;
  		public void setDescription( String description){
  		 		this.description = description ; 
  		 		}
- 		public SysRole toDescription(String description){
+ 		public SysRole toDescription( String description){
  		 		this.description = description ; 
  		 		 return this ;
  		}

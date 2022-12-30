@@ -10,7 +10,8 @@ $(function () {
             { label: '只生成界面Val', name: 'pageVal', width: 80 },
             { label: '是否使用Dubbo', name: 'dubbo', width: 80 },
             { label: '是否使用SpringMVC', name: 'mvc', width: 80 },
-             { label: '是否强制覆盖Bean:', name: 'isOverrideWrite', width: 80 }
+            { label: '是否强制覆盖Bean:', name: 'isOverrideWrite', width: 80 },
+            { label: '是否使用Lombok:', name: 'isLombok', width: 80 }
 
         ],
 		viewrecords: true,
@@ -99,7 +100,11 @@ var vm = new Vue({
             } else {
                 delete params.entityDao
             }
-
+            if (this.q.isLombok) {
+                params.isLombok = this.q.isLombok
+            } else {
+                delete params.isLombok
+            }
             console.log(params)
             for(var key in params) {
                 paramsStr += '&' + key + '=' + params[key]

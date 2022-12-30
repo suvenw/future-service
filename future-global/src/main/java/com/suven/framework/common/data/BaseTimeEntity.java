@@ -1,5 +1,7 @@
 package com.suven.framework.common.data;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
+import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.suven.framework.common.api.ApiDesc;
@@ -24,13 +26,16 @@ public class BaseTimeEntity extends BaseBeanClone implements IBaseApi, IBeanClon
     private static final long serialVersionUID = -5102197522565173276L;
 
     @ApiDesc(value =  "对应的业务主键值")
+    @ExcelIgnore
     private long id; //表主键id;
     //	private long globalId; //全局id 用于分表分库使用
     @ApiDesc(value =  "创建时间")
     @TableField(value = "create_time", fill = FieldFill.INSERT)
+    @ExcelProperty("创建时间")
     private Date createTime; //创建时间;
     @ApiDesc(value =  "修改时间")
     @TableField(value = "update_time", fill = FieldFill.INSERT_UPDATE)
+    @ExcelProperty("修改时间")
     private Date updateTime; //修改时间;
 
 

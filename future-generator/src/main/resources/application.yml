@@ -12,8 +12,8 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     #MySQL配置
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://106.15.95.180:3306/sixeco_user_assets?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1/sixeco_acgn
     username: dev
     password: dev123456
 #    url: jdbc:mysql://rm-uf60841xu50evrh921o.mysql.rds.aliyuncs.com:3306/redt-3.0?rewriteBatchedStatements=true&characterEncoding=UTF8&allowMultiQueries=true&autoReconnect=true&zeroDateTimeBehavior=convertToNull

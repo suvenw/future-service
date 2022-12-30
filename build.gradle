@@ -534,13 +534,18 @@ project(':future-http-system') {
         compile project(':future-http')
         compile project(':future-global')
         compile project(':future-doc')
-
-        compile 'com.suven.framework:swagger-ui-layer:0.0.01'
+        compile 'com.sixeco.framework:swagger-ui-layer:0.0.57'
 
         compile 'io.jsonwebtoken:jjwt-api:0.10.7'
-        runtime 'io.jsonwebtoken:jjwt-impl:0.10.7','io.jsonwebtoken:jjwt-jackson:0.10.7'
-        compile 'org.apache.shiro:shiro-core:1.4.0:'
+
+        compile'io.jsonwebtoken:jjwt-jackson:0.11.2'
+        compile 'io.jsonwebtoken:jjwt-impl:0.11.2'
+        compile 'io.jsonwebtoken:jjwt-api:0.11.2'
+        compile 'org.apache.shiro:shiro-spring:1.8.0'
+        compile 'org.apache.shiro:shiro-core:1.8.0'
+        compile 'org.apache.shiro:shiro-web:1.8.0'
         compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.authzserver:1.0.2'
+        runtime 'io.jsonwebtoken:jjwt-impl:0.10.7','io.jsonwebtoken:jjwt-jackson:0.10.7'
 
 //        compile 'com.github.caspar-chen:swagger-ui-layer:1.1.9'
 

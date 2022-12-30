@@ -1,37 +1,50 @@
 package com.suven.framework.sys.entity;
 
+import com.suven.framework.common.data.BaseTimeEntity;
 import com.suven.framework.common.api.ApiDesc;
-import com.suven.framework.common.data.BaseEntity;
-import com.suven.framework.common.data.BaseStatusEntity;
 import com.suven.framework.core.db.ext.DS;
 
+import java.util.Date;
+
 /**
- * @Title: SysUserRole.java
- * @Description: 用户角色表的数据模型
- * @author xxx.xxx
- * @date   2019-10-18 12:35:25
- * @version V1.0.0
- * ----------------------------------------------------------------------------
- *  modifyer    modifyTime                 comment
- *
- * ----------------------------------------------------------------------------
- *
- */
-@DS("sys")
-public class SysUserRole extends BaseEntity {
+  * @ClassName: SysUserRole.java
+  *
+  * @Author 作者 : suven
+  * @email 邮箱 : suvenw@163.com
+  * @CreateDate 创建时间: 2022-02-28 17:00:29
+  * @Version 版本: v1.0.0
+  * <pre>
+  *
+  *  @Description: 用户角色关系表 数据库表对应的实现类
+  *
+  * </pre>
+  * <pre>
+  * 修改记录
+  *    修改后版本:     修改人：  修改日期:     修改内容:
+  * ----------------------------------------------------------------------------
+  *
+  * ----------------------------------------------------------------------------
+  * </pre>
+  * @Copyright: (c) 2021 gc by https://www.suven.top
+  **/
+
+@DS(DataSourceModuleName.module_name_sys)
+public class SysUserRole extends BaseTimeEntity{
 
 private static final long serialVersionUID = 1L;
 
 
 
 
- 		/** userId 用户id  */
+ 		/** user_id 用户id  */
  		@ApiDesc(value = "用户id", required = 0)
  		private long userId;
 
- 		/** roleId 角色id  */
+ 		/** role_id 角色id  */
  		@ApiDesc(value = "角色id", required = 0)
  		private long roleId;
+
+
 
 
     public static SysUserRole build(){

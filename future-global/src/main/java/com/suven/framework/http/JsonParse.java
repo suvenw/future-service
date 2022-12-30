@@ -57,7 +57,7 @@ public class JsonParse {
 	}
 
 
-	public static <T> T parseFrom(Map map, Class<T> clazz)
+	public static <T> T parseFrom(Map map, final Class<T> clazz)
 			throws Exception {
 
 		T instance= clazz.newInstance();
@@ -86,7 +86,7 @@ public class JsonParse {
 
 			Class<?> fieldType = field.getType();
 
-			if (isTypeisStaticOrFinal(field) || (fieldType != String.class && null == values)) {
+			if (isTypeIsStaticOrFinal(field) || (fieldType != String.class && null == values)) {
 				continue;
 			}
 
@@ -116,7 +116,7 @@ public class JsonParse {
 	 * @param property
 	 * @return
 	 */
-	private static boolean isTypeisStaticOrFinal(Field property) {
+	private static boolean isTypeIsStaticOrFinal(Field property) {
 		boolean isStatic = Modifier.isStatic(property.getModifiers());
 		boolean isFinal = Modifier.isFinal(property.getModifiers());
 //			boolean isTyep = RedisSetEnum.isContains(property.getType().getSimpleName());
@@ -136,11 +136,14 @@ public class JsonParse {
 				|| fieldType == String.class || fieldType == Date.class;
 	}
 
-	private static Object signPrimitive(Class<?> fieldType, String rawValue)
-			throws Exception {
+	private static Object signPrimitive(Class<?> fieldType, String rawValue) {
 		Object value = null;
 		if (StringUtils.isBlank(rawValue)) {
-			return null;
+			if (fieldType == int.class || fieldType == long.class) {
+				return 0;
+			} else {
+				return null;
+			}
 		}
 		if (ClassUtils.isPrimitiveOrWrapper(fieldType)) {
 			Class<?> wrapperClazz = ClassUtils.primitiveToWrapper(fieldType);
@@ -168,8 +171,7 @@ public class JsonParse {
 		return value;
 	}
 
-	private static Object signIterable(Field field, String[] strings)
-			throws Exception {
+	private static Object signIterable(Field field, String[] strings) {
 		Class<?> fieldType = field.getType();
 		if (fieldType.isArray()) {
 			Class<?> cpnType = fieldType.getComponentType();

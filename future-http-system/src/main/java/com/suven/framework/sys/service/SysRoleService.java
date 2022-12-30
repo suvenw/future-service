@@ -1,120 +1,180 @@
 package com.suven.framework.sys.service;
 
-import com.suven.framework.common.data.BasePage;
-import com.suven.framework.http.data.vo.ResponseResultList;
-import com.suven.framework.sys.dto.request.RoleRequestDto;
-import com.suven.framework.sys.dto.response.RoleResponseDto;
-import com.suven.framework.sys.entity.SysRole;
-import com.suven.framework.util.PageUtils;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.io.InputStream;
+
+
+import com.suven.framework.sys.dto.request.SysRoleRequestDto;
+import com.suven.framework.sys.dto.response.SysRoleResponseDto;
+import com.suven.framework.sys.dto.enums.SysRoleQueryEnum;
+import com.suven.framework.common.data.BasePage;
+import com.suven.framework.util.PageUtils;
+import com.suven.framework.http.data.vo.ResponseResultList;
+
+
+
 
 /**
- * @ClassName: RoleService.java
- * @Description: 角色表的数据交互处理类
- * @author xxx.xxx
- * @date   2019-11-21 15:22:59
- * @version V1.0.0
- * <p>
+ * @ClassName: SysRoleService.java
+ *
+ * @Author 作者 : suven
+ * @CreateDate 创建时间: 2022-02-28 16:10:43
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: 角色表 RPC业务接口逻辑实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
  * ----------------------------------------------------------------------------
- *  modifyer    modifyTime                 comment
  *
  * ----------------------------------------------------------------------------
- * </p>
- */
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+
 public interface SysRoleService {
 
 
 
     /**
      * 保存角色表更新数据库和缓存的实现方法
-     * @param roleRequestDto  RoleRequestDto
+     * @param sysRoleRequestDto  SysRoleRequestDto
      * @return
      */
-    RoleResponseDto saveRole(RoleRequestDto roleRequestDto);
+    SysRoleResponseDto saveSysRole(SysRoleRequestDto sysRoleRequestDto);
+
+
+     /**
+     * 保存角色表同时更新数据库和缓存的实现方法,同时保存Id主键到对象中
+     * @param sysRoleRequestDto  SysRoleRequestDto
+     * @return
+     */
+    SysRoleResponseDto saveIdSysRole(SysRoleRequestDto sysRoleRequestDto);
+
+
+     /**
+     * 保存角色表同时更新数据库和缓存的实现方法,同时保存Id主键到对象中
+     * @return
+     */
+    boolean saveBatchIdSysRole(Collection<SysRoleRequestDto> entityList);
 
     /**
      * 保存角色表更新数据库和缓存的实现方法
      * @return
      */
-    boolean saveBatchRole(Collection<RoleRequestDto> entityList, int batchSize);
+    boolean saveBatchSysRole(Collection<SysRoleRequestDto> entityList, int batchSize);
 
     /**
      * 保存角色表更新数据库和缓存的实现方法
      * @return
      */
-    boolean saveOrUpdateBatchRole(Collection<RoleRequestDto> entityList, int batchSize);
+    boolean saveOrUpdateBatchSysRole(Collection<SysRoleRequestDto> entityList, int batchSize);
 
 
 
     /**
      * 更新角色表同时更新数据库和缓存的实现方法
-     * @param roleRequestDto  RoleRequestDto
+     * @param sysRoleRequestDto  SysRoleRequestDto
      * @return
      */
-    boolean updateRole (RoleRequestDto roleRequestDto);
+    boolean updateSysRole (SysRoleRequestDto sysRoleRequestDto);
 
     /**
      * 更新角色表同时更新数据库和缓存的实现方法
      * @return
      */
-    boolean updateBatchById(Collection<RoleRequestDto> entityList, int batchSize);
+    boolean updateBatchById(Collection<SysRoleRequestDto> entityList, int batchSize);
 
 
     /**
      * 通过主键ID删除对象信息实现缓存和数据库,同时删除的方法
-     * @param  roleIds
+     * @param  sysRoleIds
      * @return
      */
-    int delRoleByIds(List<Long>  roleIds);
+    int delSysRoleByIds(List<Long>  sysRoleIds);
 
 
     /**
      * 通过主键ID更新对象角色表实现缓存和数据库更新的方法
-     * @param  roleId
+     * @param  sysRoleId
      * @return
      */
-        RoleResponseDto getRoleById(long roleId);
+        SysRoleResponseDto getSysRoleById(long sysRoleId);
 
+    /**
+     * 通过参数limit0,1获取对象角色表的查询方法
+     * @param  queryEnum
+     * @return
+     */
+    SysRoleResponseDto getSysRoleByOne( SysRoleQueryEnum queryEnum,SysRoleRequestDto sysRoleRequestDto);
 
 
     /**
-     * 通过分页获取RoleResponseDto信息实现查找缓存和数据库的方法
+    * 通过分页和枚举条件获取SysRole信息实现查找缓存和数据库的方法
+    * @param paramObject Object
+    * @return
+    * @author suven
+    * @date 2022-02-28 16:10:43
+    */
+    List<SysRoleResponseDto> getSysRoleListByQuery(Object  paramObject, SysRoleQueryEnum queryEnum);
+
+
+    /**
+     * 通过分页获取SysRole信息实现查找缓存和数据库的方法
      * @param page BasePage
      * @return
+     * @author suven
+     * @date 2022-02-28 16:10:43
      */
-//    List<RoleResponseDto> getRoleByPage(BasePage page);
+    List<SysRoleResponseDto> getSysRoleListByPage(BasePage page,SysRoleQueryEnum queryEnum);
+
+
 
 
     /**
-     * 通过分页获取Role 角色表信息实现查找缓存和数据库的方法
+     * 通过分页获取SysRole 角色表信息实现查找缓存和数据库的方法,包括查总页数
      * @param page BasePage
      * @return
-     * @author xxx.xxx
-     * @date 2019-11-21 15:22:59
+     * @author suven
+     * @date 2022-02-28 16:10:43
      */
-    ResponseResultList<RoleResponseDto> getRoleByNextPage(BasePage page);
+    ResponseResultList<SysRoleResponseDto> getSysRoleByNextPage(BasePage page,SysRoleQueryEnum queryEnum);
+
+    /**
+     * 通过分页获取SysRole 角色表信息实现查找缓存和数据库的方法,不查总页数
+     * @param page BasePage
+     * @return
+     * @author suven
+     * @date 2022-02-28 16:10:43
+     */
+    ResponseResultList<SysRoleResponseDto> getSysRoleByQueryPage(BasePage page,SysRoleQueryEnum queryEnum);
 
 
-    public PageUtils queryPage(Map<String, Object> params);
+
+
 
 
     /**
-     * 查询角色列表
-     * @return
-     */
-    List<SysRole> list();
+    * 通过上传excel 保存数据到数据库
+    * @param initialStream
+    * @return
+    */
+    public boolean saveData(InputStream initialStream);
 
-
-    RoleResponseDto getRoleByCode(String code);
 
     /**
-     * 通过主键ID集合更新对象角色表实现缓存和数据库更新的方法
-     *
-     * @param sysRoleIds
+     * 通过分页获取SysRoleResponseDto信息列表,实现查找缓存和数据库的方法,并且查询总页数
+     * @param idList Collection<Long>
      * @return
+     * @author suven
+     * @date 2022-02-28 16:13:31
      */
-    List<RoleResponseDto> getSysRoleByIds(List sysRoleIds);
+   List<SysRoleResponseDto> getSysDepartByIdList(Collection<Long> idList);
+
 }

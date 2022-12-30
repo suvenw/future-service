@@ -118,7 +118,7 @@ public class UserTokenHandlerValidator extends ValidatorCache<Boolean> implement
                 logger.error("======获取result信息：" + result);
                 throw new SystemRuntimeException(SYS_AUTH_ACCESS_TOKEN_FAIL);
             }
-//            throw new SystemRuntimeException(SYS_AUTH_REFRES_TOKEN_FAIL);
+            throw new SystemRuntimeException(SYS_AUTH_REFRES_TOKEN_FAIL);
         }
 
         if(result.equals(TokenMsgCodeEnum.RESET_PASSWORD.getIndexString())){

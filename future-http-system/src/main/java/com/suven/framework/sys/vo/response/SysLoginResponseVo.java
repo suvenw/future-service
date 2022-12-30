@@ -1,16 +1,27 @@
 package com.suven.framework.sys.vo.response;
 
 
+import com.suven.framework.common.api.ApiDesc;
+
 import java.util.List;
 
 public class SysLoginResponseVo {
 
-    private int multi_depart;
-    private SysUserResponseVo userInfo;
 
+    @ApiDesc(value = "用户信息", required = 0)
+    private SysUserResponseVo userInfo;
+    @ApiDesc(value = "登陆token", required = 0)
     private String token;
 
+    @ApiDesc(value = "部门类型:0,1,2", required = 0)
+    private int multi_depart;
+    @ApiDesc(value = "部门信息", required = 0)
     private List<SysDepartResponseVo> departs;
+
+    public static  SysLoginResponseVo build() {
+        return new SysLoginResponseVo();
+    }
+
 
     public int getMulti_depart() {
         return multi_depart;

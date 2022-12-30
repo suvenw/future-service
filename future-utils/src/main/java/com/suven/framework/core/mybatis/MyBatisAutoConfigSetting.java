@@ -1,21 +1,28 @@
 package com.suven.framework.core.mybatis;
 
+import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.suven.framework.common.constants.GlobalConfigConstants;
-import com.suven.framework.core.db.druid.DataSourceAuthGroupProperties;
+import com.suven.framework.core.db.druid.DruidDataSourceAutoConfig;
+import com.suven.framework.core.db.druid.DruidDataSourceConfigWrapper;
 import org.apache.ibatis.plugin.Interceptor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
@@ -45,7 +52,10 @@ import java.util.List;
 @Configuration
 @ConditionalOnProperty(name = GlobalConfigConstants.TOP_SERVER_MYBATIS_ENABLED,  matchIfMissing = true)
 @ConfigurationProperties(GlobalConfigConstants.TOP_SERVER_MYBATIS)
-@EnableConfigurationProperties({DataSourceAuthGroupProperties.class})
+
+//@EnableAutoConfiguration(exclude = {MybatisPlusAutoConfiguration.class})
+//@AutoConfigureBefore({MybatisPlusAutoConfiguration.class})
+@AutoConfigureAfter({DruidDataSourceAutoConfig.class})
 //@NacosConfigurationProperties( groupId= GlobalConfigConstants.SERVICE_NAME, dataId = GlobalConfigConstants.TOP_SERVER_MYBATIS_NAME, prefix= GlobalConfigConstants.TOP_SERVER_MYBATIS,  autoRefreshed = true)
 class MyBatisAutoConfigSetting implements ApplicationContextAware{
 
@@ -73,22 +83,22 @@ class MyBatisAutoConfigSetting implements ApplicationContextAware{
 
 
     /** 使用mybatis plus 必须使用该实现类 **/
-    @ConditionalOnClass(DataSourceAuthGroupProperties.class)
-    @ConditionalOnMissingBean(DataSourceAuthGroupProperties.class)
-    @Bean
-    public FactoryBean sqlSessionFactory() throws Exception {
-        DataSource dataSource = applicationContext.getBean("dataSource",DataSource.class);
-//      SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
-        /** 使用mybatis plus 必须使用该实现类 **/
-        MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
-
-        sqlSessionFactory.setDataSource(dataSource);
-        sqlSessionFactory.setGlobalConfig(globalConfig());
-        sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(getResources()));
-        sqlSessionFactory.setPlugins(getPlugins());
-
-        return sqlSessionFactory;
-    }
+//    @ConditionalOnClass(DruidDataSourceConfigWrapper.class)
+//    @ConditionalOnMissingBean(DruidDataSourceConfigWrapper.class)
+//    @Bean
+//    public FactoryBean sqlSessionFactory(DataSource dataSource) throws Exception {
+////        DataSource dataSource = applicationContext.getBean("dataSource",DataSource.class);
+////      SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
+//        /** 使用mybatis plus 必须使用该实现类 **/
+//        MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
+//
+//        sqlSessionFactory.setDataSource(dataSource);
+//        sqlSessionFactory.setGlobalConfig(globalConfig());
+//        sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(getResources()));
+//        sqlSessionFactory.setPlugins(getPlugins());
+//
+//        return sqlSessionFactory;
+//    }
 
 
 
@@ -113,7 +123,7 @@ class MyBatisAutoConfigSetting implements ApplicationContextAware{
 
     public Interceptor[] getPlugins() {
         List<Interceptor> interceptors = new ArrayList<>();
-        interceptors.add(new PaginationInterceptor());
+        interceptors.add(paginationInterceptor());
         return interceptors.toArray(new Interceptor[interceptors.size()]);
     }
 

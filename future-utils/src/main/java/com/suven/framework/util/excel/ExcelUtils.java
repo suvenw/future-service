@@ -81,13 +81,12 @@ public class ExcelUtils {
      * @param sheetName  sheetName名称
      * @return
      */
-    public static Boolean writeExcel(HttpServletResponse response, String fileName , Charset charset, Class clazzData, List data, String sheetName) throws Exception{
+    public static Boolean writeExcel(HttpServletResponse response, String fileName ,Charset charset, Class clazzData, List data, String sheetName) throws Exception{
         response.setHeader("Content-Disposition", "attachment; filename=" + fileName.getBytes(charset) );
         response.setContentType("application/octet-stream; charset=UTF-8");
         return writeExcel(response.getOutputStream(),clazzData,data,sheetName);
 
     }
-
     /**
      *
      *  文件导出

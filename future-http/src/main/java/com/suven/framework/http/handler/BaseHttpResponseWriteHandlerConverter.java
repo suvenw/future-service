@@ -8,6 +8,7 @@ import com.suven.framework.common.enums.SysResultCodeEnum;
 import com.suven.framework.http.data.vo.IResponseResult;
 import com.suven.framework.http.data.vo.IResponseResultList;
 import com.suven.framework.http.data.vo.ResponseResultList;
+import com.suven.framework.http.data.vo.ResponseResultVo;
 import com.suven.framework.http.exception.SystemRuntimeException;
 import com.suven.framework.http.inters.IResultCodeEnum;
 import com.suven.framework.util.constants.Env;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -28,10 +30,12 @@ import java.util.List;
  *    修改后版本:  v1.0.0    修改人： suven  修改日期:  20160110   修改内容: 添加异常信息参数化 
  * </pre>
  */
-public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResponseHandlerConverter implements IOutputStream {
+public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResponseHandlerConverter implements IOutputStream, IResponseHandler {
 
 
 	private	Logger logger = LoggerFactory.getLogger(getClass());
+
+
 	/**
 	 * 按默认格式返回data数据;返回客户端结果/消息。
 	 * ResponseMessage=[{
@@ -72,8 +76,7 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 	 */
 	@Override
 	public void write(IResultCodeEnum enumType, Object errorToData)  {
-		IResponseResult vo = this.getResultVo() ;
-		vo.buildResultVo(errorToData);
+		IResponseResult vo = this.getResultVo().buildResultVo(errorToData) ;
 		this.writeResponseData(vo,enumType);
 		this.writeStream(vo);
 		this.printErrorLogForRequestMessage(logger,vo.code(),vo.message());
@@ -142,7 +145,7 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 //		ResponseResultVo vo = responseResultVo.buildResponseResultVo();
 		this.writeResponseData(responseResultVo,responseData,errParam);
 		this.writeStream(responseResultVo);
-		if(responseResultVo.code() == SysResultCodeEnum.SYS_SUCCESS.getCode() || responseResultVo.success()){
+		if(responseResultVo.code() == SysResultCodeEnum.SYS_SUCCESS.getCode()){
 			this.printSuccessLog(logger);
 		}else {
 			this.printErrorLogForRequestMessage(logger,responseResultVo.code(), responseResultVo.message());
@@ -178,7 +181,5 @@ public abstract class BaseHttpResponseWriteHandlerConverter extends BaseHttpResp
 
 		}
 	}
-
-
 
 }

@@ -1,12 +1,7 @@
 package com.suven.framework.core.rocketmq;
 
-import com.suven.framework.common.aop.GlobalRpcLogbackThread;
+import com.suven.framework.plus.logback.GlobalRpcLogbackThread;
 import com.suven.framework.common.constants.GlobalConfigConstants;
-import com.suven.framework.core.redis.RedisClusterServer;
-import com.suven.framework.http.exception.SystemRuntimeException;
-import com.suven.framework.util.ids.GlobalId;
-import com.suven.framework.util.json.JsonUtils;
-import com.suven.framework.util.json.SerializableUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.MessageQueueSelector;
@@ -19,9 +14,14 @@ import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+import com.suven.framework.core.redis.RedisClusterServer;
+import com.suven.framework.http.exception.SystemRuntimeException;
+import com.suven.framework.util.ids.GlobalId;
+import com.suven.framework.util.json.JsonUtils;
+import com.suven.framework.util.json.SerializableUtil;
 
 import javax.annotation.Resource;
 
@@ -32,7 +32,7 @@ import javax.annotation.Resource;
  * @desc mq自定义模版类
  */
 @Component
-@ConditionalOnBean(DefaultMQProducer.class)
+@ConditionalOnMissingBean(DefaultMQProducer.class)
 @ConditionalOnProperty(name = GlobalConfigConstants.ROCKET_MQ_PRODUCT_CONFIG_ENABLED,  matchIfMissing = false)
 public class RocketMQApi {
     private Logger logger = LoggerFactory.getLogger(RocketMQApi.class);
@@ -149,14 +149,13 @@ public class RocketMQApi {
     }
 
     public <T>SendResult sendOrder(IRocketMqTopic rocketMqTopic, T payload,String messageQueueHashKey) {
-        return sendOrder(rocketMqTopic,payload,messageQueueHashKey,null,0,0);
+        return sendOrder(rocketMqTopic,payload,null,0,0,messageQueueHashKey);
+    }
+    public <T>SendResult sendOrder(IRocketMqTopic rocketMqTopic, T payload,long timeout,String messageQueueHashKey) {
+        return sendOrder(rocketMqTopic,payload,null,timeout,0,messageQueueHashKey);
 
     }
-    public <T>SendResult sendOrder(IRocketMqTopic rocketMqTopic, T payload,String messageQueueHashKey ,long timeout) {
-        return sendOrder(rocketMqTopic,payload,messageQueueHashKey,null,timeout,0);
-
-    }
-    public <T>SendResult sendOrder(IRocketMqTopic rocketMqTopic, T payload,String messageQueueHashKey, String prefixKeys,long timeout,int delayLevel)  {
+    public <T>SendResult sendOrder(IRocketMqTopic rocketMqTopic, T payload, String prefixKeys,long timeout,int delayLevel,String messageQueueHashKey)  {
         try {
             SendRocketMqMessage rocketMq = new SendRocketMqMessage<>(rocketMqTopic, payload, prefixKeys,delayLevel).build();
             if(null == rocketMq || !rocketMq.isSuccess){
@@ -177,7 +176,7 @@ public class RocketMQApi {
     }
 
     public <T>void asyncSend(IRocketMqTopic rocketMqTopic, T payload, SendCallback sendCallback)  {
-        asyncSend(rocketMqTopic,payload,sendCallback,null,0,0);
+        asyncSend(rocketMqTopic,payload,null,0,0,sendCallback);
     }
 
     /**
@@ -189,7 +188,7 @@ public class RocketMQApi {
      * @param timeout
      * @param delayLevel
      */
-    public <T>void asyncSend(IRocketMqTopic rocketMqTopic, T payload, SendCallback sendCallback, String prefixKeys, long timeout,int delayLevel)  {
+    public <T>void asyncSend(IRocketMqTopic rocketMqTopic, T payload,  String prefixKeys, long timeout,int delayLevel,SendCallback sendCallback)  {
 
         try {
             SendRocketMqMessage rocketMq = new SendRocketMqMessage<>(rocketMqTopic, payload, prefixKeys,delayLevel).build();

@@ -1,6 +1,7 @@
 package com.suven.framework.util.createcode.swagger;
 
 
+import java.util.List;
 
 public class SwaggerMethodBean {
 
@@ -13,6 +14,12 @@ public class SwaggerMethodBean {
     private String  responseName = "";//接口返回类名 request
 
     private String requestAuthor = "";
+
+    private String sourceClassName = ""; //来源的类名
+
+    private String moduleGroupName = ""; //归属模块分组名称
+
+    private List<SwaggerParameterBean> requestParameterList;//请求参数解释后对象信息聚合,用于在界面渲染展示;
 
     public static SwaggerMethodBean build(){
         return new SwaggerMethodBean();
@@ -83,6 +90,33 @@ public class SwaggerMethodBean {
 
     public SwaggerMethodBean setRequestAuthor(String requestAuthor) {
         this.requestAuthor = requestAuthor;
+        return this;
+    }
+
+    public String getSourceClassName() {
+        return sourceClassName;
+    }
+
+    public SwaggerMethodBean setSourceClassName(String sourceClassName) {
+        this.sourceClassName = sourceClassName;
+        return this;
+    }
+
+    public String getModuleGroupName() {
+        return moduleGroupName;
+    }
+
+    public SwaggerMethodBean setModuleGroupName(String moduleGroupName) {
+        this.moduleGroupName = moduleGroupName;
+        return this;
+    }
+
+    public List<SwaggerParameterBean> getRequestParameterList() {
+        return requestParameterList;
+    }
+
+    public SwaggerMethodBean setRequestParameterList(List<SwaggerParameterBean> requestParameterList) {
+        this.requestParameterList = requestParameterList;
         return this;
     }
 }

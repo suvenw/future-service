@@ -37,6 +37,7 @@ public class JsonResponseHandlerArgumentResolver extends AbstractHandlerArgument
         mavContainer.setRequestHandled(true);
         HttpServletResponse response = webRequest.getNativeResponse(HttpServletResponse.class);
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
+        /** **/
         Class responseClass = parameter.getParameterType();
         return parserResponse(request, response,responseClass);
     }

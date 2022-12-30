@@ -2,46 +2,50 @@ package com.suven.framework.sys.facade;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.suven.framework.common.enums.SysResultCodeEnum;
-import com.suven.framework.http.inters.IResultCodeEnum;
-import com.suven.framework.sys.utils.JwtUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.databene.commons.CollectionUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import com.suven.framework.common.data.BasePage;
+import com.suven.framework.common.enums.SysResultCodeEnum;
+import com.suven.framework.common.enums.SystemMsgCodeEnum;
 import com.suven.framework.common.util.Constant;
 import com.suven.framework.core.redis.RedisClusterServer;
 import com.suven.framework.core.redis.RedisKeys;
 import com.suven.framework.core.redis.RedisUtil;
 import com.suven.framework.http.data.vo.HttpRequestByIdListVo;
 import com.suven.framework.http.data.vo.ResponseResultList;
+import com.suven.framework.http.exception.SystemRuntimeException;
+import com.suven.framework.http.handler.OutputResponse;
+import com.suven.framework.http.validator.JwtUtil;
+import com.suven.framework.sys.dto.enums.SysUserQueryEnum;
+import com.suven.framework.sys.dto.enums.SysUserRoleQueryEnum;
 import com.suven.framework.sys.dto.request.SysUserDepartRequestDto;
+import com.suven.framework.sys.dto.request.SysUserLoginRequestDto;
 import com.suven.framework.sys.dto.request.SysUserRequestDto;
-import com.suven.framework.sys.dto.response.SysDepartResponseDto;
-import com.suven.framework.sys.dto.response.SysUserResponseDto;
-import com.suven.framework.sys.dto.response.SysUserRoleResponseDto;
-import com.suven.framework.sys.entity.SysDepart;
-import com.suven.framework.sys.entity.SysUserDepart;
-import com.suven.framework.sys.service.SysDepartService;
-import com.suven.framework.sys.service.SysUserDepartService;
-import com.suven.framework.sys.service.SysUserRoleService;
-import com.suven.framework.sys.service.SysUserService;
-import com.suven.framework.sys.vo.request.SysUserDepartRequestVo;
-import com.suven.framework.sys.vo.request.SysUserRequestVo;
-import com.suven.framework.sys.vo.request.SysUserRoleRequestVo;
-import com.suven.framework.sys.vo.request.SysUserUpdatePwdRequestVo;
-import com.suven.framework.sys.vo.response.LoginCodeResponseVo;
-import com.suven.framework.sys.vo.response.SysDepartResponseVo;
-import com.suven.framework.sys.vo.response.SysLoginResponseVo;
-import com.suven.framework.sys.vo.response.SysUserResponseVo;
+import com.suven.framework.sys.dto.request.SysUserRoleRequestDto;
+import com.suven.framework.sys.dto.response.*;
+import com.suven.framework.sys.entity.SysUserRole;
+import com.suven.framework.sys.service.*;
+import com.suven.framework.sys.utils.SystemParamConstant;
+import com.suven.framework.sys.vo.request.*;
+import com.suven.framework.sys.vo.response.*;
 import com.suven.framework.util.crypt.CryptUtil;
+import com.suven.framework.util.random.RandImageUtil;
 import com.suven.framework.util.random.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.databene.commons.CollectionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
+
+import static com.suven.framework.common.enums.SysResultCodeEnum.SYS_AUTH_ACCESS_TOKEN_FAIL;
 
 
 /**   
@@ -59,6 +63,9 @@ import java.util.Random;
 @Component
 public class SysUserFacade {
 
+
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+
 	@Autowired
 	private SysUserService  sysUserService;
 
@@ -74,129 +81,88 @@ public class SysUserFacade {
 	@Autowired
 	private SysUserRoleService sysUserRoleService;
 
+	@Autowired
+	private SysUserLoginService sysUserLoginService;
+
+
 
 
 	/**
-	 * 用户信息
-	 *
-	 * @param sysUser
+	 * 用户登陆
+	 * @param sysUserLoginRequestVo
 	 * @return
 	 */
-	public SysLoginResponseVo userInfo(SysUserResponseVo sysUser) {
-
-		SysLoginResponseVo result = new SysLoginResponseVo();
-		// 	生成token
-		String token = JwtUtil.createToken(JSON.toJSONString(sysUser));
-		long current = System.currentTimeMillis();
-		String key = RedisUtil.formatKey(RedisKeys.USER_LOGIN_TOKEN, sysUser.getId());
-		redisClusterServer.hmset(key, token, String.valueOf(current + JwtUtil.JWT_EXPIRE_TIME));
-
-		int multi_depart = 0 ;
-		List<SysDepartResponseVo> departList = new ArrayList<>();
-
-		// 获取用户部门信息
-		List<Long> departIds = sysUserDepartService.getDepartIdsByUserId(sysUser.getId());
-		List<SysDepartResponseDto> departs =  sysDepartService.getSysDepartByIds(departIds);
-		if(null != departList &&  departs.size() == 1){
-//			sysUserService.updateUserDepart(userName, departs.get(0).getOrgCode());
-			multi_depart = 1;
-		} else  if(null != departList &&  departs.size() > 1){
-			multi_depart = 2;
+	public SysLoginResponseVo userLogin(SysUserLoginRequestVo sysUserLoginRequestVo) {
+		SysUserLoginRequestDto loginRequestDto = SysUserLoginRequestDto.build().clone(sysUserLoginRequestVo);
+		SysLoginResponseDto loginDto =  sysUserLoginService.loginSysUser(loginRequestDto);
+		if(loginDto == null ){
+			throw new SystemRuntimeException(SysResultCodeEnum.SYS_USER_FAIL);
 		}
-		List<SysDepartResponseVo> resDtoList = new ArrayList<>();
-		if(null != departs){
-			departs.forEach(sysDepart -> {
-				SysDepartResponseVo sysDepartResponseVo = SysDepartResponseVo.build().clone(sysDepart);
-				resDtoList.add(sysDepartResponseVo);
+		List<SysDepartResponseVo> departs  = new ArrayList<>();
+		if(null != loginDto.getDeparts() && !loginDto.getDeparts().isEmpty()){
+			loginDto.getDeparts().forEach(depart -> {
+				SysDepartResponseVo vo = SysDepartResponseVo.build().clone(depart);
+				departs.add(vo);
 			});
 		}
-		result.setDeparts(resDtoList).setToken(token).setUserInfo(sysUser).setMulti_depart(multi_depart);
+		SysLoginResponseVo result = SysLoginResponseVo.build();
+		result.setMulti_depart(loginDto.getMulti_depart());
+		result.setToken(loginDto.getToken());
+		result.setUserInfo(SysUserResponseVo.build().clone(loginDto.getUserInfo()));
+		result.setDeparts(departs);
 		return result;
+
 	}
 
-
-
-	public SysResultCodeEnum checkUserIsEffective(SysUserResponseDto dto, SysUserRequestVo sysUserRequestVo) {
-		Object checkCode = redisClusterServer.get(sysUserRequestVo.getCheckKey());
-		if(checkCode==null) {
-			return SysResultCodeEnum.SYS_LOGIN_CODE_FAIL;
-		}
-		if(!checkCode.equals(sysUserRequestVo.getCaptcha())) {
-			return SysResultCodeEnum.SYS_LOGIN_CODE_FAIL;
-		}
-		if (dto == null ) {
-			return SysResultCodeEnum.SYS_USER_FAIL;
-		} if (dto != null && dto.getStatus()==2) {
-			return SysResultCodeEnum.SYS_USER_BAND_FAIL;
-		}
-
-		//不存在角色，不让该用户登录
-		List<SysUserRoleResponseDto>  sysUserRoleResponseDtos = sysUserRoleService.getListByUserId(dto.getId());
-		if (CollectionUtil.isEmpty(sysUserRoleResponseDtos)) {
-			return SysResultCodeEnum.SYS_USER_FAIL;
-		}
-
-		/*String userPassword = CryptUtil.encryptPassword(sysUserRequestVo.getPassword());
-		userPassword = coverPassword(userPassword);
-		String sysPassword = dto.getPassword();
-		if (!userPassword.equals(sysPassword)) {
-			return SysMsgEnum.SYS_USER_PWD_FAIL;
-		}*/
-
-
-		return null;
-	}
-
-	public LoginCodeResponseVo getCheckCode() {
-		String code = RandomUtils.randomString(4);
-		String key = CryptUtil.md5(code+System.currentTimeMillis());
-		key = RedisUtil.formatKey(RedisKeys.USER_LOGIN_CHECK, key);
-		redisClusterServer.setNx(key,code,Constant.CHECK_CODE_SECOND);
-		return LoginCodeResponseVo.build().setKey(key).setCode(code);
-	}
-
-
-
-	public SysUserResponseDto getUserByName(String username) {
-		return sysUserService.getUserByName(username);
-	}
 
 
 	public SysResultCodeEnum logout(HttpServletRequest request) {
 		String token = request.getHeader(Constant.X_ACCESS_TOKEN);
-		if(StringUtils.isEmpty(token)) {
-			return SysResultCodeEnum.SYS_LOGOUT_FAIL;
-		}
-		String obj = JwtUtil.getUserInfo(token);
-		if(StringUtils.isEmpty(obj)) {
+		String codeKey = RedisUtil.formatKey(RedisKeys.USER_LOGIN_TOKEN, token);
+		long expire = System.currentTimeMillis();
+		Map<String, String> result = redisClusterServer.getMapCacheAndDelExpire(codeKey, expire);
+		if (result.isEmpty() ) {
 			return SysResultCodeEnum.SYS_TOKEN_FAIL;
 		}
-		SysUserResponseVo vo = JSONObject.parseObject(obj,SysUserResponseVo.class);
-		SysUserResponseDto dto = sysUserService.getUserByPhone(vo.getPhone());
-		if(dto!=null) {
-			String key = RedisUtil.formatKey(RedisKeys.USER_LOGIN_TOKEN, dto.getId());
-			redisClusterServer.hdel(key,token);
-			return SysResultCodeEnum.SYS_SUCCESS;
-		}else {
-			return SysResultCodeEnum.SYS_TOKEN_FAIL;
-		}
+		redisClusterServer.del(codeKey);
+		return SysResultCodeEnum.SYS_SUCCESS;
+//		if(StringUtils.isEmpty(token)) {
+//			return SysResultCodeEnum.SYS_LOGOUT_FAIL;
+//		}
+//		String obj = JwtUtil.getUserInfo(token);
+//		if(StringUtils.isEmpty(obj)) {
+//			return SysResultCodeEnum.SYS_TOKEN_FAIL;
+//		}
+//		SysUserResponseVo vo = JSONObject.parseObject(obj,SysUserResponseVo.class);
+//		SysUserLoginRequestDto loginRequestDto = SysUserLoginRequestDto.build().clone(vo.getUsername());
+//		SysLoginResponseDto dto =  sysUserLoginService.loginSysUser(loginRequestDto);
+//		if(dto!=null) {
+//			String key = RedisUtil.formatKey(RedisKeys.USER_LOGIN_TOKEN, dto.getId());
+//			redisClusterServer.hdel(key,token);
+//			return SysResultCodeEnum.SYS_SUCCESS;
+//		}else {
+//			return SysResultCodeEnum.SYS_TOKEN_FAIL;
+//		}
 	}
 
 
-	public Boolean deleteUserInDepart(SysUserDepartRequestVo sysUserDepartRequestVo, HttpRequestByIdListVo idListVo) {
-		SysUserDepartRequestDto dto = SysUserDepartRequestDto.build().clone(sysUserDepartRequestVo);
-		return sysUserDepartService.deleteUserInDepart(sysUserDepartRequestVo.getDepId(),idListVo.getIdList());
+	public Boolean deleteUserInDepart(SysUserDepartIdsRequestVo sysUserDepartRequestVo) {
+		return sysUserDepartService.deleteUserInDepart(sysUserDepartRequestVo.getDepId(),sysUserDepartRequestVo.getUserIdList());
 	}
 
 
-
+	/**
+	 * 修改密码
+	 * @param userUpdatePwdRequestVo
+	 * @return
+	 */
 	public SysResultCodeEnum updatePassword(SysUserUpdatePwdRequestVo userUpdatePwdRequestVo) {
-		SysUserResponseDto dto = sysUserService.getUserByName(userUpdatePwdRequestVo.getUsername());
+		SysUserRequestDto sysUserRequestDto = SysUserRequestDto.build().toUsername(userUpdatePwdRequestVo.getUsername());
+		SysUserResponseDto dto = sysUserService.getSysUserByOne(SysUserQueryEnum.USER_NAME,sysUserRequestDto);
 		if (null == dto) {
 			return SysResultCodeEnum.SYS_USER_FAIL;
 		}
-		String passwordEncode = CryptUtil.encryptPassword(userUpdatePwdRequestVo.getOldpassword());
-		String md5OldPassword = coverPassword(passwordEncode);
+		String md5OldPassword = crypPasswordSalt(userUpdatePwdRequestVo.getOldpassword() , dto.getSalt());
 		if (!dto.getPassword().equals(md5OldPassword)) {
 			return SysResultCodeEnum.SYS_USER_OLD_PWD_FAIL;
 		}
@@ -209,12 +175,11 @@ public class SysUserFacade {
 		if (!userUpdatePwdRequestVo.getPassword().equals(userUpdatePwdRequestVo.getConfirmpassword())) {
 			return SysResultCodeEnum.SYS_USER_TWO_PWD_FAIL;
 		}
-		String password = CryptUtil.encryptPassword(dto.getPassword());
-		password = coverPassword(password);
+		String password = crypPasswordSalt(userUpdatePwdRequestVo.getPassword() , dto.getSalt());
 
 		SysUserRequestDto requestDto = SysUserRequestDto.build().clone(dto);
 		requestDto.setPassword(password);
-		sysUserService.updateSysUser(requestDto);
+		sysUserService.updateSysUserPassWord(requestDto);
 		return SysResultCodeEnum.SYS_SUCCESS;
 	}
 
@@ -223,8 +188,8 @@ public class SysUserFacade {
 	 * @param userId
 	 * @return
 	 */
-	public List<SysDepartResponseVo.DepartTreeRespVo> getUserDepartList(long userId) {
-		List<SysUserDepart> userDeparts = sysUserDepartService.getListByUserId(userId);
+	public List<DepartTreeResponseVo> getUserDepartList(long userId) {
+		List<SysUserDepartResponseDto> userDeparts = sysUserDepartService.getListByUserId(userId);
 		if (CollectionUtil.isEmpty(userDeparts)) {
 			return new ArrayList<>();
 		}
@@ -232,36 +197,41 @@ public class SysUserFacade {
 		userDeparts.forEach(u ->{
 			departIds.add(u.getDepId());
 		});
-		List<SysDepart> departList = sysDepartService.getList(departIds);
+		List<SysDepartResponseDto> departList = sysDepartService.getSysDepartByIdList(departIds);
 		if (CollectionUtil.isEmpty(departList)){
 			return new ArrayList<>();
 		}
-		List<SysDepartResponseVo.DepartTreeRespVo> departTreeRespVoList = new ArrayList<>();
+		List<DepartTreeResponseVo> departTreeRespVoList = new ArrayList<>();
 		departList.forEach(d ->{
-			departTreeRespVoList.add(SysDepartResponseVo.DepartTreeRespVo.build().convertByUserDepart(d));
+			departTreeRespVoList.add(DepartTreeResponseVo.build().convertByUserDepart(d));
 		});
 		return departTreeRespVoList;
 	}
 
-	public Boolean addSysUserRole(SysUserRoleRequestVo userDepartRequestVo, HttpRequestByIdListVo idListVo) {
-		boolean isFlag = sysUserService.addSysUserRole(userDepartRequestVo.getRoleId(),idListVo.getIdList());
+	public Boolean addSysUserRole(SysUserRoleIdsRequestVo userDepartRequestVo) {
+		boolean isFlag = sysUserService.addSysUserRole(userDepartRequestVo.getRoleId(),
+				userDepartRequestVo.getUserIdList());
 		return isFlag;
 	}
 
-	public Boolean deleteUserRole(SysUserRoleRequestVo userDepartRequestVo, HttpRequestByIdListVo idListVo) {
-		boolean isFlag = sysUserService.deleteUserRole(userDepartRequestVo.getRoleId(),idListVo.getIdList());
+	public Boolean deleteUserRole(SysUserRoleIdsRequestVo userDepartRequestVo) {
+		boolean isFlag = sysUserService.deleteUserRole(userDepartRequestVo.getRoleId(),userDepartRequestVo.getUserIdList());
 		return isFlag;
 	}
 
+	private static String crypPasswordSalt(String sourcePassword , String salt) {
+		String password = CryptUtil.md5(sourcePassword + salt) ;
+		return password;
+	}
 
-	private static String coverPassword(String sourcePassword) {
+	private static String coverPassword(String sourcePassword , String salt) {
 		String decryptPassword = CryptUtil.decryptPassword(sourcePassword);
-		String password = CryptUtil.md5(decryptPassword) ;
+		String password = CryptUtil.md5(decryptPassword + salt) ;
 		return password;
 	}
 
 	public ResponseResultList getSysUserList(BasePage page) {
-		ResponseResultList<SysUserResponseDto> resultList = sysUserService.getSysUserByNextPage(page);
+		ResponseResultList<SysUserResponseDto> resultList = sysUserService.getSysUserByNextPage(page,SysUserQueryEnum.DESC_ID);
 		if (null == resultList || resultList.getList().isEmpty()) {
 			return ResponseResultList.build();
 		}
@@ -279,4 +249,70 @@ public class SysUserFacade {
 		return result;
 
 	}
+
+	/**
+	 * 获取随机码,并缓存到redis中;
+	 * @return
+	 */
+	public LoginCodeResponseVo getCheckCode() {
+		String code = RandomUtils.randomString(4);
+		String key = CryptUtil.md5(code+System.currentTimeMillis());
+		key = RedisUtil.formatKey(RedisKeys.USER_LOGIN_CHECK, key);
+		redisClusterServer.setNx(key,code,Constant.CHECK_CODE_SECOND);
+		return LoginCodeResponseVo.build().setKey(key).setCode(code);
+	}
+
+	/**
+	 * 将验证码生成图片
+	 * @return
+	 */
+	public LoginCodeResponseVo getCheckCodeImage(){
+		try {
+
+			String code = RandomUtils.randomString(4);
+			String lowerCaseCode = code.toLowerCase();
+			String key = RedisUtil.formatKey(RedisKeys.USER_LOGIN_CHECK, lowerCaseCode);
+			redisClusterServer.setNx(key,code,Constant.CHECK_CODE_SECOND);
+			String base64 = RandImageUtil.generate(code);
+			LoginCodeResponseVo vo = LoginCodeResponseVo.build().setCode(code).setKey(key).setBase64(base64);
+			return vo;
+		} catch (Exception e) {
+			logger.error("生成图片验证异常 randomImage exception[{}]",e);
+			e.printStackTrace();
+			throw new SystemRuntimeException(SystemMsgCodeEnum.SYS_ERROR_500
+					.cloneMsg(SystemParamConstant.Sys.SYS_CAPTCHA_CODE_ERROR));
+
+		}
+	}
+
+	/**
+	 * 校验用户token信息, 是否有效,有效返回true,否则为false;
+	 *
+	 * @param username
+	 * @param accessToken
+	 * @return
+	 */
+	public boolean checkToken(String username, String accessToken ){
+		long current = System.currentTimeMillis();
+		//shiro
+		String codeKey = RedisUtil.formatKey(RedisKeys.USER_LOGIN_TOKEN, accessToken);
+		long expire = System.currentTimeMillis();
+		Map<String, String> result = redisClusterServer.getMapCacheAndDelExpire(codeKey, expire);
+		if (result.isEmpty() ) {
+			throw new SystemRuntimeException(SYS_AUTH_ACCESS_TOKEN_FAIL);
+		}
+		String loginName = result.get(username);
+		if(loginName == null){
+			throw new SystemRuntimeException(SYS_AUTH_ACCESS_TOKEN_FAIL);
+		}
+		return true;
+	}
+
+
+
+
+
+
+
+
 }

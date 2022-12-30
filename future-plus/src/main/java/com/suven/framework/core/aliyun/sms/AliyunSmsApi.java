@@ -73,7 +73,7 @@ public class AliyunSmsApi {
             request.setAction("SendSms");
             Map<String,Object> map =  JsonUtils.objectToMap(aliyunSmsRequestDto);
 
-            if(null == map && map.isEmpty()){
+            if(null == map || map.isEmpty()){
                 return AliyunSmsResult.build();
              }
             map.forEach((k,v)->{

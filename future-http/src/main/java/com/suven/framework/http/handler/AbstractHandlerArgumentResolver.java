@@ -7,6 +7,7 @@ import com.suven.framework.http.interceptor.IHandlerHeaderInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -54,9 +55,9 @@ public abstract class AbstractHandlerArgumentResolver<T> implements HandlerMetho
      * @param webRequest HttpServletRequest 网络请求对象
      * @return  boolean   如果是json返回ture;否则为false;
      * **/
-    protected boolean isJsonRequestContentType(NativeWebRequest webRequest){
+    protected boolean requestContentTypeIsJson(NativeWebRequest webRequest){
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-        boolean requestJson = this.isJsonRequestFromContentType(request);
+        boolean requestJson = this.requestIsJsonFromContentType(request);
         return requestJson;
     }
 

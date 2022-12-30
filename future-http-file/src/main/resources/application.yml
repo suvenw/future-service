@@ -3,6 +3,6 @@
 logging:
   level:
     root: info
-    com.sixeco.framework.sys.dao: trace
+    com.suven.framework.sys.dao: trace
   pattern:
     console: '%p%m%n'

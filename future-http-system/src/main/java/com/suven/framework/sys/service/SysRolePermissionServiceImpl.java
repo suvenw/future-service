@@ -1,43 +1,64 @@
 package com.suven.framework.sys.service;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.suven.framework.common.enums.SysResultCodeEnum;
 import com.suven.framework.http.inters.IResultCodeEnum;
 import org.databene.commons.CollectionUtil;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.suven.framework.common.data.BasePage;
-import com.suven.framework.common.enums.ResultEnum;
-import com.suven.framework.core.db.ext.Query;
-import com.suven.framework.http.data.vo.ResponseResultList;
+
+import java.util.*;
+import java.io.InputStream;
+
+
+import com.suven.framework.sys.entity.SysRolePermission;
 import com.suven.framework.sys.dao.SysRolePermissionDao;
 import com.suven.framework.sys.dto.request.SysRolePermissionRequestDto;
 import com.suven.framework.sys.dto.response.SysRolePermissionResponseDto;
-import com.suven.framework.sys.entity.SysRolePermission;
-import com.suven.framework.util.PageUtils;
+import com.suven.framework.sys.dto.enums.SysRolePermissionQueryEnum;
 
-import java.util.*;
+import com.suven.framework.core.db.IterableConverter;
+import com.suven.framework.core.mybatis.MyBatisUtils;
+import com.suven.framework.core.db.ext.Query;
+import com.suven.framework.common.data.BasePage;
+import com.suven.framework.common.enums.ResultEnum;
+import com.suven.framework.http.data.vo.ResponseResultList;
+import com.suven.framework.util.PageUtils;
+import com.suven.framework.util.excel.ExcelUtils;
+
+
+
+
+
 
 
 /**
- * @ClassName: SysRolePermissionDao.java
- * @Description: 角色权限表的数据交互处理类
- * @author xxx.xxx
- * @date   2019-10-18 12:35:25
- * @version V1.0.0
- * <p>
+ * @ClassName: SysRolePermissionServiceImpl.java
+ *
+ * @Author 作者 : suven
+ * @CreateDate 创建时间: 2022-02-28 16:10:49
+ * @Version 版本: v1.0.0
+ * <pre>
+ *
+ *  @Description: 角色权限表 RPC业务接口逻辑实现类
+ *
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
  * ----------------------------------------------------------------------------
- *  modifyer    modifyTime                 comment
  *
  * ----------------------------------------------------------------------------
- * </p>
- */
-@Component
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
+
+@Service
 public class SysRolePermissionServiceImpl  implements SysRolePermissionService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -67,6 +88,47 @@ public class SysRolePermissionServiceImpl  implements SysRolePermissionService {
 
 
     }
+
+    /**
+     * 保存角色权限表同时更新数据库和缓存的实现方法,同时保存Id主键到对象中
+     * @param sysRolePermissionRequestDto SysRolePermissionResponseDto
+     * @return
+     */
+    @Override
+    public SysRolePermissionResponseDto saveIdSysRolePermission(SysRolePermissionRequestDto sysRolePermissionRequestDto){
+        if(sysRolePermissionRequestDto== null){
+            return null;
+        }
+        SysRolePermission sysRolePermission = SysRolePermission.build().clone(sysRolePermissionRequestDto);
+        sysRolePermission = sysRolePermissionDao.saveId(sysRolePermission);
+        if(null == sysRolePermission){
+            return null;
+        }
+        SysRolePermissionResponseDto sysRolePermissionResponseDto = SysRolePermissionResponseDto.build().clone(sysRolePermission);
+        return sysRolePermissionResponseDto;
+
+
+    }
+    /**
+     * 保存角色权限表同时更新数据库和缓存的实现方法,同时保存Id主键到对象中
+     * @param entityList SysRolePermissionRequestDto集合
+     * @return
+     */
+    @Override
+    public boolean saveBatchIdSysRolePermission(Collection<SysRolePermissionRequestDto> entityList) {
+        if(null == entityList ){
+            return false;
+        }
+        List<SysRolePermission> list = new ArrayList<>();
+        entityList.forEach(e -> list.add(SysRolePermission.build().clone(e)));
+        boolean result = sysRolePermissionDao.saveBatchId(list);
+        return result;
+    }
+    /**
+     * 批量保存角色权限表同时更新数据库和缓存的实现方法
+     * @param entityList SysRolePermissionRequestDto集合
+     * @return
+     */
     @Override
     public boolean saveBatchSysRolePermission(Collection<SysRolePermissionRequestDto> entityList, int batchSize) {
         if(null == entityList || entityList.size() !=  batchSize){
@@ -88,6 +150,7 @@ public class SysRolePermissionServiceImpl  implements SysRolePermissionService {
         boolean result = sysRolePermissionDao.saveOrUpdateBatch(list,batchSize);
         return result;
     }
+
 
     @Override
     public boolean updateBatchById(Collection<SysRolePermissionRequestDto> entityList, int batchSize) {
@@ -169,74 +232,155 @@ public class SysRolePermissionServiceImpl  implements SysRolePermissionService {
 
     }
 
-
-
-
     /**
-     * 通过分页获取SysRolePermission信息实现查找缓存和数据库的方法
-     * @param basePage BasePage
+     * 通过参数limit0,1获取对象角色权限表的查询方法
+     * @param  queryEnum
      * @return
-     * @author xxx.xxx
-     * @date 2019-10-18 12:35:25
      */
-    public List<SysRolePermissionResponseDto> getSysRolePermissionByPage(BasePage basePage){
+     @Override
+     public   SysRolePermissionResponseDto getSysRolePermissionByOne( SysRolePermissionQueryEnum queryEnum,SysRolePermissionRequestDto sysRolePermissionRequestDto){
+          if(sysRolePermissionRequestDto == null ){
+              return null;
+          }
+           QueryWrapper<SysRolePermission> queryWrapper = sysRolePermissionDao.builderQueryEnum( queryEnum, sysRolePermissionRequestDto);
+            //分页对象        PageHelper
+           Page<SysRolePermission> iPage = new Page<>(0, 1);
+           iPage.setSearchCount(false);
+           List<SysRolePermission>  list = sysRolePermissionDao.getListByPage(iPage,queryWrapper);
+           if(null == list || list.isEmpty()){
+                 return null;
+           }
+           SysRolePermission sysRolePermission = list.get(0);
+           SysRolePermissionResponseDto sysRolePermissionResponseDto = SysRolePermissionResponseDto.build().clone(sysRolePermission);
+
+            return sysRolePermissionResponseDto ;
+       }
 
 
-        List<SysRolePermissionResponseDto> resDtoList = new ArrayList<>();
-        if(basePage == null){
-            return resDtoList;
-        }
-        //分页对象        PageHelper
-        IPage<SysRolePermission> iPage = new Page<>(basePage.getPageNo(), basePage.getPageSize());
-        QueryWrapper<SysRolePermission> queryWrapper = new QueryWrapper<>();
+ /**
+   * 通过条件查询SysRolePermission信息列表,实现查找缓存和数据库的方法,但不统计总页数
+   * @param paramObject Object
+   * @return
+   * @author suven
+   * @date 2022-02-28 16:10:49
+   */
+  @Override
+  public List<SysRolePermissionResponseDto> getSysRolePermissionListByQuery( Object  paramObject, SysRolePermissionQueryEnum queryEnum){
 
-        IPage<SysRolePermission> page = sysRolePermissionDao.page(iPage, queryWrapper);
-        if(null == page){
-            return resDtoList;
-        }
+      QueryWrapper<SysRolePermission> queryWrapper = sysRolePermissionDao.builderQueryEnum( queryEnum, paramObject);
 
-        List<SysRolePermission>  list = page.getRecords();;
-        if(null == list || list.isEmpty()){
-            return resDtoList;
-        }
-        list.forEach(sysRolePermission -> {
-                SysRolePermissionResponseDto sysRolePermissionResponseDto = SysRolePermissionResponseDto.build().clone(sysRolePermission);
+      List<SysRolePermission>  list = sysRolePermissionDao.getListByQuery(queryWrapper);
+      if(null == list ){
+          list = new ArrayList<>();
+      }
+      List<SysRolePermissionResponseDto>  resDtoList =  IterableConverter.convertList(list,SysRolePermissionResponseDto.class);
+      return resDtoList;
 
-            resDtoList.add(sysRolePermissionResponseDto);
-        });
-        return resDtoList;
+  }
 
-
-    }
 
     /**
-     * 通过分页获取SysRolePermission信息实现查找缓存和数据库的方法
-     * @param basePage BasePage
+     * 通过分页获取SysRolePermission信息列表,实现查找缓存和数据库的方法,但不统计总页数
+     * @param page BasePage
      * @return
-     * @author xxx.xxx
-     * @date 2019-10-18 12:35:25
+     * @author suven
+     * @date 2022-02-28 16:10:49
      */
     @Override
-    public ResponseResultList<SysRolePermissionResponseDto> getSysRolePermissionByNextPage(BasePage basePage){
-        List<SysRolePermissionResponseDto>  list = this.getSysRolePermissionByPage(basePage);
+    public List<SysRolePermissionResponseDto> getSysRolePermissionListByPage(BasePage page,SysRolePermissionQueryEnum queryEnum){
+
+        QueryWrapper<SysRolePermission> queryWrapper =sysRolePermissionDao.builderQueryEnum(queryEnum,  page.getParamObject());
+        //分页对象        PageHelper
+        Page<SysRolePermission> iPage = new Page<>(page.getPageNo(), page.getPageSize());
+        iPage.setSearchCount(false);
+        List<SysRolePermission>  list = sysRolePermissionDao.getListByPage(iPage,queryWrapper);
         if(null == list ){
             list = new ArrayList<>();
         }
-        boolean isNext =  basePage.isNextPage(list);
-        ResponseResultList<SysRolePermissionResponseDto> responseResultList = ResponseResultList.build().toIsNextPage(isNext).toList(list);
+        List<SysRolePermissionResponseDto>  resDtoList =  IterableConverter.convertList(list,SysRolePermissionResponseDto.class);
+        return resDtoList;
+
+    }
+
+
+
+   /**
+     * 通过分页获取SysRolePermission 角色权限表信息实现查找缓存和数据库的方法,不查总页数
+     * @param page BasePage
+     * @return
+     * @author suven
+     * @date 2022-02-28 16:10:49
+     */
+    @Override
+    public ResponseResultList<SysRolePermissionResponseDto> getSysRolePermissionByQueryPage(BasePage page,SysRolePermissionQueryEnum queryEnum){
+
+        ResponseResultList<SysRolePermissionResponseDto> responseResultList = ResponseResultList.build();
+        QueryWrapper<SysRolePermission> queryWrapper = sysRolePermissionDao.builderQueryEnum(queryEnum,  page.getParamObject());
+        //分页对象        PageHelper
+        Page<SysRolePermission> iPage = new Page<>(page.getPageNo(), page.getPageSize());
+        iPage.setSearchCount(false);
+        List<SysRolePermission>  list = sysRolePermissionDao.getListByPage(iPage,queryWrapper);
+        if(null == list ){
+            list = new ArrayList<>();
+        }
+        List<SysRolePermissionResponseDto>  resDtoList =  IterableConverter.convertList(list,SysRolePermissionResponseDto.class);
+        boolean isNext =  page.isNextPage(resDtoList);
+        responseResultList.toIsNextPage(isNext).toList(resDtoList);
+        return responseResultList;
+    }
+
+    /**
+     * 通过分页获取SysRolePermission信息列表,实现查找缓存和数据库的方法,并且查询总页数
+     * @param page BasePage
+     * @return
+     * @author suven
+     * @date 2022-02-28 16:10:49
+     */
+    @Override
+    public ResponseResultList<SysRolePermissionResponseDto> getSysRolePermissionByNextPage(BasePage page,SysRolePermissionQueryEnum queryEnum){
+        ResponseResultList<SysRolePermissionResponseDto> responseResultList = ResponseResultList.build();
+        QueryWrapper<SysRolePermission> queryWrapper = sysRolePermissionDao.builderQueryEnum(queryEnum,  page.getParamObject());;
+        //分页对象        PageHelper
+        Page<SysRolePermission> iPage = new Page<>(page.getPageNo(), page.getPageSize());
+        iPage.setSearchCount(true);
+        List<SysRolePermission>  list = sysRolePermissionDao.getListByPage(iPage,queryWrapper);
+        if(null == list ){
+            list = new ArrayList<>();
+        }
+        List<SysRolePermissionResponseDto>  resDtoList =  IterableConverter.convertList(list,SysRolePermissionResponseDto.class);
+        boolean isNext =  page.isNextPage(resDtoList);
+        responseResultList.toIsNextPage(isNext).toList(resDtoList).toTotal((int)iPage.getTotal());
         return responseResultList;
 
     }
 
 
 
-    @Override
-    public PageUtils queryPage(Map<String, Object> params) {
-        IPage iPage =  new Query<SysRolePermission>().getPage(params);
-        QueryWrapper<SysRolePermission> queryWrapper = new QueryWrapper<>();
-        IPage<SysRolePermission> page = sysRolePermissionDao.page(iPage,queryWrapper);
-        return new PageUtils(page);
+    /**
+     * 保存角色权限表同时更新数据库和缓存的实现方法
+     * @return
+     */
+    public SysRolePermission  setSysRolePermission(){
+        SysRolePermission sysRolePermission = new SysRolePermission();
+        /**
+ 			//sysRolePermission.setRoleId (long roleId);
+ 			//sysRolePermission.setPermissionId (long permissionId);
+ 			//sysRolePermission.setDataRuleIds (String dataRuleIds);
+ 			//sysRolePermission.setOperateIp (String operateIp);
+ 			//sysRolePermission.setCreateBy (String createBy);
+ 			//sysRolePermission.setCreateTime (Date createTime);
+ 			//sysRolePermission.setUpdateBy (String updateBy);
+ 			//sysRolePermission.setUpdateTime (Date updateTime);
+		**/
+
+        return sysRolePermission;
     }
+
+    @Override
+    public boolean saveData(InputStream initialStream) {
+        return ExcelUtils.readExcel(initialStream,sysRolePermissionDao, SysRolePermission.class,0);
+    }
+
 
 
     @Override
@@ -304,26 +448,5 @@ public class SysRolePermissionServiceImpl  implements SysRolePermissionService {
         }
         return res;
     }
-
-
-    /**
-     * 保存角色权限表同时更新数据库和缓存的实现方法
-     * @return
-     */
-    public SysRolePermission  setSysRolePermission(){
-        SysRolePermission sysRolePermission = new SysRolePermission();
-        
- 			//sysRolePermission.setId (long id);
- 			//sysRolePermission.setCreateDate (Date createDate);
- 			//sysRolePermission.setModifyDate (Date modifyDate);
- 			//sysRolePermission.setRoleId (String roleId);
- 			//sysRolePermission.setPermissionId (long permissionId);
- 			//sysRolePermission.setDataRuleIds (String dataRuleIds);
-
-        return sysRolePermission;
-    }
-
-
-
 
 }

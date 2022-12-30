@@ -35,19 +35,17 @@ import ${mainPath}.http.data.vo.HttpRequestByIdPageVo;
  * @Copyright: (c) 2021 gc by https://www.suven.top
  **/
 
+#if( $isLombok==1)
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
+#end
 public class ${className}RequestVo extends HttpRequestByIdPageVo implements Serializable{
-
-
-
 
 
     public static ${className}RequestVo build(){
         return new ${className}RequestVo();
     }
-
-
 
 
 

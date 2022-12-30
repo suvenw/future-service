@@ -45,4 +45,23 @@ public class GenericsUtils {
 		}
 		return Object.class;
 	}
+	/**
+	 * Http 替换https
+	 * @param url
+	 * @return
+	 */
+	private static String replaceHttps(String url) {
+		String HTTPS = "https://";
+		String HTTP = "http://";
+		// 是否含有端口号
+		boolean isHttp = url.startsWith(HTTP);
+		url = url.replaceFirst(HTTP,HTTPS);
+		return url;
+	}
+
+	public static void main(String[] args) {
+    String url = "http://baidu.com";
+		String data = replaceHttps(url);
+		System.out.println(data);
+	}
 }

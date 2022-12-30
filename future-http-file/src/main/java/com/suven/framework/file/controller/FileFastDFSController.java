@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +40,7 @@ import java.util.List;
 
 
 
-@ApiDoc(module = "文件存储FastDFS文件服务的相关api",group = "File-Group",groupDesc = "FastDFS文件存上传下载文档")
+@ApiDoc(module = "文件存储FastDFS文件服务的相关api",group = "File-Group",groupDesc = "FastDFS文件上传下载文档")
 @Controller
 public class FileFastDFSController {
 
@@ -107,7 +108,6 @@ public class FileFastDFSController {
 				return;
 			}
 			vo.setPath(storePath.getFullPath());
-			vo.setFullPath(fileConfigSetting.getDomain()+"/"+vo.getPath());
 			vo.setDomain(fileConfigSetting.getDomain());
 			output.write(vo);
 
@@ -168,8 +168,6 @@ public class FileFastDFSController {
 					continue;
 				}
 				vo.setPath(storePath.getFullPath());
-				vo.setFullPath(fileConfigSetting.getDomain()+"/"+vo.getPath());
-				vo.setDomain(fileConfigSetting.getDomain());
 
 			}catch (Exception e){
 				logger.error(e.getMessage());
@@ -221,8 +219,6 @@ public class FileFastDFSController {
 				return;
 			}
 			vo.setPath(storePath.getFullPath());
-			vo.setFullPath(fileConfigSetting.getDomain()+"/"+vo.getPath());
-			vo.setDomain(fileConfigSetting.getDomain());
 			output.write(vo);
 
 		}catch (Exception e){
@@ -271,10 +267,7 @@ public class FileFastDFSController {
                 output.write(vo);
                 return;
             }
-			vo.setPath(slaveFile.getFullPath());
-			vo.setFullPath(fileConfigSetting.getDomain()+"/"+vo.getPath());
-			vo.setDomain(fileConfigSetting.getDomain());
-
+            vo.setPath(slaveFile.getFullPath());
             output.write(vo);
 
         }catch (Exception e){
@@ -458,11 +451,7 @@ public class FileFastDFSController {
 			return;
 		}
 		saveCache(userId,fileMd5,curPosition,storePath.getPath());
-
 		vo.setPath(storePath.getFullPath());
-		vo.setFullPath(fileConfigSetting.getDomain()+"/"+vo.getPath());
-		vo.setDomain(fileConfigSetting.getDomain());
-
 		output.write(vo);
 	}
 

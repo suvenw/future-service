@@ -1,15 +1,15 @@
 package com.suven.framework.core.rocketmq;
 
-import com.suven.framework.core.redis.RedisClusterServer;
-import com.suven.framework.core.redis.RedisKeys;
-import com.suven.framework.util.json.JsonUtils;
-import com.suven.framework.util.json.SerializableUtil;
 import org.apache.rocketmq.spring.autoconfigure.RocketMQAutoConfiguration;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import com.suven.framework.core.redis.RedisClusterServer;
+import com.suven.framework.core.redis.RedisKeys;
+import com.suven.framework.util.json.JsonUtils;
+import com.suven.framework.util.json.SerializableUtil;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

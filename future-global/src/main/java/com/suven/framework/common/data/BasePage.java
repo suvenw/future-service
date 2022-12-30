@@ -54,24 +54,25 @@ public class BasePage<T> implements Serializable {
      * 创建默认有下一页的分页对象
      * @return
      */
-	public  static BasePage build(){
-		return new BasePage(true);
+	public  static <T> BasePage<T> build(){
+		return new BasePage<>(true);
 	}
 
     /**
      * 创建默认有下一页的分页对象,且返回条数小于等于指定的pageMaxSize值;
      * @return
      */
-    public  static BasePage build(int pageMaxSize){
-        return new BasePage(true,pageMaxSize);
+    public  static <T> BasePage<T> build(int pageMaxSize){
+        return new BasePage<>(true,pageMaxSize);
     }
 
 
 	/**
 	 * 创建分页对象时,设置页码的大小值默认为100条;是否有下一页,默认为false;
 	 */
-	public static BasePage build(int pageNo, int pageSize){
-		return build().toPageNo(pageNo).toPageSize(pageSize);
+	public static <T> BasePage<T> build(int pageNo, int pageSize){
+		BasePage<T> build = build();
+		return build.toPageNo(pageNo).toPageSize(pageSize);
 	}
 
 	
@@ -122,7 +123,7 @@ public class BasePage<T> implements Serializable {
 		this.pageSize = pageSize;
 	}
 	
-	public BasePage toPageSize(int pageSize) {
+	public BasePage<T> toPageSize(int pageSize) {
 		this.pageSize = pageSize;
 		return this;
 	}
@@ -140,7 +141,7 @@ public class BasePage<T> implements Serializable {
 	public void setPageNo(Integer pageNo) {
 		this.pageNo = pageNo;
 	}
-	public BasePage toPageNo(Integer pageNo) {
+	public BasePage<T> toPageNo(Integer pageNo) {
 		this.pageNo = pageNo;
 		return this;
 	}

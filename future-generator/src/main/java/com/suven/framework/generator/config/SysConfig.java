@@ -6,15 +6,18 @@ public class SysConfig {
 
     private String databaseType = "mysql";
     private String dataSourceName;//数据库类实现名
-    private String entity = "BaseEntity"; //1.BaseEntity, 2.BaseStatusEntity,BaseByTimeEntity,BaseTimeEntity,BaseIdEntity
-    //1.JdbcBaseEntityDao, 2.JdbcBaseCacheDao,3.MyBatisBaseEntityDao,4.MyBatisBaseCacheDao,5.MyBatisBaseServiceImpl
+    private String entity = "BaseEntity"; //1.BaseEntity, 2.BaseStatusEntity,3.BaseTimeEntity,4.BaseByTimeEntity
     private String entityDao = "MyBatisBaseCacheDao"; //1.JdbcBaseEntityDao, 2.JdbcBaseCacheDao,3.MyBatisBaseEntityDao,4.MyBatisBaseCacheDao
     private String tempEnum = "MybatisCodeEnum"; //1.JdbcCodeCacheEnum, 2.JdbcCodeStatusEnum, 3.MybatisCodeEnum,4.MvcCodeEnum,5.SimpMvcCodeEnum
     private int pageVal = 1;
     private int dubbo = 0;
     private int mvc = 1;
     private int isOverrideWrite = 0;
-
+    private int isLombok= 1;
+    /**
+     * 模仿的对象名
+     */
+    private String imitationBean;
 
 
 
@@ -95,6 +98,22 @@ public class SysConfig {
         this.entityDao = entityDao;
     }
 
+    public int getIsLombok() {
+        return isLombok;
+    }
+
+    public void setIsLombok(int isLombok) {
+        this.isLombok = isLombok;
+    }
+
+    public String getImitationBean() {
+        return imitationBean;
+    }
+
+    public void setImitationBean(String imitationBean) {
+        this.imitationBean = imitationBean;
+    }
+
     @Override
     public String toString() {
         return "SysConfig{" +
@@ -106,6 +125,8 @@ public class SysConfig {
                 ", pageVal=" + pageVal +
                 ", dubbo=" + dubbo +
                 ", mvc=" + mvc +
+                ", isLombok=" + isLombok +
+                ", imitationBean=" + imitationBean +
                 '}';
     }
 }

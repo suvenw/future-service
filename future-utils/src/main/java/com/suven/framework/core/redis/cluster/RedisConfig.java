@@ -11,4 +11,6 @@ public interface RedisConfig {
     String REDIS_CLUSTER_PARAM_SERVER = "server";
     String REDIS_CLUSTER_PARAM_PASSWORD = "password";
     String REDIS_CLUSTER_PARAM = "settings";
+    String REDIS_ONE_CLIENT_NAME = "redisClient";
+
 }

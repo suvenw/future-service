@@ -18,13 +18,11 @@ import java.io.Serializable;
 
 import ${packageName}.${moduleName}.entity.${className};
 import ${packageName}.${moduleName}.mapper.${className}Mapper;
-
 import ${packageName}.${moduleName}.vo.request.${className}AddRequestVo;
 import ${packageName}.${moduleName}.vo.request.${className}RequestVo;
 import ${packageName}.${moduleName}.vo.response.${className}ResponseVo;
 import ${packageName}.${moduleName}.dto.enums.${className}QueryEnum;
 
-import ${mainPath}.core.mybatis.${baseEntityDao};
 import ${mainPath}.core.db.IterableConverter;
 import ${mainPath}.common.data.BasePage;
 import ${mainPath}.common.enums.ResultEnum;
@@ -58,7 +56,7 @@ import ${mainPath}.http.data.vo.ResponseResultList;
  **/
 
 @Service
-public class ${className}ServiceImpl  extends ${baseEntityDao}<${className}Mapper, ${className}> implements ${className}Service  {
+public class ${className}ServiceImpl  extends ServiceImpl<${className}Mapper, ${className}> implements ${className}Service  {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -96,7 +94,7 @@ public class ${className}ServiceImpl  extends ${baseEntityDao}<${className}Mappe
      */
     @Override
     public boolean saveBatch${className}(Collection<${className}AddRequestVo> entityList, int batchSize) {
-        if(null == entityList || entityList.size() !=  batchSize){
+        if(null == entityList || batchSize <= 0){
             return false;
         }
         List<${className}> list = new ArrayList<>();
@@ -107,7 +105,7 @@ public class ${className}ServiceImpl  extends ${baseEntityDao}<${className}Mappe
 
     @Override
     public boolean saveOrUpdateBatch${className}(Collection<${className}AddRequestVo> entityList, int batchSize) {
-        if(null == entityList || entityList.size() != batchSize ){
+        if(null == entityList || batchSize <= 0 ){
             return false;
         }
         List<${className}> list = new ArrayList<>();
@@ -119,7 +117,7 @@ public class ${className}ServiceImpl  extends ${baseEntityDao}<${className}Mappe
 
     @Override
     public boolean updateBatchByList(Collection<${className}AddRequestVo> entityList, int batchSize) {
-        if(null == entityList || entityList.size() != batchSize ){
+        if(null == entityList  || batchSize <= 0){
             return false;
         }
         List<${className}> list = new ArrayList<>();
