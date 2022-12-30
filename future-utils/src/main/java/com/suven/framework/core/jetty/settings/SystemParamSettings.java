@@ -21,7 +21,7 @@ public class SystemParamSettings {
     //是否开始aop切面日志
     private boolean logAop;
 
-    private boolean isHeaderToken = false;
+    private boolean isHeaderToken = true;
 
     private boolean checkBody = false;
 

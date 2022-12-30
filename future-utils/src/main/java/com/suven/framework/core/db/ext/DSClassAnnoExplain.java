@@ -5,7 +5,6 @@ import com.suven.framework.common.constants.ReflectionsScan;
 import com.suven.framework.core.db.DataSourceGroup;
 import com.suven.framework.core.db.DataSourceHolder;
 import com.suven.framework.core.db.DataSourceTypeEnum;
-import com.suven.framework.core.db.DatasourceEnumManager;
 import com.suven.framework.core.db.druid.DruidDatasourceGroup;
 import com.suven.framework.core.db.druid.DruidDynamicDataSource;
 import org.slf4j.Logger;
@@ -92,8 +91,7 @@ public class DSClassAnnoExplain {
 			return DataSourceGroup.build(druidDatasourceGroup);
 		}
 		//兼容旧版本
-		DataSourceGroup dataSourceGroup = DatasourceEnumManager.getDataSourceGroupByModule(dataSourceGroupModuleKey);
-		return  dataSourceGroup;
+		return  null;
 	}
 
 

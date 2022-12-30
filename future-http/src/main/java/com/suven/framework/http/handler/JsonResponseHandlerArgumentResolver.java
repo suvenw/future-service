@@ -51,7 +51,6 @@ public class JsonResponseHandlerArgumentResolver extends AbstractHandlerArgument
         try {
              IResponseHandler responseVo = (IResponseHandler) responseClass.newInstance();
             responseVo.initResponse(response);
-            responseVo.initRequest(request);
 
             /** 用于异常处理,返回统一规范对象 **/
             ParamMessage.setResponseResult(responseVo.getResultVo());

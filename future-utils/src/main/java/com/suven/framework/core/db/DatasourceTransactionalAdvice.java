@@ -25,14 +25,14 @@ import java.util.Collection;
  *
  * </pre>
  */
-@Aspect
-@Component
+//@Aspect
+//@Component
 public class DatasourceTransactionalAdvice {
 
     private static Logger logger = LoggerFactory.getLogger(DatasourceTransactionalAdvice.class);
 
 
-    @Around("@annotation(transactional)")
+//    @Around("@annotation(transactional)")
     public Object monitorTransactional(ProceedingJoinPoint joinPoint, Transactional transactional) throws Throwable {
         try {
             Object[] args = joinPoint.getArgs();

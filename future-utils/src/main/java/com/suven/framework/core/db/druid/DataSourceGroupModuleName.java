@@ -36,5 +36,4 @@ public interface DataSourceGroupModuleName {
     final String MODULE_NAME_MEDIA  = "media" ;//"媒体模块数据库" 
     final String MODULE_NAME_STATISTIC  = "statistic" ;//"采摘模块数据库"
     final String MODULE_NAME_SHORTER  = "shorter" ;//"采摘模块数据库"
-    final String MODULE_NAME_REDWEB  = "red" ;//"网红墙"
 }

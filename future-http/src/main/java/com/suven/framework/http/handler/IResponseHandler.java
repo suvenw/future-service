@@ -26,10 +26,4 @@ public interface IResponseHandler  extends IResponseResultVoHandler{
      /** 创建该对象的实现,并设置HttpServletResponse付值**/
      IResponseHandler initResponse(HttpServletResponse httpResponse);
 
-     /** 创建该对象的实现,并设置HttpServletResponse付值**/
-     default IResponseHandler initRequest(HttpServletRequest httpRequest){
-
-          return this;
-     }
-
 }

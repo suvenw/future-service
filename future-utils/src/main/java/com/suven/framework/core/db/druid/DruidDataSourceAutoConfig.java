@@ -22,7 +22,6 @@ import com.alibaba.druid.spring.boot.autoconfigure.stat.DruidFilterConfiguration
 import com.alibaba.druid.spring.boot.autoconfigure.stat.DruidSpringAopConfiguration;
 import com.alibaba.druid.spring.boot.autoconfigure.stat.DruidStatViewServletConfiguration;
 import com.alibaba.druid.spring.boot.autoconfigure.stat.DruidWebStatFilterConfiguration;
-import com.suven.framework.core.db.DataSourceAutoConfig;
 import com.suven.framework.core.db.DataSourceTypeEnum;
 import com.suven.framework.util.json.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -58,7 +57,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @ConditionalOnClass(DruidDataSource.class)
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class,
         DruidDataSourceAutoConfigure.class, JdbcTemplateAutoConfiguration.class})
-@AutoConfigureBefore({DataSourceAutoConfiguration.class, DruidDataSourceAutoConfigure.class, DataSourceAutoConfig.class})
+@AutoConfigureBefore({DataSourceAutoConfiguration.class, DruidDataSourceAutoConfigure.class})
 @EnableConfigurationProperties({DruidStatProperties.class, DataSourceProperties.class, DruidDataSourceConfigWrapper.class})
 @Import({DruidSpringAopConfiguration.class,
         DruidStatViewServletConfiguration.class,

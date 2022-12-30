@@ -94,10 +94,6 @@ public class JsonHandlerInterceptorAdapter extends BaseHandlerInterceptorAdapter
         if(message == null) {
             throw new Exception("request data error, request url : " + request.getRequestURI());
         }
-
-        //init token by header
-        this.getTokenByHeader(message, request);
-
         String url = request.getServletPath();
         long netTime = message.getTimes();
         long sysTime = System.currentTimeMillis();
