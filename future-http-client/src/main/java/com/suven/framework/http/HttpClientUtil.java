@@ -90,6 +90,7 @@ public class HttpClientUtil {
 		HttpProxy defaultProxy = null;
 		ClassLoader classLoader = HttpClientUtil.class.getClassLoader();
 
+
 		// 基于 apache httpclient
 		if (null == defaultProxy && ClassUtil.isPresent("org.apache.http.impl.client.HttpClients", classLoader)) {
 			defaultProxy = createHttpProxy(ApacheHttpClientProxy.class);
@@ -107,7 +108,6 @@ public class HttpClientUtil {
 		if (null == defaultProxy && ClassUtil.isPresent("okhttp3.OkHttpClient", classLoader)) {
 			defaultProxy = createHttpProxy(OkHttp3HttpClientProxy.class);
 		}
-
 
 
 

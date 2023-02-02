@@ -17,22 +17,10 @@
 package com.suven.framework.http.proxy.httpclient;
 
 import com.suven.framework.http.config.HttpClientConfig;
-import com.suven.framework.http.constants.HttpClientConstants;
 import com.suven.framework.http.proxy.FutureCallbackProxy;
 import com.suven.framework.http.proxy.HttpProxyHeader;
 import com.suven.framework.http.proxy.HttpClientResponse;
-import com.suven.framework.http.util.HttpParamsUtil;
-import org.apache.http.*;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.*;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.apache.http.message.BasicNameValuePair;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -187,7 +175,7 @@ public class ApacheHttpClientProxy extends AbstractApacheRequestProxy {
 	@Override
 	public HttpClientResponse getAsync(String url) {
 
-		ApacheHttpFutureProxy future =  ApacheHttpFutureProxy.build();
+		ApacheFutureCallback future =  ApacheFutureCallback.build();
 		ApacheRequestBuilder request = this.getRequest(url,null,null,true);
 		HttpClientResponse response = this.executeAsync(request,future);
 		return response;
@@ -197,7 +185,7 @@ public class ApacheHttpClientProxy extends AbstractApacheRequestProxy {
 
 	@Override
 	public HttpClientResponse getAsync(String url, Map<String, String> params) {
-		ApacheHttpFutureProxy future =  ApacheHttpFutureProxy.build();
+		ApacheFutureCallback future =  ApacheFutureCallback.build();
 		ApacheRequestBuilder request = this.getRequest(url,params,null,true);
 		HttpClientResponse response = this.executeAsync(request,future);
 		return response;
@@ -207,7 +195,7 @@ public class ApacheHttpClientProxy extends AbstractApacheRequestProxy {
 	@Override
 	public HttpClientResponse getAsync(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
 
-		ApacheHttpFutureProxy future =  ApacheHttpFutureProxy.build();
+		ApacheFutureCallback future =  ApacheFutureCallback.build();
 		ApacheRequestBuilder request = this.getRequest(url,params,header,encode);
 		HttpClientResponse response = this.executeAsync(request,future);
 		return response;
@@ -218,7 +206,7 @@ public class ApacheHttpClientProxy extends AbstractApacheRequestProxy {
 
 	@Override
 	public HttpClientResponse postAsync(String url) {
-		ApacheHttpFutureProxy future =  ApacheHttpFutureProxy.build();
+		ApacheFutureCallback future =  ApacheFutureCallback.build();
 		ApacheRequestBuilder request = this.postFormRequest(url,null,null,true);
 		HttpClientResponse response = this.executeAsync(request,future);
 		return response;
@@ -229,7 +217,7 @@ public class ApacheHttpClientProxy extends AbstractApacheRequestProxy {
 
 	@Override
 	public HttpClientResponse postAsync(String url, String jsonData) {
-		ApacheHttpFutureProxy future =  ApacheHttpFutureProxy.build();
+		ApacheFutureCallback future =  ApacheFutureCallback.build();
 		ApacheRequestBuilder request = this.postJsonRequest(url,jsonData,null,true);
 		HttpClientResponse response = this.executeAsync(request,future);
 		return response;
@@ -239,7 +227,7 @@ public class ApacheHttpClientProxy extends AbstractApacheRequestProxy {
 
 	@Override
 	public HttpClientResponse postAsync(String url, String jsonData, HttpProxyHeader header) {
-		ApacheHttpFutureProxy future =  ApacheHttpFutureProxy.build();
+		ApacheFutureCallback future =  ApacheFutureCallback.build();
 		ApacheRequestBuilder request = this.postJsonRequest(url,jsonData,header,true);
 		HttpClientResponse response = this.executeAsync(request,future);
 		return response;
@@ -249,7 +237,7 @@ public class ApacheHttpClientProxy extends AbstractApacheRequestProxy {
 
 	@Override
 	public HttpClientResponse postAsync(String url, Map<String, String> params) {
-		ApacheHttpFutureProxy future =  ApacheHttpFutureProxy.build();
+		ApacheFutureCallback future =  ApacheFutureCallback.build();
 		ApacheRequestBuilder request = this.postFormRequest(url,params,null,true);
 		HttpClientResponse response = this.executeAsync(request,future);
 		return response;
@@ -259,9 +247,9 @@ public class ApacheHttpClientProxy extends AbstractApacheRequestProxy {
 
 	@Override
 	public HttpClientResponse postAsync(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
-		ApacheHttpFutureProxy future =  ApacheHttpFutureProxy.build();
+		ApacheFutureCallback futureCallback =  ApacheFutureCallback.build();
 		ApacheRequestBuilder request = this.postFormRequest(url,params,header,encode);
-		HttpClientResponse response = this.executeAsync(request,future);
+		HttpClientResponse response = this.executeAsync(request,futureCallback);
 		return response;
 	}
 

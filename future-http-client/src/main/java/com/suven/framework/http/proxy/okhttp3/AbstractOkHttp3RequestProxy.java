@@ -9,6 +9,7 @@ import okhttp3.*;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractOkHttp3RequestProxy  extends AbstractHttpProxy implements HttpRequestProxy<Okhttp3RequestBuilder> {
@@ -59,10 +60,14 @@ public abstract class AbstractOkHttp3RequestProxy  extends AbstractHttpProxy imp
 
     @Override
     public HttpClientResponse executeAsync(Okhttp3RequestBuilder httpRequestBuilder, FutureCallbackProxy future) {
+        return executeAsync(httpRequestBuilder,future,true);
+    }
+    @Override
+    public HttpClientResponse executeAsync(Okhttp3RequestBuilder httpRequestBuilder, FutureCallbackProxy future,boolean isGetResult) {
         OkHttpClient httpClient;
         Request  request =  httpRequestBuilder.getRequest();
         // 设置代理
-        if (null != httpClientConfig.getProxy()) {
+        if ( httpClientConfig.isProxy()) {
             httpClient = httpClientBuilder.connectTimeout(Duration
                             .ofMillis(this.getTimeout()))
                     .writeTimeout(Duration.ofMillis(this.getTimeout()))
@@ -76,12 +81,17 @@ public abstract class AbstractOkHttp3RequestProxy  extends AbstractHttpProxy imp
         }
 
         try  {
-            OkHttp3FutureProxy futureProxy  = (OkHttp3FutureProxy) future;
-            OkHttp3FutureCallback callback = futureProxy.getFutureCallbackProxy();
+
+            OkHttp3FutureCallback futureCallback = (OkHttp3FutureCallback)future;
+            Callback callback  = futureCallback.getFutureCallbackProxy();
             Call call = httpClient.newCall(request);
             call.enqueue(callback);
-            HttpClientResponse  response = futureProxy.get(this.getTimeout(), TimeUnit.MILLISECONDS);
-            return response;
+            if (!isGetResult){
+                return null;
+            }
+            Response response = futureCallback.getFuture().get(this.getTimeout(), TimeUnit.MILLISECONDS);
+            HttpClientResponse  result = future.getResult();
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
             return HttpClientResponse.build(false, 500, null, null, e.getMessage());

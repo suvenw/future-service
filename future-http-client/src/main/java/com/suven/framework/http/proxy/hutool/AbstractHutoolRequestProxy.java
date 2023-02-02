@@ -16,7 +16,7 @@ public abstract class AbstractHutoolRequestProxy extends AbstractHttpProxy imple
        super(httpClientConfig);
     }
 
-    private HttpClientResponse execute(HutoolRequestBuilder httpRequestBuilder, boolean isAsync) {
+    private HttpClientResponse execute(HutoolRequestBuilder httpRequestBuilder, boolean isAsync ,boolean isGetResult) {
         // 设置超时时长
         HttpRequest request = httpRequestBuilder.getRequest();
         request = request.timeout(this.getTimeout());
@@ -29,9 +29,14 @@ public abstract class AbstractHutoolRequestProxy extends AbstractHttpProxy imple
             HttpResponse response = null;
             if(isAsync){
                 response = request.executeAsync();
+                if(!isGetResult){
+                    return null;
+                }
+
             }else {
                 response = request.execute();
             };
+
             int code = response.getStatus();
             boolean successful = response.isOk();
             String body = response.body();
@@ -45,13 +50,18 @@ public abstract class AbstractHutoolRequestProxy extends AbstractHttpProxy imple
 
     @Override
     public HttpClientResponse execute(HutoolRequestBuilder httpRequestBuilder) {
-        HttpClientResponse response =  this.execute(httpRequestBuilder,false);
+        HttpClientResponse response =  this.execute(httpRequestBuilder,false,true);
         return response;
     }
 
     @Override
     public HttpClientResponse executeAsync(HutoolRequestBuilder httpRequestBuilder, FutureCallbackProxy futureProxy) {
-        HttpClientResponse response =  this.execute(httpRequestBuilder,true);
+        HttpClientResponse response =  this.execute(httpRequestBuilder,true,true);
+        return  response;
+    }
+    @Override
+    public HttpClientResponse executeAsync(HutoolRequestBuilder httpRequestBuilder, FutureCallbackProxy futureProxy, boolean isGetResult) {
+        HttpClientResponse response =  this.execute(httpRequestBuilder,true,isGetResult);
         return  response;
     }
 

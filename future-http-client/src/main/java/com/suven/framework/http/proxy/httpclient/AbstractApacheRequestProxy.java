@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -41,20 +43,42 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
         super(new HttpClientConfig());
         this.httpClient = HttpClients.createDefault();
         this.asyncClient = HttpAsyncClients.createDefault();
+        asyncClient.start();
     }
 
     public AbstractApacheRequestProxy(HttpClientConfig httpConfig) {
         super(httpConfig);
         this.httpClient = HttpClients.createDefault();
         this.asyncClient = HttpAsyncClients.createDefault();
+        asyncClient.start();
     }
 
     public AbstractApacheRequestProxy(HttpClientConfig httpConfig, CloseableHttpClient httpClient,CloseableHttpAsyncClient asyncClient) {
         super(httpConfig);
         this.httpClient = httpClient;
         this.asyncClient = asyncClient;
+        asyncClient.start();
     }
 
+    public void test(){
+        // 设置连接参数
+        // 设置超时时长
+        RequestConfig.Builder requestConfig = RequestConfig.custom()
+                .setConnectTimeout(this.getTimeout())
+                .setSocketTimeout(this.getTimeout())
+                .setConnectionRequestTimeout(this.getTimeout());
+
+        final CompletableFuture<HttpResponse> result = new CompletableFuture<>();
+//        // 创建自定义的httpclient对象
+//        try (CloseableHttpAsyncClient httpclient = HttpAsyncClients.custom()
+//                .setDefaultRequestConfig(requestConfig.build())
+//                .setConnectionManager(connManager)
+//                .disableCookieManagement()
+//                .build()) {
+//
+//            return httpclient;
+
+    }
 
     @Override
     public HttpClientResponse execute(ApacheRequestBuilder httpRequestBuilder) {
@@ -97,7 +121,12 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
     }
 
     @Override
-    public HttpClientResponse executeAsync(ApacheRequestBuilder httpRequestBuilder, FutureCallbackProxy futureProxy) {
+    public HttpClientResponse executeAsync(ApacheRequestBuilder httpRequestBuilder, FutureCallbackProxy future) {
+        return executeAsync(httpRequestBuilder,future,true);
+    }
+
+    @Override
+    public HttpClientResponse executeAsync(ApacheRequestBuilder httpRequestBuilder, FutureCallbackProxy futureProxy, boolean isGetResult) {
         HttpRequestBase  request =  httpRequestBuilder.getRequest();
         try {
             // 设置超时时长
@@ -105,6 +134,9 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
                     .setConnectTimeout(this.getTimeout())
                     .setSocketTimeout(this.getTimeout())
                     .setConnectionRequestTimeout(this.getTimeout());
+
+
+
             // 设置代理
             if (isProxy()) {
                 Proxy proxy = this.getProxy();
@@ -114,11 +146,18 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
             }
 
             request.setConfig(configBuilder.build());
-            ApacheHttpFutureProxy httpFutureProxy = (ApacheHttpFutureProxy)futureProxy;
-            FutureCallback futureCallback = httpFutureProxy.getFutureCallbackProxy();
-            this.asyncClient.execute(request, futureCallback);
-            HttpClientResponse response = httpFutureProxy.get(getTimeout(), TimeUnit.MILLISECONDS);
-            return response;
+
+            ApacheFutureCallback futureCallback = (ApacheFutureCallback)futureProxy.getFutureCallbackProxy();
+            Future<HttpResponse> future = this.asyncClient.execute(request, futureCallback);
+            if(!isGetResult){
+                return null;
+            }
+            //获取线程结果
+            HttpResponse response = futureCallback.getFuture().get(getTimeout(), TimeUnit.MILLISECONDS);
+            futureProxy.isSuccess(response);
+
+            HttpClientResponse result = futureProxy.getResult();
+            return result;
         }catch (Exception e){
             e.printStackTrace();
             return  HttpClientResponse.build(false, 500, null, null, e.getMessage());

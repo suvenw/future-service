@@ -39,7 +39,7 @@ public interface HttpClientConstants {
 	/**
 	 * 超时时长，单位毫秒
 	 */
-	int DEFAULT_TIMEOUT = 300;
+	int DEFAULT_TIMEOUT = 3000;
 
 
 

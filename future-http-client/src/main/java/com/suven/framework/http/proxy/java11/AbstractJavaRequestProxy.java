@@ -3,9 +3,6 @@ package com.suven.framework.http.proxy.java11;
 import com.suven.framework.http.config.HttpClientConfig;
 import com.suven.framework.http.constants.HttpClientConstants;
 import com.suven.framework.http.proxy.*;
-import com.suven.framework.http.proxy.okhttp3.OkHttp3FutureCallback;
-import com.suven.framework.http.proxy.okhttp3.OkHttp3FutureProxy;
-import com.suven.framework.http.proxy.okhttp3.Okhttp3RequestBuilder;
 import com.suven.framework.http.util.HttpParamsUtil;
 import okhttp3.*;
 
@@ -56,9 +53,12 @@ public abstract class AbstractJavaRequestProxy extends AbstractHttpProxy impleme
             return  HttpClientResponse.build(false, 500, null, null, e.getMessage());
         }
     }
-
     @Override
     public HttpClientResponse executeAsync(JavaRequestBuilder httpRequestBuilder, FutureCallbackProxy futureProxy) {
+        return executeAsync(httpRequestBuilder,futureProxy,true);
+    }
+    @Override
+    public HttpClientResponse executeAsync(JavaRequestBuilder httpRequestBuilder, FutureCallbackProxy futureProxy,boolean isGetResult) {
         HttpRequest  request =  httpRequestBuilder.getRequest();
         try {
             HttpClient client;
@@ -70,6 +70,9 @@ public abstract class AbstractJavaRequestProxy extends AbstractHttpProxy impleme
                 client = httpClientBuilder.connectTimeout(Duration.ofMillis(this.getTimeout())).build();
             }
             Future<HttpResponse<String>> future = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            if(!isGetResult){
+                return null;
+            }
 
             HttpResponse<String> httpResponse = future.get(this.getTimeout(), TimeUnit.MILLISECONDS);
 

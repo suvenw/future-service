@@ -166,7 +166,7 @@ public class OkHttp3HttpClientProxy extends AbstractOkHttp3RequestProxy {
 
 	@Override
 	public HttpClientResponse getAsync(String url) {
-		OkHttp3FutureProxy future =  OkHttp3FutureProxy.build();
+		OkHttp3FutureCallback future =  OkHttp3FutureCallback.build();
 		Okhttp3RequestBuilder request = this.getRequest(url,null,null,true);
 		HttpClientResponse response = this.executeAsync(request,future);
 		return response;
@@ -175,7 +175,7 @@ public class OkHttp3HttpClientProxy extends AbstractOkHttp3RequestProxy {
 
 	@Override
 	public HttpClientResponse getAsync(String url, Map<String, String> params) {
-		OkHttp3FutureProxy future =  OkHttp3FutureProxy.build();
+		OkHttp3FutureCallback future =  OkHttp3FutureCallback.build();
 		Okhttp3RequestBuilder request = this.getRequest(url,params,null,true);
 		HttpClientResponse response = this.executeAsync(request,future);
 		return response;
@@ -183,7 +183,7 @@ public class OkHttp3HttpClientProxy extends AbstractOkHttp3RequestProxy {
 
 	@Override
 	public HttpClientResponse getAsync(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
-		OkHttp3FutureProxy future =  OkHttp3FutureProxy.build();
+		OkHttp3FutureCallback future =  OkHttp3FutureCallback.build();
 		Okhttp3RequestBuilder request = this.getRequest(url,params,header,encode);
 		HttpClientResponse response = this.executeAsync(request,future);
 		return response;
@@ -191,7 +191,7 @@ public class OkHttp3HttpClientProxy extends AbstractOkHttp3RequestProxy {
 
 	@Override
 	public HttpClientResponse postAsync(String url) {
-		OkHttp3FutureProxy future =  OkHttp3FutureProxy.build();
+		OkHttp3FutureCallback future =  OkHttp3FutureCallback.build();
 		Okhttp3RequestBuilder request = this.postFormRequest(url,null,null,true);
 		HttpClientResponse response = this.executeAsync(request,future);
 		return response;
@@ -199,7 +199,7 @@ public class OkHttp3HttpClientProxy extends AbstractOkHttp3RequestProxy {
 
 	@Override
 	public HttpClientResponse postAsync(String url, String jsonData) {
-		OkHttp3FutureProxy future =  OkHttp3FutureProxy.build();
+		OkHttp3FutureCallback future =  OkHttp3FutureCallback.build();
 		Okhttp3RequestBuilder request = this.postJsonRequest(url,jsonData,null,true);
 		HttpClientResponse response = this.executeAsync(request,future);
 		return response;
@@ -207,7 +207,7 @@ public class OkHttp3HttpClientProxy extends AbstractOkHttp3RequestProxy {
 
 	@Override
 	public HttpClientResponse postAsync(String url, String jsonData, HttpProxyHeader header) {
-		OkHttp3FutureProxy future =  OkHttp3FutureProxy.build();
+		OkHttp3FutureCallback future =  OkHttp3FutureCallback.build();
 		Okhttp3RequestBuilder request = this.postJsonRequest(url,jsonData,header,true);
 		HttpClientResponse response = this.executeAsync(request,future);
 		return response;
@@ -215,7 +215,7 @@ public class OkHttp3HttpClientProxy extends AbstractOkHttp3RequestProxy {
 
 	@Override
 	public HttpClientResponse postAsync(String url, Map<String, String> params) {
-		OkHttp3FutureProxy future =  OkHttp3FutureProxy.build();
+		OkHttp3FutureCallback future =  OkHttp3FutureCallback.build();
 		Okhttp3RequestBuilder request = this.postFormRequest(url,params,null,true);
 		HttpClientResponse response = this.executeAsync(request,future);
 		return response;
@@ -224,7 +224,7 @@ public class OkHttp3HttpClientProxy extends AbstractOkHttp3RequestProxy {
 	@Override
 	public HttpClientResponse postAsync(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
 
-		OkHttp3FutureProxy future =  OkHttp3FutureProxy.build();
+		OkHttp3FutureCallback future =  OkHttp3FutureCallback.build();
 		Okhttp3RequestBuilder request = this.postFormRequest(url,params,header,encode);
 		HttpClientResponse response = this.executeAsync(request,future);
 		return response;
