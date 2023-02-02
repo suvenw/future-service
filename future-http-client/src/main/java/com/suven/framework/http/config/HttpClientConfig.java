@@ -28,8 +28,14 @@ public class HttpClientConfig {
 	 * 超时时长，单位毫秒
 	 */
 	private int timeout = HttpClientConstants.DEFAULT_TIMEOUT;
+
 	/**
-	 * 代理配置
+	 * 针对国外服务可以单独设置代理,代理配置
+	 * HttpConfig config = new HttpConfig();
+	 * config.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 10080)));
+	 * config.setTimeout(15000);
+	 *
+	 * @since 1.15.5
 	 */
 	private Proxy proxy;
 
@@ -59,6 +65,11 @@ public class HttpClientConfig {
 		this.timeout = timeout;
 		return this;
 	}
+	public HttpClientConfig toProxy(Proxy proxy) {
+		this.proxy = proxy;
+		return this;
+	}
+
 
 	public boolean isProxy(){
 		return  null != proxy;

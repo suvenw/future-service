@@ -143,6 +143,34 @@ public class HttpParamsUtil {
 			throw new HttpClientRuntimeException("Unsupported encoding", e);
 		}
 	}
+
+	/**
+	 * 遍历
+	 *
+	 * @param map    待遍历的 map
+	 * @param action 操作
+	 * @param <K>    map键泛型
+	 * @param <V>    map值泛型
+	 */
+	public static <K, V> void  forFunction(Map<K, V> map, BiConsumer<String,String> action) {
+		if (isEmpty(map) || action == null) {
+			return;
+		}
+		for (Map.Entry<K, V> entry : map.entrySet()) {
+			K k;
+			V v;
+			try {
+				k = entry.getKey();
+				v = entry.getValue();
+			} catch (IllegalStateException ise) {
+				// this usually means the entry is no longer in the map.
+				throw new ConcurrentModificationException(ise);
+			}
+			String key = k instanceof byte[] ? new String((byte[])k): String.valueOf(k);
+			String value = v instanceof byte[] ? new String((byte[])v): String.valueOf(v);
+			action.accept(key, value);
+		}
+	}
 	/**
 	 * 遍历
 	 *
@@ -177,8 +205,11 @@ public class HttpParamsUtil {
 	 * @return str
 	 */
 	public static String parseMapToString(Map<String, String> params, boolean encode) {
+		if(isEmpty(params)){
+			return "";
+		}
 		List<String> paramList = new ArrayList<>();
-		forEach(params, (k, v) -> {
+		forFunction(params, (k, v) -> {
 			if (v == null) {
 				paramList.add(k + "=");
 			} else {

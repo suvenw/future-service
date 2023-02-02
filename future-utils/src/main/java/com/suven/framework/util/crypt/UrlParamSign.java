@@ -73,6 +73,7 @@ public class UrlParamSign{
                 fbuilder.add(entry.getKey(), String.valueOf(entry.getValue()));
             }
         }
+
         return fbuilder.build();
     }
 

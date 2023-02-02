@@ -1,32 +1,12 @@
-/*
- * Copyright (c) 2019-2029, xkcoding & Yangkai.Shen & 沈扬凯 (237497819@qq.com & xkcoding.com).
- * <p>
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.gnu.org/licenses/lgpl.html
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package com.suven.framework.http.proxy.okhttp3;
 
 import com.suven.framework.http.config.HttpClientConfig;
-import com.suven.framework.http.constants.HttpClientConstants;
-import com.suven.framework.http.proxy.AbstractHttpProxy;
-import com.suven.framework.http.proxy.FutureCallbackProxy;
 import com.suven.framework.http.proxy.HttpProxyHeader;
 import com.suven.framework.http.proxy.HttpClientResponse;
-import com.suven.framework.http.util.HttpParamsUtil;
 import okhttp3.*;
 
-import java.time.Duration;
-import java.util.List;
 import java.util.Map;
 
 
@@ -46,96 +26,21 @@ import java.util.Map;
  * </pre>
  * @Copyright: (c) 2021 gc by https://www.suven.top
  **/
-public class OkHttp3HttpClientProxy extends AbstractHttpProxy {
-	public static final MediaType CONTENT_TYPE_JSON = MediaType.get(HttpClientConstants.CONTENT_TYPE_JSON);
-	private final OkHttpClient.Builder httpClientBuilder;
+public class OkHttp3HttpClientProxy extends AbstractOkHttp3RequestProxy {
 
 	public OkHttp3HttpClientProxy() {
 		this(new HttpClientConfig());
 	}
 
-	public OkHttp3HttpClientProxy(HttpClientConfig httpConfig) {
-		this(new OkHttpClient().newBuilder(), httpConfig);
+	public OkHttp3HttpClientProxy(HttpClientConfig httpClientConfig) {
+		super(httpClientConfig);
 	}
 
-	public OkHttp3HttpClientProxy(OkHttpClient.Builder httpClientBuilder, HttpClientConfig httpConfig) {
-		super(httpConfig);
-		this.httpClientBuilder = httpClientBuilder;
+	public OkHttp3HttpClientProxy(HttpClientConfig httpConfig,OkHttpClient.Builder httpClientBuilder ) {
+		super(httpConfig,httpClientBuilder);
 	}
 
-	private HttpClientResponse exec(Request.Builder requestBuilder) {
-		this.addHeader(requestBuilder);
-		Request request = requestBuilder.build();
 
-		OkHttpClient httpClient;
-		// 设置代理
-		if (null != httpClientConfig.getProxy()) {
-			httpClient = httpClientBuilder.connectTimeout(Duration
-							.ofMillis(this.getTimeout()))
-					.writeTimeout(Duration.ofMillis(this.getTimeout()))
-					.readTimeout(Duration.ofMillis(this.getTimeout()))
-					.proxy(this.getProxy()).build();
-		} else {
-			httpClient = httpClientBuilder
-					.connectTimeout(Duration.ofMillis(this.getTimeout()))
-					.writeTimeout(Duration.ofMillis(this.getTimeout()))
-					.readTimeout(Duration.ofMillis(this.getTimeout())).build();
-		}
-
-		try (Response response = httpClient.newCall(request).execute()) {
-
-			int code = response.code();
-			boolean successful = response.isSuccessful();
-			Map<String, List<String>> headers = response.headers().toMultimap();
-			ResponseBody responseBody = response.body();
-			String body = null == responseBody ? null : responseBody.string();
-			return HttpClientResponse.build(successful, code, headers, body, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return HttpClientResponse.build(false, 500, null, null, e.getMessage());
-		}
-	}
-
-	private HttpClientResponse execAsync(Request.Builder requestBuilder,FutureCallbackProxy future) {
-		this.addHeader(requestBuilder);
-		Request request = requestBuilder.build();
-
-		OkHttpClient httpClient;
-		// 设置代理
-		if (null != httpClientConfig.getProxy()) {
-			httpClient = httpClientBuilder.connectTimeout(Duration
-							.ofMillis(this.getTimeout()))
-					.writeTimeout(Duration.ofMillis(this.getTimeout()))
-					.readTimeout(Duration.ofMillis(this.getTimeout()))
-					.proxy(this.getProxy()).build();
-		} else {
-			httpClient = httpClientBuilder
-					.connectTimeout(Duration.ofMillis(this.getTimeout()))
-					.writeTimeout(Duration.ofMillis(this.getTimeout()))
-					.readTimeout(Duration.ofMillis(this.getTimeout())).build();
-		}
-
-		try  {
-			Call call = httpClient.newCall(request);
-//			OkHttp3FutureProxy futureProxy =  OkHttp3FutureProxy.build();
-			OkHttp3FutureProxy futureProxy  = (OkHttp3FutureProxy) future;
-			OkHttp3FutureCallback callback = futureProxy.getFutureCallbackProxy();
-			call.enqueue(callback);
-			HttpClientResponse  response= futureProxy.get();
-			return response;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return HttpClientResponse.build(false, 500, null, null, e.getMessage());
-		}
-	}
-	/**
-	 * 添加request header
-	 *
-	 * @param builder Request.Builder
-	 */
-	private void addHeader(Request.Builder builder) {
-		builder.header(HttpClientConstants.USER_AGENT, HttpClientConstants.USER_AGENT_DATA);
-	}
 
 	/**
 	 * GET 请求
@@ -145,8 +50,13 @@ public class OkHttp3HttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse get(String url) {
-		return this.get(url, null, false);
+		Okhttp3RequestBuilder request = getRequest(url,null,null,true);
+		HttpClientResponse response = execute(request);
+		return response;
 	}
+
+
+
 
 	/**
 	 * GET 请求
@@ -158,7 +68,10 @@ public class OkHttp3HttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse get(String url, Map<String, String> params, boolean encode) {
-		return this.get(url, params, null, encode);
+		Okhttp3RequestBuilder request = getRequest(url,params,null,encode);
+		HttpClientResponse response = execute(request);
+		return response;
+
 	}
 
 	/**
@@ -172,21 +85,9 @@ public class OkHttp3HttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse get(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
-		HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-		if (encode) {
-			HttpParamsUtil.forEach(params, urlBuilder::addEncodedQueryParameter);
-		} else {
-			HttpParamsUtil.forEach(params, urlBuilder::addQueryParameter);
-		}
-		HttpUrl httpUrl = urlBuilder.build();
-
-		Request.Builder requestBuilder = new Request.Builder().url(httpUrl);
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), requestBuilder::addHeader);
-		}
-		requestBuilder = requestBuilder.get();
-
-		return exec(requestBuilder);
+		Okhttp3RequestBuilder request = this.getRequest(url,params,header,encode);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -197,43 +98,39 @@ public class OkHttp3HttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url) {
-		return this.post(url, HttpClientConstants.EMPTY);
+		Okhttp3RequestBuilder request = this.postFormRequest(url,null,null,true);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
 	 * POST 请求
 	 *
 	 * @param url  URL
-	 * @param data JSON 参数
+	 * @param jsonData JSON 参数
 	 * @return 结果
 	 */
 	@Override
-	public HttpClientResponse post(String url, String data) {
-		return this.post(url, data, null);
+	public HttpClientResponse post(String url, String jsonData) {
+		Okhttp3RequestBuilder request = this.postJsonRequest(url,jsonData,null,true);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
 	 * POST 请求
 	 *
 	 * @param url    URL
-	 * @param data   JSON 参数
+	 * @param jsonData   JSON 参数
 	 * @param header 请求头
 	 * @return 结果
 	 */
 	@Override
-	public HttpClientResponse post(String url, String data, HttpProxyHeader header) {
-		if (HttpParamsUtil.isEmpty(data)) {
-			data = HttpClientConstants.EMPTY;
-		}
-		RequestBody body = RequestBody.create(data, CONTENT_TYPE_JSON);
+	public HttpClientResponse post(String url, String jsonData, HttpProxyHeader header) {
+		Okhttp3RequestBuilder request = this.postJsonRequest(url,jsonData,header,true);
+		HttpClientResponse response = this.execute(request);
+		return response;
 
-		Request.Builder requestBuilder = new Request.Builder().url(url);
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), requestBuilder::addHeader);
-		}
-		requestBuilder = requestBuilder.post(body);
-
-		return exec(requestBuilder);
 	}
 
 	/**
@@ -246,7 +143,9 @@ public class OkHttp3HttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url, Map<String, String> params, boolean encode) {
-		return this.post(url, params, null, encode);
+		Okhttp3RequestBuilder request = this.postFormRequest(url,params,null,encode);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -260,60 +159,79 @@ public class OkHttp3HttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
-		FormBody.Builder formBuilder = new FormBody.Builder();
-		if (encode) {
-			HttpParamsUtil.forEach(params, formBuilder::addEncoded);
-		} else {
-			HttpParamsUtil.forEach(params, formBuilder::add);
-		}
-		FormBody body = formBuilder.build();
-
-		Request.Builder requestBuilder = new Request.Builder().url(url);
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), requestBuilder::addHeader);
-		}
-		requestBuilder = requestBuilder.post(body);
-
-		return exec(requestBuilder);
+		Okhttp3RequestBuilder request = this.postFormRequest(url,params,header,encode);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	@Override
 	public HttpClientResponse getAsync(String url) {
-		return null;
+		OkHttp3FutureProxy future =  OkHttp3FutureProxy.build();
+		Okhttp3RequestBuilder request = this.getRequest(url,null,null,true);
+		HttpClientResponse response = this.executeAsync(request,future);
+		return response;
+
 	}
 
 	@Override
 	public HttpClientResponse getAsync(String url, Map<String, String> params) {
-		return null;
+		OkHttp3FutureProxy future =  OkHttp3FutureProxy.build();
+		Okhttp3RequestBuilder request = this.getRequest(url,params,null,true);
+		HttpClientResponse response = this.executeAsync(request,future);
+		return response;
 	}
 
 	@Override
 	public HttpClientResponse getAsync(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
-		return null;
+		OkHttp3FutureProxy future =  OkHttp3FutureProxy.build();
+		Okhttp3RequestBuilder request = this.getRequest(url,params,header,encode);
+		HttpClientResponse response = this.executeAsync(request,future);
+		return response;
 	}
 
 	@Override
 	public HttpClientResponse postAsync(String url) {
-		return null;
+		OkHttp3FutureProxy future =  OkHttp3FutureProxy.build();
+		Okhttp3RequestBuilder request = this.postFormRequest(url,null,null,true);
+		HttpClientResponse response = this.executeAsync(request,future);
+		return response;
 	}
 
 	@Override
-	public HttpClientResponse postAsync(String url, String data) {
-		return null;
+	public HttpClientResponse postAsync(String url, String jsonData) {
+		OkHttp3FutureProxy future =  OkHttp3FutureProxy.build();
+		Okhttp3RequestBuilder request = this.postJsonRequest(url,jsonData,null,true);
+		HttpClientResponse response = this.executeAsync(request,future);
+		return response;
 	}
 
 	@Override
-	public HttpClientResponse postAsync(String url, String data, HttpProxyHeader header) {
-		return null;
+	public HttpClientResponse postAsync(String url, String jsonData, HttpProxyHeader header) {
+		OkHttp3FutureProxy future =  OkHttp3FutureProxy.build();
+		Okhttp3RequestBuilder request = this.postJsonRequest(url,jsonData,header,true);
+		HttpClientResponse response = this.executeAsync(request,future);
+		return response;
 	}
 
 	@Override
 	public HttpClientResponse postAsync(String url, Map<String, String> params) {
-		return null;
+		OkHttp3FutureProxy future =  OkHttp3FutureProxy.build();
+		Okhttp3RequestBuilder request = this.postFormRequest(url,params,null,true);
+		HttpClientResponse response = this.executeAsync(request,future);
+		return response;
 	}
 
 	@Override
 	public HttpClientResponse postAsync(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
-		return null;
+
+		OkHttp3FutureProxy future =  OkHttp3FutureProxy.build();
+		Okhttp3RequestBuilder request = this.postFormRequest(url,params,header,encode);
+		HttpClientResponse response = this.executeAsync(request,future);
+		return response;
+
 	}
+
+
+
+
 }

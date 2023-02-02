@@ -2,6 +2,7 @@ package com.suven.framework.http.proxy;
 
 import com.alibaba.fastjson.JSON;
 import com.suven.framework.http.config.HttpClientConfig;
+import com.suven.framework.http.proxy.okhttp3.Okhttp3RequestBuilder;
 
 import java.net.Proxy;
 
@@ -25,7 +26,7 @@ import java.net.Proxy;
  **/
 
 public abstract class AbstractHttpProxy implements HttpProxy {
-	protected HttpClientConfig httpClientConfig;
+	protected  HttpClientConfig httpClientConfig;
 
 	public AbstractHttpProxy(HttpClientConfig httpClientConfig) {
 		this.httpClientConfig = httpClientConfig;
@@ -61,4 +62,5 @@ public abstract class AbstractHttpProxy implements HttpProxy {
 	public <T> T getData(String body, Class<T> parseJson) {
 		return JSON.parseObject(body,parseJson);
 	}
+
 }

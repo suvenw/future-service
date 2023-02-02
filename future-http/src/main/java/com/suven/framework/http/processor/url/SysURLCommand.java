@@ -26,6 +26,7 @@ public class SysURLCommand implements IURLCommand {
 
     /** 架构使用例子接口 start**/
     public static final String sys_get_framework = "";
+    public static final String sys_get_framework_http = "/http";
     public static final String sys_get_error_no = "/sys/errorNo";
     public static final String sys_get_post_param = "/sys/postParam";
     public static final String sys_get_get_param = "/sys/getParam";

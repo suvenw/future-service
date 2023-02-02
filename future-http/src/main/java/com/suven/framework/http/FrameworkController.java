@@ -15,9 +15,11 @@ import com.suven.framework.http.message.HttpMsgEnumError;
 import com.suven.framework.http.message.HttpRequestGetMessage;
 import com.suven.framework.http.message.HttpRequestPostMessage;
 import com.suven.framework.http.processor.url.SysURLCommand;
+import com.suven.framework.http.util.HttpParamsUtil;
 import com.suven.framework.util.createcode.swagger.SwaggerReflectionsDoc;
 import com.suven.framework.util.createcode.swagger.SwaggerResultBean;
 import com.suven.framework.util.crypt.CryptUtil;
+import com.suven.framework.util.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +87,20 @@ public class FrameworkController {
         out.writeSuccess();
     }
 
+    @ApiDoc(
+            value = "接口服务基本响应",
+            request = HttpRequestGetMessage.class,
+            response = long.class
+    )
+
+    @RequestMapping(value = SysURLCommand.sys_get_framework_http, method = RequestMethod.GET)
+    public void getFrameworkApiHttp(OutputResponse out, HttpRequestGetMessage jsonParse)  {
+        String json = JsonUtils.toJson(jsonParse);
+        Map map  = JsonUtils.toMap(json);
+        HttpClientUtil.getAsync("http://127.0.0.1:8080/api/sys/postParam",map,true);
+
+        out.writeSuccess();
+    }
 
 
     @ApiDoc(

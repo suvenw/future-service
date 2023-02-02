@@ -28,20 +28,31 @@ import com.suven.framework.http.proxy.java11.JavaHttpClientProxy;
 import com.suven.framework.http.proxy.okhttp3.OkHttp3HttpClientProxy;
 import com.suven.framework.http.util.ClassUtil;
 
+import java.net.Proxy;
 import java.util.Map;
 
 
+
 /**
- * <p>
- * 请求工具类
- * </p>
+ * @Author 作者 : suven.wang
+ * @CreateDate 创建时间: 2021-09-13
+ * @WeeK 星期: 星期四
+ * @Version 版本: v1.0.0
+ * <pre>
  *
- * @author yangkai.shen
- * @date Created in 2019/12/24 18:15
- */
+ *  @Description (说明):  OkHttp3 网络请求配置类
+ *  默认代理选择器
+ * </pre>
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容:
+ * </pre>
+ * @Copyright: (c) 2021 gc by https://www.suven.top
+ **/
 public class HttpClientUtil {
 	private static HttpProxy proxy;
 
+	/** 使用单例模式初始化实例 **/
 	private static class HttpProxyInstance {
 		private static final HttpClientUtil INSTANCE = new HttpClientUtil();
 		private static final HttpClientConfig HTTP_CONFIG = HttpClientConfig.builder().toTimeout(HttpClientConstants.DEFAULT_TIMEOUT);
@@ -53,8 +64,21 @@ public class HttpClientUtil {
 	public static HttpClientUtil getInstance(HttpClientConfig httpConfig) {
 		if(proxy == null){
 			HttpProxyInstance.INSTANCE.selectHttpProxy();
-		}if(httpConfig == null){
-			proxy.setHttpConfig(HttpProxyInstance.HTTP_CONFIG);
+		}if(httpConfig != null) {
+			proxy.setHttpConfig(httpConfig);
+		}
+		return HttpProxyInstance.INSTANCE;
+	}
+
+	/**
+	 * 初始化设置代理与超时时长，单位毫秒
+	 */
+	public static HttpClientUtil getInstance(Proxy toProxy,int timeout) {
+		if(proxy == null){
+			HttpProxyInstance.INSTANCE.selectHttpProxy();
+		}
+		if(toProxy != null && timeout > 0){
+			proxy.setHttpConfig(HttpProxyInstance.HTTP_CONFIG.toProxy(toProxy).toTimeout(timeout));
 		}
 		return HttpProxyInstance.INSTANCE;
 	}
@@ -65,15 +89,8 @@ public class HttpClientUtil {
 	protected static void selectHttpProxy() {
 		HttpProxy defaultProxy = null;
 		ClassLoader classLoader = HttpClientUtil.class.getClassLoader();
-		// 基于 okhttp3
-		if (null == defaultProxy && ClassUtil.isPresent("okhttp3.OkHttpClient", classLoader)) {
-			defaultProxy = createHttpProxy(OkHttp3HttpClientProxy.class);
-		}
-		// 基于 java 11 HttpClient
-		if (ClassUtil.isPresent("java.net.http.HttpClient", classLoader)) {
-			defaultProxy = createHttpProxy(JavaHttpClientProxy.class);
-		}
-		// 基于 httpclient
+
+		// 基于 apache httpclient
 		if (null == defaultProxy && ClassUtil.isPresent("org.apache.http.impl.client.HttpClients", classLoader)) {
 			defaultProxy = createHttpProxy(ApacheHttpClientProxy.class);
 		}
@@ -81,6 +98,18 @@ public class HttpClientUtil {
 		if (null == defaultProxy && ClassUtil.isPresent("cn.hutool.http.HttpRequest", classLoader)) {
 			defaultProxy = createHttpProxy(HutoolHttpClientProxy.class);
 		}
+		// 基于 java 11 HttpClient
+		if (null == defaultProxy && ClassUtil.isPresent("java.net.http.HttpClient", classLoader)) {
+			defaultProxy = createHttpProxy(JavaHttpClientProxy.class);
+		}
+
+		// 基于 okhttp3
+		if (null == defaultProxy && ClassUtil.isPresent("okhttp3.OkHttpClient", classLoader)) {
+			defaultProxy = createHttpProxy(OkHttp3HttpClientProxy.class);
+		}
+
+
+
 
 		if (defaultProxy == null) {
 			throw new HttpClientRuntimeException("Has no HttpImpl defined in environment!");
@@ -99,6 +128,7 @@ public class HttpClientUtil {
 		try {
 			return clazz.newInstance();
 		} catch (Throwable e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -123,6 +153,28 @@ public class HttpClientUtil {
 	public static HttpClientResponse get(String url) {
 		checkHttpNotNull(proxy);
 		return proxy.get(url);
+	}
+	/**
+	 * GET 请求
+	 *
+	 * @param url URL
+	 * @return 结果
+	 */
+	public static HttpClientResponse getAsync(String url) {
+		checkHttpNotNull(proxy);
+		return proxy.getAsync(url);
+	}
+	/**
+	 * GET 请求
+	 *
+	 * @param url    URL
+	 * @param params 参数
+	 * @param encode 是否需要 url encode
+	 * @return 结果
+	 */
+	public static HttpClientResponse getAsync(String url, Map<String, String> params, boolean encode) {
+		checkHttpNotNull(proxy);
+		return proxy.getAsync(url, params,null, encode);
 	}
 
 	/**

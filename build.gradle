@@ -399,6 +399,7 @@ project(':future-http-client') {
         compile 'org.apache.httpcomponents:httpasyncclient:4.1.5'
         compile 'com.alibaba:fastjson:1.2.58'
         compile "ch.qos.logback:logback-core:${logback_version}"
+        compile 'com.google.guava:guava:18.0'
 
     }
 }
@@ -458,6 +459,7 @@ project(':future-http') {
         compile fileTree( dir: "lib", include: '*.jar' )
         compile project(':future-utils')
         compile project(':future-doc')
+        compile project(':future-http-client')
 
         compile("org.springframework.boot:spring-boot-starter-jetty:${spring_boot_version}")
         compile("org.springframework.boot:spring-boot-starter-websocket:${spring_boot_version}")

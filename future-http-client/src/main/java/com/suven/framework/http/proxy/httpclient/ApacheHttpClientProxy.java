@@ -18,35 +18,21 @@ package com.suven.framework.http.proxy.httpclient;
 
 import com.suven.framework.http.config.HttpClientConfig;
 import com.suven.framework.http.constants.HttpClientConstants;
-import com.suven.framework.http.proxy.AbstractHttpProxy;
 import com.suven.framework.http.proxy.FutureCallbackProxy;
 import com.suven.framework.http.proxy.HttpProxyHeader;
 import com.suven.framework.http.proxy.HttpClientResponse;
 import com.suven.framework.http.util.HttpParamsUtil;
-import org.apache.http.Header;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.config.RequestConfig;
+import org.apache.http.*;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
-import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 
 /**
@@ -65,123 +51,17 @@ import java.util.stream.Collectors;
  * </pre>
  * @Copyright: (c) 2021 gc by https://www.suven.top
  **/
-public class ApacheHttpClientProxy extends AbstractHttpProxy {
-	private final CloseableHttpClient httpClient;
-	private final CloseableHttpAsyncClient asyncClient;
+public class ApacheHttpClientProxy extends AbstractApacheRequestProxy {
 
 	public ApacheHttpClientProxy() {
-		this(HttpClients.createDefault(),  HttpAsyncClients.createDefault(), new HttpClientConfig());
+		super(new HttpClientConfig());
 	}
 
-	public ApacheHttpClientProxy(HttpClientConfig httpConfig) {
-		this(HttpClients.createDefault(), HttpAsyncClients.createDefault(), httpConfig);
-	}
 
-	public ApacheHttpClientProxy(CloseableHttpClient httpClient,CloseableHttpAsyncClient asyncClient, HttpClientConfig httpConfig) {
+	public ApacheHttpClientProxy( HttpClientConfig httpConfig) {
 		super(httpConfig);
-		this.httpClient = httpClient;
-		this.asyncClient = asyncClient;
 	}
 
-	/**
-	 * 同步执行的方法;
-	 * @param request
-	 * @return
-	 */
-	protected HttpClientResponse exec(HttpRequestBase request) {
-		this.addHeader(request);
-		// 设置超时时长
-		RequestConfig.Builder configBuilder = RequestConfig.custom()
-				.setConnectTimeout(this.getTimeout())
-				.setSocketTimeout(this.getTimeout())
-				.setConnectionRequestTimeout(this.getTimeout());
-		// 设置代理
-		if (isProxy()) {
-			Proxy proxy = this.getProxy();
-			InetSocketAddress address = (InetSocketAddress) proxy.address();
-			HttpHost host = new HttpHost(address.getHostName(), address.getPort(), proxy.type().name().toLowerCase());
-			configBuilder.setProxy(host);
-		}
-
-		request.setConfig(configBuilder.build());
-
-		try (CloseableHttpResponse response = this.httpClient.execute(request)) {
-
-			StringBuffer body = new StringBuffer();
-			if (response.getEntity() != null) {
-				body.append(EntityUtils.toString(response.getEntity(), HttpClientConstants.DEFAULT_ENCODING));
-			}
-
-			int code = response.getStatusLine().getStatusCode();
-			boolean successful = isSuccess(response);
-			Map<String, List<String>> headers = Arrays.stream(response.getAllHeaders())
-					.collect(Collectors.toMap(Header::getName, (value) -> {
-				ArrayList<String> headerValue = new ArrayList<>();
-				headerValue.add(value.getValue());
-				return headerValue;
-			}, (oldValue, newValue) -> newValue));
-			return  HttpClientResponse.build(successful, code, headers, body.toString(), null);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return  HttpClientResponse.build(false, 500, null, null, e.getMessage());
-		}
-	}
-
-	/**
-	 * 异步执行的方法
-	 * @param request
-	 * @param future
-	 */
-	protected void execAsync(HttpRequestBase request,FutureCallbackProxy future)  {
-		this.addHeader(request);
-		// 设置超时时长
-		RequestConfig.Builder configBuilder = RequestConfig.custom()
-				.setConnectTimeout(this.getTimeout())
-				.setSocketTimeout(this.getTimeout())
-				.setConnectionRequestTimeout(this.getTimeout());
-		// 设置代理
-		if (isProxy()) {
-			Proxy proxy = this.getProxy();
-			InetSocketAddress address = (InetSocketAddress) proxy.address();
-			HttpHost host = new HttpHost(address.getHostName(), address.getPort(), proxy.type().name().toLowerCase());
-			configBuilder.setProxy(host);
-		}
-
-		request.setConfig(configBuilder.build());
-		if(null  == future){
-
-		}
-		if (future instanceof ApacheFutureCallback){
-			ApacheFutureCallback callback = (ApacheFutureCallback)future;
-			FutureCallback futureCallback = callback.getFutureCallbackProxy();
-			this.asyncClient.execute(request, futureCallback);
-		}
-
-
-	}
-
-	/**
-	 * 添加request header
-	 *
-	 * @param request HttpRequestBase
-	 */
-	private void addHeader(HttpRequestBase request) {
-		String ua = HttpClientConstants.USER_AGENT;
-		Header[] headers = request.getHeaders(ua);
-		if (null == headers || headers.length == 0) {
-			request.addHeader(ua, HttpClientConstants.USER_AGENT_DATA);
-		}
-	}
-
-	private boolean isSuccess(HttpResponse response) {
-		if (response == null) {
-			return false;
-		}
-		if (response.getStatusLine() == null) {
-			return false;
-		}
-		return response.getStatusLine().getStatusCode() >= 200 && response.getStatusLine().getStatusCode() < 300;
-	}
 
 	/**
 	 * GET 请求
@@ -191,7 +71,10 @@ public class ApacheHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse get(String url) {
-		return this.get(url, null, false);
+		ApacheRequestBuilder request = this.getRequest(url,null,null,true);
+		HttpClientResponse response = this.execute(request);
+		return response;
+
 	}
 
 	/**
@@ -204,7 +87,10 @@ public class ApacheHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse get(String url, Map<String, String> params, boolean encode) {
-		return this.get(url, params, null, encode);
+		ApacheRequestBuilder request = this.getRequest(url,params,null,encode);
+		HttpClientResponse response = this.execute(request);
+		return response;
+
 	}
 
 	/**
@@ -218,16 +104,11 @@ public class ApacheHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse get(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
-		String baseUrl = HttpParamsUtil.appendIfNotContain(url, "?", "&");
-		url = baseUrl + HttpParamsUtil.parseMapToString(params, encode);
+		ApacheRequestBuilder request = this.getRequest(url,params,header,encode);
+		HttpClientResponse response = this.execute(request);
+		return response;
 
-		HttpGet httpGet = new HttpGet(url);
 
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), httpGet::addHeader);
-		}
-
-		return exec(httpGet);
 	}
 
 	/**
@@ -238,8 +119,9 @@ public class ApacheHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url) {
-		HttpPost httpPost = new HttpPost(url);
-		return this.exec(httpPost);
+		ApacheRequestBuilder request = this.postFormRequest(url,null,null,true);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -251,7 +133,9 @@ public class ApacheHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url, String data) {
-		return this.post(url, data, null);
+		ApacheRequestBuilder request = this.postJsonRequest(url,data,null,true);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -264,20 +148,9 @@ public class ApacheHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url, String data, HttpProxyHeader header) {
-		HttpPost httpPost = new HttpPost(url);
-
-		if (HttpParamsUtil.isNotEmpty(data)) {
-			StringEntity entity = new StringEntity(data, HttpClientConstants.DEFAULT_ENCODING);
-			entity.setContentEncoding(HttpClientConstants.DEFAULT_ENCODING.displayName());
-			entity.setContentType(HttpClientConstants.CONTENT_TYPE_JSON);
-			httpPost.setEntity(entity);
-		}
-
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), httpPost::addHeader);
-		}
-
-		return this.exec(httpPost);
+		ApacheRequestBuilder request = this.postJsonRequest(url,data,header,true);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -290,7 +163,9 @@ public class ApacheHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url, Map<String, String> params, boolean encode) {
-		return this.post(url, params, null, encode);
+		ApacheRequestBuilder request = this.postFormRequest(url,params,null,encode);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -304,39 +179,39 @@ public class ApacheHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
-		HttpPost httpPost = new HttpPost(url);
-
-		if (HttpParamsUtil.isNotEmpty(params)) {
-			List<NameValuePair> form = new ArrayList<>();
-			HttpParamsUtil.forEach(params, (k, v) -> form.add(new BasicNameValuePair(k, v)));
-			httpPost.setEntity(new UrlEncodedFormEntity(form, HttpClientConstants.DEFAULT_ENCODING));
-		}
-
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), httpPost::addHeader);
-		}
-
-		return this.exec(httpPost);
+		ApacheRequestBuilder request = this.postFormRequest(url,params,header,encode);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	@Override
 	public HttpClientResponse getAsync(String url) {
-		return postAsync(url,null,null,true);
+
+		ApacheHttpFutureProxy future =  ApacheHttpFutureProxy.build();
+		ApacheRequestBuilder request = this.getRequest(url,null,null,true);
+		HttpClientResponse response = this.executeAsync(request,future);
+		return response;
+
 	}
 
 
 	@Override
 	public HttpClientResponse getAsync(String url, Map<String, String> params) {
-		return postAsync(url,params,null,true);
+		ApacheHttpFutureProxy future =  ApacheHttpFutureProxy.build();
+		ApacheRequestBuilder request = this.getRequest(url,params,null,true);
+		HttpClientResponse response = this.executeAsync(request,future);
+		return response;
 	}
 
 
 	@Override
 	public HttpClientResponse getAsync(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
+
 		ApacheHttpFutureProxy future =  ApacheHttpFutureProxy.build();
-		postAsync(future,url,params,header,true);
-		HttpClientResponse result = future.get(getTimeout(), TimeUnit.MILLISECONDS);
-		return result;
+		ApacheRequestBuilder request = this.getRequest(url,params,header,encode);
+		HttpClientResponse response = this.executeAsync(request,future);
+		return response;
+
 	}
 
 
@@ -344,35 +219,40 @@ public class ApacheHttpClientProxy extends AbstractHttpProxy {
 	@Override
 	public HttpClientResponse postAsync(String url) {
 		ApacheHttpFutureProxy future =  ApacheHttpFutureProxy.build();
-		postAsync(future,url,null,null);
-		HttpClientResponse result = future.get(getTimeout(), TimeUnit.MILLISECONDS);
-		return result;
+		ApacheRequestBuilder request = this.postFormRequest(url,null,null,true);
+		HttpClientResponse response = this.executeAsync(request,future);
+		return response;
+
 	}
 
 
 
 	@Override
-	public HttpClientResponse postAsync(String url, String params) {
+	public HttpClientResponse postAsync(String url, String jsonData) {
 		ApacheHttpFutureProxy future =  ApacheHttpFutureProxy.build();
-		postAsync(future,url,params,null);
-		HttpClientResponse result = future.get(getTimeout(), TimeUnit.MILLISECONDS);
-		return result;
+		ApacheRequestBuilder request = this.postJsonRequest(url,jsonData,null,true);
+		HttpClientResponse response = this.executeAsync(request,future);
+		return response;
+
 	}
 
 
 	@Override
-	public HttpClientResponse postAsync(String url, String params, HttpProxyHeader header) {
+	public HttpClientResponse postAsync(String url, String jsonData, HttpProxyHeader header) {
 		ApacheHttpFutureProxy future =  ApacheHttpFutureProxy.build();
-		postAsync(future,url,params,header);
-		HttpClientResponse result = future.get(getTimeout(), TimeUnit.MILLISECONDS);
-		return result;
+		ApacheRequestBuilder request = this.postJsonRequest(url,jsonData,header,true);
+		HttpClientResponse response = this.executeAsync(request,future);
+		return response;
 	}
 
 
 
 	@Override
 	public HttpClientResponse postAsync(String url, Map<String, String> params) {
-		return postAsync(url,params,null,true);
+		ApacheHttpFutureProxy future =  ApacheHttpFutureProxy.build();
+		ApacheRequestBuilder request = this.postFormRequest(url,params,null,true);
+		HttpClientResponse response = this.executeAsync(request,future);
+		return response;
 	}
 
 
@@ -380,84 +260,11 @@ public class ApacheHttpClientProxy extends AbstractHttpProxy {
 	@Override
 	public HttpClientResponse postAsync(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
 		ApacheHttpFutureProxy future =  ApacheHttpFutureProxy.build();
-		postAsync(future,url,params,header,encode);
-		HttpClientResponse result = future.get(getTimeout(), TimeUnit.MILLISECONDS);
-		return result;
+		ApacheRequestBuilder request = this.postFormRequest(url,params,header,encode);
+		HttpClientResponse response = this.executeAsync(request,future);
+		return response;
 	}
 
-
-//	@Override
-	public void getAsync(FutureCallbackProxy future,  String url )  {
-		postAsync(future,url,null,null,true);
-	}
-
-//	@Override
-	public void getAsync(FutureCallbackProxy future,  String url, Map<String, String> params )  {
-		postAsync(future, url,params,null,true);
-	}
-
-
-//	@Override
-	public void getAsync(FutureCallbackProxy future,  String url, Map<String, String> params, HttpProxyHeader header, boolean encode )  {
-		String baseUrl = HttpParamsUtil.appendIfNotContain(url, "?", "&");
-		url = baseUrl + HttpParamsUtil.parseMapToString(params, encode);
-
-		HttpGet httpGet = new HttpGet(url);
-
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), httpGet::addHeader);
-		}
-		execAsync(httpGet,future);
-	}
-
-//	@Override
-	public void postAsync(FutureCallbackProxy future,String url )  {
-		postAsync(future,url,null,null);
-	}
-
-
-//	@Override
-	public void postAsync(FutureCallbackProxy future,String url, String params )  {
-		postAsync(future,url,params,null);
-	}
-
-
-//	@Override
-	public void postAsync(FutureCallbackProxy future,String url, String params, HttpProxyHeader header )  {
-		HttpPost httpPost = new HttpPost(url);
-
-		if (HttpParamsUtil.isNotEmpty(params)) {
-			StringEntity entity = new StringEntity(params, HttpClientConstants.DEFAULT_ENCODING);
-			entity.setContentEncoding(HttpClientConstants.DEFAULT_ENCODING.displayName());
-			entity.setContentType(HttpClientConstants.CONTENT_TYPE_JSON);
-			httpPost.setEntity(entity);
-		}
-
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), httpPost::addHeader);
-		}
-		this.execAsync(httpPost,future);
-	}
-//	@Override
-	public void postAsync(FutureCallbackProxy future,String url, Map<String, String> params )  {
-		postAsync(future,url,params,null,true);
-	}
-//	@Override
-	public void postAsync(FutureCallbackProxy future,String url, Map<String, String> params, HttpProxyHeader header, boolean encode )  {
-		HttpPost httpPost = new HttpPost(url);
-
-		if (HttpParamsUtil.isNotEmpty(params)) {
-			List<NameValuePair> form = new ArrayList<>();
-			HttpParamsUtil.forEach(params, (k, v) -> form.add(new BasicNameValuePair(k, v)));
-			httpPost.setEntity(new UrlEncodedFormEntity(form, HttpClientConstants.DEFAULT_ENCODING));
-		}
-
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), httpPost::addHeader);
-		}
-
-		this.execAsync(httpPost,future);
-	}
 
 
 }

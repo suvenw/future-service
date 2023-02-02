@@ -25,11 +25,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 
@@ -49,104 +48,19 @@ import java.util.concurrent.Future;
  * </pre>
  * @Copyright: (c) 2021 gc by https://www.suven.top
  **/
-public  class JavaHttpClientProxy extends AbstractHttpProxy {
-	private final HttpClient.Builder clientBuilder;
+public  class JavaHttpClientProxy extends AbstractJavaRequestProxy {
 
 	public JavaHttpClientProxy() {
-		this(new HttpClientConfig());
+		super(new HttpClientConfig());
 	}
-
 	public JavaHttpClientProxy(HttpClientConfig httpConfig) {
-		this(HttpClient.newBuilder(), httpConfig);
+		super( httpConfig);
 	}
 
-	public JavaHttpClientProxy(HttpClient.Builder clientBuilder, HttpClientConfig httpConfig) {
-		super(httpConfig);
-		this.clientBuilder = clientBuilder;
+	public JavaHttpClientProxy( HttpClientConfig httpConfig,HttpClient.Builder clientBuilder) {
+		super(httpConfig,clientBuilder);
 	}
 
-	/**
-	 * HTTP Client  异步发送请求使用示例
-	 * */
-//	public static void t1() throws ExecutionException, InterruptedException {
-//		HttpClient client = HttpClient.newHttpClient();
-//		HttpRequest request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:8080/test/hello")).build();
-//		HttpResponse.BodyHandler<String> responseBodyHandler = HttpResponse.BodyHandlers.ofString();
-//		CompletableFuture<HttpResponse<String>> sendAsync = client.sendAsync(request, responseBodyHandler);
-//		HttpResponse<String> response = sendAsync.get();
-//		String body = response.body();
-//		System.out.println(body);
-//	}
-
-	private HttpClientResponse exec(HttpRequest.Builder builder) {
-		this.addHeader(builder);
-		try {
-			HttpClient client;
-
-			if (this.isProxy()) {
-				client = clientBuilder.connectTimeout(Duration.ofMillis(this.getTimeout()))
-						.proxy(new DefaultProxySelector(httpClientConfig)).build();
-			} else {
-				client = clientBuilder.connectTimeout(Duration.ofMillis(this.getTimeout())).build();
-			}
-			HttpRequest request = builder.build();
-			HttpResponse<String> httpResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-			int code = httpResponse.statusCode();
-			boolean successful = isSuccess(httpResponse);
-			Map<String, List<String>> headers = httpResponse.headers().map();
-			String body = httpResponse.body();
-			return  HttpClientResponse.build(successful, code, headers, body, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return  HttpClientResponse.build(false, 500, null, null, e.getMessage());
-		}
-	}
-
-
-	private HttpClientResponse execAsync(HttpRequest.Builder builder) {
-		this.addHeader(builder);
-		try {
-			HttpClient client;
-
-			if (this.isProxy()) {
-				client = clientBuilder.connectTimeout(Duration.ofMillis(this.getTimeout()))
-						.proxy(new DefaultProxySelector(httpClientConfig)).build();
-			} else {
-				client = clientBuilder.connectTimeout(Duration.ofMillis(this.getTimeout())).build();
-			}
-			HttpRequest request = builder.build();
-
-			Future<HttpResponse<String>> future = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-
-			HttpResponse<String> httpResponse = future.get();
-
-			int code = httpResponse.statusCode();
-			boolean successful = isSuccess(httpResponse);
-			Map<String, List<String>> headers = httpResponse.headers().map();
-			String body = httpResponse.body();
-			return  HttpClientResponse.build(successful, code, headers, body, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return  HttpClientResponse.build(false, 500, null, null, e.getMessage());
-		}
-	}
-
-	private boolean isSuccess(HttpResponse<String> response) {
-		if (response == null) {
-			return false;
-		}
-		return response.statusCode() >= 200 && response.statusCode() < 300;
-	}
-
-	/**
-	 * 添加request header
-	 *
-	 * @param builder HttpRequest.Builder
-	 */
-	private void addHeader(HttpRequest.Builder builder) {
-		builder.header(HttpClientConstants.USER_AGENT, HttpClientConstants.USER_AGENT_DATA);
-	}
 
 	/**
 	 * GET 请求
@@ -156,7 +70,9 @@ public  class JavaHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse get(String url) {
-		return this.get(url, null, false);
+		JavaRequestBuilder request = this.getRequest(url,null,null,true);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -169,7 +85,9 @@ public  class JavaHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse get(String url, Map<String, String> params, boolean encode) {
-		return this.get(url, params, null, encode);
+		JavaRequestBuilder request = this.getRequest(url,params,null,encode);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -183,17 +101,9 @@ public  class JavaHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse get(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
-		String baseUrl = HttpParamsUtil.appendIfNotContain(url, "?", "&");
-		String reqUrl = baseUrl + HttpParamsUtil.parseMapToString(params, encode);
-
-		HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(reqUrl)).GET()
-				.timeout(Duration.ofMillis(this.getTimeout()));
-
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), builder::header);
-		}
-
-		return exec(builder);
+		JavaRequestBuilder request = this.getRequest(url,params,header,encode);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -204,7 +114,9 @@ public  class JavaHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url) {
-		return this.post(url, null);
+		JavaRequestBuilder request = this.postFormRequest(url,null,null,true);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -216,7 +128,9 @@ public  class JavaHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url, String data) {
-		return this.post(url, data, null);
+		JavaRequestBuilder request = this.postJsonRequest(url,null,null,true);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -229,22 +143,9 @@ public  class JavaHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url, String data, HttpProxyHeader header) {
-		HttpRequest.Builder builder = HttpRequest.newBuilder()
-				.uri(URI.create(url)).timeout(Duration.ofMillis(httpClientConfig.getTimeout()));
-
-		if (HttpParamsUtil.isNotEmpty(data)) {
-			builder.POST(HttpRequest.BodyPublishers.ofString(data, HttpClientConstants.DEFAULT_ENCODING));
-			builder.header(HttpClientConstants.CONTENT_ENCODING, HttpClientConstants.DEFAULT_ENCODING.displayName());
-			builder.header(HttpClientConstants.CONTENT_TYPE, HttpClientConstants.CONTENT_TYPE_JSON);
-		} else {
-			builder.POST(HttpRequest.BodyPublishers.noBody());
-		}
-
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), builder::header);
-		}
-
-		return this.exec(builder);
+		JavaRequestBuilder request = this.postJsonRequest(url,data,header,true);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -257,7 +158,9 @@ public  class JavaHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url, Map<String, String> params, boolean encode) {
-		return this.post(url, params, null, encode);
+		JavaRequestBuilder request = this.postFormRequest(url,params,null,encode);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -271,75 +174,68 @@ public  class JavaHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
-		String baseUrl = HttpParamsUtil.appendIfNotContain(url, "?", "&");
-		String reqUrl = baseUrl + HttpParamsUtil.parseMapToString(params, encode);
-		return this.post(reqUrl, null, header);
+		JavaRequestBuilder request = this.postFormRequest(url,params,header,encode);
+		HttpClientResponse response = this.execute(request);
+		return response;
+
 	}
 
 	@Override
 	public HttpClientResponse getAsync(String url) {
-		return getAsync(url,null,null,true);
+		JavaRequestBuilder request = this.getRequest(url,null,null,true);
+		HttpClientResponse response = this.executeAsync(request,null);
+		return response;
+
 	}
 
 	@Override
 	public HttpClientResponse getAsync(String url, Map<String, String> params) {
-		return getAsync(url,params,null,true);
+		JavaRequestBuilder request = this.getRequest(url,params,null,true);
+		HttpClientResponse response = this.executeAsync(request,null);
+		return response;
 	}
 
 	@Override
 	public HttpClientResponse getAsync(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
-		String baseUrl = HttpParamsUtil.appendIfNotContain(url, "?", "&");
-		String reqUrl = baseUrl + HttpParamsUtil.parseMapToString(params, encode);
+		JavaRequestBuilder request = this.getRequest(url,params,header,true);
+		HttpClientResponse response = this.executeAsync(request,null);
+		return response;
 
-		HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(reqUrl)).GET()
-				.timeout(Duration.ofMillis(this.getTimeout()));
-
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), builder::header);
-		}
-		return execAsync(builder);
 	}
 
 	@Override
 	public HttpClientResponse postAsync(String url) {
-		return postAsync(url,null,null);
+		JavaRequestBuilder request = this.postFormRequest(url,null,null,true);
+		HttpClientResponse response = this.executeAsync(request,null);
+		return response;
 	}
 
 	@Override
 	public HttpClientResponse postAsync(String url, String data) {
-		return postAsync(url,data,null);
+		JavaRequestBuilder request = this.postJsonRequest(url,data,null,true);
+		HttpClientResponse response = this.executeAsync(request,null);
+		return response;
 	}
 
 	@Override
 	public HttpClientResponse postAsync(String url, String data, HttpProxyHeader header) {
-
-		HttpRequest.Builder builder = HttpRequest.newBuilder()
-				.uri(URI.create(url)).timeout(Duration.ofMillis(httpClientConfig.getTimeout()));
-
-		if (HttpParamsUtil.isNotEmpty(data)) {
-			builder.POST(HttpRequest.BodyPublishers.ofString(data, HttpClientConstants.DEFAULT_ENCODING));
-			builder.header(HttpClientConstants.CONTENT_ENCODING, HttpClientConstants.DEFAULT_ENCODING.displayName());
-			builder.header(HttpClientConstants.CONTENT_TYPE, HttpClientConstants.CONTENT_TYPE_JSON);
-		} else {
-			builder.POST(HttpRequest.BodyPublishers.noBody());
-		}
-
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), builder::header);
-		}
-
-		return this.execAsync(builder);
+		JavaRequestBuilder request = this.postJsonRequest(url,data,header,true);
+		HttpClientResponse response = this.executeAsync(request,null);
+		return response;
 	}
 
 	@Override
 	public HttpClientResponse postAsync(String url, Map<String, String> params) {
-		return this.postAsync(url, null, null,true);
+		JavaRequestBuilder request = this.postFormRequest(url, null, null,true);
+		HttpClientResponse response = this.executeAsync(request,null);
+		return response;
 	}
 
 	@Override
 	public HttpClientResponse postAsync(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
-		String baseUrl = HttpParamsUtil.appendIfNotContain(url, "?", "&");
-		String reqUrl = baseUrl + HttpParamsUtil.parseMapToString(params, encode);
-		return this.postAsync(reqUrl, null, header);
+		JavaRequestBuilder request = this.postFormRequest(url, params, header,true);
+		HttpClientResponse response = this.executeAsync(request,null);
+		return response;
+
 	}
 }

@@ -39,7 +39,7 @@ public interface HttpClientConstants {
 	/**
 	 * 超时时长，单位毫秒
 	 */
-	int DEFAULT_TIMEOUT = 3000;
+	int DEFAULT_TIMEOUT = 300;
 
 
 
@@ -81,7 +81,7 @@ public interface HttpClientConstants {
 	/**
 	 * 模拟 User-Agent
 	 */
-	String USER_AGENT_DATA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36 simple-http";
+	String USER_AGENT_DATA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36 future-http-client";
 
 	/**
 	 * 空字符串

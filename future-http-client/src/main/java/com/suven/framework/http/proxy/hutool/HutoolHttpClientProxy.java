@@ -16,16 +16,9 @@
 
 package com.suven.framework.http.proxy.hutool;
 
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
 import com.suven.framework.http.config.HttpClientConfig;
-import com.suven.framework.http.proxy.AbstractHttpProxy;
-import com.suven.framework.http.proxy.FutureCallbackProxy;
 import com.suven.framework.http.proxy.HttpProxyHeader;
 import com.suven.framework.http.proxy.HttpClientResponse;
-import com.suven.framework.http.util.HttpParamsUtil;
-
-import java.util.List;
 import java.util.Map;
 
 
@@ -45,47 +38,16 @@ import java.util.Map;
  * </pre>
  * @Copyright: (c) 2021 gc by https://www.suven.top
  **/
-public class HutoolHttpClientProxy extends AbstractHttpProxy {
+public class HutoolHttpClientProxy extends AbstractHutoolRequestProxy {
+
 	public HutoolHttpClientProxy() {
-		this(new HttpClientConfig());
+		super(new HttpClientConfig());
 	}
 
 	public HutoolHttpClientProxy(HttpClientConfig httpConfig) {
 		super(httpConfig);
 	}
-	private HttpClientResponse exec(HttpRequest request) {
-		return execute(request,false);
-	}
 
-	private HttpClientResponse executeAsync(HttpRequest request) {
-		return execute(request,true);
-	}
-
-	private HttpClientResponse execute(HttpRequest request,boolean isAsync) {
-		// 设置超时时长
-		request = request.timeout(this.getTimeout());
-		// 设置代理
-		if (isProxy()) {
-			request = request.setProxy(this.getProxy());
-		}
-
-		try {
-			HttpResponse response = null;
-			if(isAsync){
-				response = request.executeAsync();
-			}else {
-				response = request.execute();
-			};
-			int code = response.getStatus();
-			boolean successful = response.isOk();
-			String body = response.body();
-			Map<String, List<String>> headers = response.headers();
-			return  HttpClientResponse.build(successful, code, headers, body, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return  HttpClientResponse.build(false, 500, null, null, e.getMessage());
-		}
-	}
 
 	/**
 	 * GET 请求
@@ -95,7 +57,9 @@ public class HutoolHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse get(String url) {
-		return this.get(url, null, false);
+		HutoolRequestBuilder request = this.getRequest(url,null,null,true);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -108,7 +72,9 @@ public class HutoolHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse get(String url, Map<String, String> params, boolean encode) {
-		return this.get(url, params, null, encode);
+		HutoolRequestBuilder request = this.getRequest(url,params,null,encode);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -122,16 +88,9 @@ public class HutoolHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse get(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
-		String baseUrl = HttpParamsUtil.appendIfNotContain(url, "?", "&");
-		url = baseUrl + HttpParamsUtil.parseMapToString(params, encode);
-
-		HttpRequest request = HttpRequest.get(url);
-
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), request::header);
-		}
-
-		return exec(request);
+		HutoolRequestBuilder request = this.getRequest(url,params,header,encode);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -142,8 +101,9 @@ public class HutoolHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url) {
-		HttpRequest request = HttpRequest.post(url);
-		return this.exec(request);
+		HutoolRequestBuilder request = this.postFormRequest(url,null,null,true);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -155,7 +115,9 @@ public class HutoolHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url, String data) {
-		return this.post(url, data, null);
+		HutoolRequestBuilder request = this.postJsonRequest(url,data,null,true);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -168,16 +130,9 @@ public class HutoolHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url, String data, HttpProxyHeader header) {
-		HttpRequest request = HttpRequest.post(url);
-
-		if (HttpParamsUtil.isNotEmpty(data)) {
-			request.body(data);
-		}
-
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), request::header);
-		}
-		return this.exec(request);
+		HutoolRequestBuilder request = this.postJsonRequest(url,data,header,true);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -190,7 +145,9 @@ public class HutoolHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url, Map<String, String> params, boolean encode) {
-		return this.post(url, params, null, encode);
+		HutoolRequestBuilder request = this.postFormRequest(url,params,null,encode);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	/**
@@ -204,90 +161,80 @@ public class HutoolHttpClientProxy extends AbstractHttpProxy {
 	 */
 	@Override
 	public HttpClientResponse post(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
-		HttpRequest request = HttpRequest.post(url);
-
-		if (encode) {
-			HttpParamsUtil.forEach(params, (k, v) -> request.form(k, HttpParamsUtil.urlEncode(v)));
-		} else {
-			HttpParamsUtil.forEach(params, request::form);
-		}
-
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), request::header);
-		}
-		return this.exec(request);
+		HutoolRequestBuilder request = this.postFormRequest(url,params,header,encode);
+		HttpClientResponse response = this.execute(request);
+		return response;
 	}
 
 	@Override
 	public HttpClientResponse getAsync(String url) {
-		return postAsync(url,null,null,true);
+
+		HutoolRequestBuilder request = this.getRequest(url,null,null,true);
+		HttpClientResponse response = this.executeAsync(request);
+		return response;
+
 	}
 
 
 
 	@Override
 	public HttpClientResponse getAsync(String url, Map<String, String> params) {
-		return postAsync(url,params,null,true);
+		HutoolRequestBuilder request = this.getRequest(url,params,null,true);
+		HttpClientResponse response = this.executeAsync(request);
+		return response;
 	}
 
 
 
 	@Override
 	public HttpClientResponse getAsync(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
-		return postAsync(url,params,header,encode);
+		HutoolRequestBuilder request = this.getRequest(url,params,header,true);
+		HttpClientResponse response = this.executeAsync(request);
+		return response;
 	}
 
 
 
 	@Override
 	public HttpClientResponse postAsync(String url) {
-		return postAsync(url,null,null);
+		HutoolRequestBuilder request = this.postFormRequest(url,null,null,true);
+		HttpClientResponse response = this.executeAsync(request);
+		return response;
 	}
 
 
 
 	@Override
 	public HttpClientResponse postAsync(String url, String data) {
-		return postAsync(url,data,null);
+		HutoolRequestBuilder request = this.postJsonRequest(url,data,null,true);
+		HttpClientResponse response = this.executeAsync(request);
+		return response;
 	}
 
 
 	@Override
 	public HttpClientResponse postAsync(String url, String data, HttpProxyHeader header) {
-		HttpRequest request = HttpRequest.post(url);
-
-		if (HttpParamsUtil.isNotEmpty(data)) {
-			request.body(data);
-		}
-
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), request::header);
-		}
-		return this.executeAsync(request);
+		HutoolRequestBuilder request = this.postJsonRequest(url,data,header,true);
+		HttpClientResponse response = this.executeAsync(request);
+		return response;
 	}
 
 
 
 	@Override
 	public HttpClientResponse postAsync(String url, Map<String, String> params) {
-		return postAsync(url,params,null,true);
+
+		HutoolRequestBuilder request = this.postFormRequest(url,params,null,true);
+		HttpClientResponse response = this.executeAsync(request);
+		return response;
 	}
 
 	@Override
 	public HttpClientResponse postAsync(String url, Map<String, String> params, HttpProxyHeader header, boolean encode) {
 
-		HttpRequest request = HttpRequest.post(url);
-
-		if (encode) {
-			HttpParamsUtil.forEach(params, (k, v) -> request.form(k, HttpParamsUtil.urlEncode(v)));
-		} else {
-			HttpParamsUtil.forEach(params, request::form);
-		}
-
-		if (header != null) {
-			HttpParamsUtil.forEach(header.getHeaders(), request::header);
-		}
-		return this.executeAsync(request);
+		HutoolRequestBuilder request = this.postFormRequest(url,params,null,true);
+		HttpClientResponse response = this.executeAsync(request);
+		return response;
 	}
 
 

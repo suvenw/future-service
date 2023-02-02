@@ -21,8 +21,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-public class OkHttp3FutureProxy extends AbstractFutureProxy<Response,OkHttp3FutureCallback>
-{
+public class OkHttp3FutureProxy extends AbstractFutureProxy<Response,OkHttp3FutureCallback> {
 
     public static OkHttp3FutureProxy build(){
         CompletableFuture future =  new  CompletableFuture();
