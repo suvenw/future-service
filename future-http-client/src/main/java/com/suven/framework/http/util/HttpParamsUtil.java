@@ -16,12 +16,19 @@
 
 package com.suven.framework.http.util;
 
+import com.alibaba.fastjson.JSON;
+import com.suven.framework.http.client.HttpRequestBean;
+import com.suven.framework.http.client.HttpRequestParams;
+import com.suven.framework.http.config.HttpClientConfig;
 import com.suven.framework.http.constants.HttpClientConstants;
 import com.suven.framework.http.exception.HttpClientRuntimeException;
+import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.security.MessageDigest;
 import java.util.*;
 import java.util.function.BiConsumer;
 
@@ -44,6 +51,9 @@ import java.util.function.BiConsumer;
  **/
 
 public class HttpParamsUtil {
+
+	private final static String MD5_CRYPT = "MD5";
+	private static final String URF_8 = "UTF-8";
 	/**
 	 * 判断 map 不为空
 	 *
@@ -219,6 +229,11 @@ public class HttpParamsUtil {
 		return String.join("&", paramList);
 	}
 
+
+
+
+
+
 	/**
 	 * 字符串转map，字符串格式为 {@code xxx=xxx&xxx=xxx}
 	 *
@@ -226,10 +241,10 @@ public class HttpParamsUtil {
 	 * @param decode 是否解码
 	 * @return map
 	 */
-	public static Map<String, String> parseStringToMap(String str, boolean decode) {
+	public static Map<String, String> parseStringToTreeMap(String str, boolean decode) {
 		str = preProcess(str);
 
-		Map<String, String> params = new HashMap<>(16);
+		Map<String, String> params = new TreeMap<>();
 		if (isEmpty(str)) {
 			return params;
 		}
@@ -316,5 +331,180 @@ public class HttpParamsUtil {
 		}
 
 		return str;
+	}
+
+	public static Map<String, String> toMapByString(String urlParam,boolean decode, boolean isUrlNotJson) {
+		if(isUrlNotJson){
+			Map<String, String>  treeMap = parseStringToTreeMap(urlParam,decode);
+			return treeMap;
+		}else {
+			Object object = JSON.parse(urlParam);
+			Map<String, String>  treeMap = toMap(object,decode);
+			return treeMap;
+		}
+	}
+	public static Map<String, String> toMap(Object object,boolean decode) {
+		if(object == null || isMapOrJsonClass(object.getClass()) ){
+			return (Map<String, String>)object;
+		}
+		List<Field> fields = FieldUtils.getAllFieldsList(object.getClass());// klass.getFields();
+		Map<String, String> map = new TreeMap<>();
+		if(null == fields){
+			return map;
+		}
+		for (Field field : fields) {
+			try {
+				field.setAccessible(true);
+				Object obj = field.get(object);
+				String value = ClassUtil.parseValueString(obj);
+				value = decode(value,decode);
+				map.put(field.getName(),value);
+			} catch (Exception e) {
+			}
+		}
+		return  map;
+	}
+
+	public static HttpRequestParams getClientSign(Object head,Object body,String md5Key,boolean decode)  {
+		//1.请求参数对象转换排序的map树
+		Map<String, String> dataMap = new TreeMap<>();
+		Map<String, String> headMap = null;
+		Map<String, String> bodyMap = null;
+		if(null != head){
+			headMap = toMap(head,decode);
+			if(headMap != null && !headMap.isEmpty()){
+				dataMap.putAll(headMap);
+			}
+		}
+		if(null != body){
+			bodyMap = toMap(body,decode);
+			if(bodyMap != null && !bodyMap.isEmpty()){
+				dataMap.putAll(bodyMap);
+			}
+		}
+		//2.请求的map 树转换url get请求规范的字符串
+		String urlParam = getSortedMapSign(dataMap,Arrays.asList("cliSign"));
+		String signParam = paramMd5length(urlParam,md5Key,8,24);
+		HttpRequestParams httpRequestParams = HttpRequestParams.build(bodyMap,headMap,decode,urlParam,signParam);
+		return httpRequestParams;
+	}
+
+
+
+
+	/**
+	 * 获取签名 服务端,用于传输公共参数,作用是参数改篡改,用于前端的方法,notContains集合,为排除参与加密字段
+	 * 获取签名的参数 格式a=1&b=1
+	 * @param param 为所有请求参数
+	 * @param notContains 排除参与加密字段
+	 * @return
+	 */
+	public static String getSortedMapSign(Map<String, String> param,List<String> notContains){
+		StringBuffer sb = new StringBuffer();
+		String strBody="";
+		if(null != param && param.size() > 0) {
+			if(!(param instanceof  TreeMap)){
+				param = new TreeMap<>(param);
+			}
+			for (Iterator<Map.Entry<String, String>> iterator = param.entrySet().iterator(); iterator.hasNext();) {
+				Map.Entry<String, String> obj = iterator.next();
+				if(null != notContains && notContains.contains(obj.getKey())){
+					continue;
+				}
+				Object value = obj.getValue();
+				sb.append(obj.getKey()).append("=").append(value).append("&");
+			}
+			if(sb.length()>1 ){
+				strBody = sb.substring(0, sb.length() - 1);
+			}
+		}
+		return strBody;
+	}
+
+
+
+
+	private static Map<String, String> getClientSignMap(Object head,Object body,boolean decode ){
+		Map<String, String> dataMap = new TreeMap<>();
+		if(null != head){
+			Map<String, String> headMap = toMap(head,decode);
+			if(headMap != null && !headMap.isEmpty()){
+				dataMap.putAll(headMap);
+			}
+		}
+		if(null != body){
+			Map<String, String> bodyMap = toMap(body,decode);
+			if(bodyMap != null && !bodyMap.isEmpty()){
+				dataMap.putAll(bodyMap);
+			}
+		}
+
+		return dataMap;
+	}
+
+	/**
+	 * 加密
+	 * @param md5Content 参与加密码的内容信息;
+	 *  @param md5Content 每个系统自定议的干扰的内容信息
+	 * @return
+	 */
+	public   static String paramMd5length(String md5Content, String md5Key,int indexStart, int indexEnd) {
+		String pass = paramMd5LowerCase(md5Content,md5Key);
+		pass = pass.substring(indexStart, indexEnd);
+		return pass;
+	}
+
+
+	/**
+	 * 加密
+	 * @param md5Content 参与加密码的内容信息;
+	 *  @param md5Content 每个系统自定议的干扰的内容信息
+	 * @return
+	 */
+	private  static String paramMd5LowerCase(String md5Content, String md5Key) {
+		String pass = md5String(md5Content + md5Key).toLowerCase();
+		return pass;
+	}
+
+	/**
+	 * 将二进制转换成16进制
+	 * @param bytes
+	 * @return
+	 */
+	private static String parseByte2Hex(byte[] bytes) {
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < bytes.length; i++) {
+			String hex = Integer.toHexString(bytes[i] & 0xFF);
+			if (hex.length() == 1) {
+				hex = '0' + hex;
+			}
+			sb.append(hex.toUpperCase());
+		}
+		return sb.toString();
+	}
+
+
+	private static String md5String(String src){
+		try {
+			MessageDigest alg = MessageDigest.getInstance(MD5_CRYPT);
+			byte[] md5Byte =  alg.digest(src.getBytes(URF_8));
+			return parseByte2Hex(md5Byte);
+		} catch (Exception e) {}
+		return "";
+	}
+
+	public static  boolean isMapOrJsonClass(Class<?> fieldType){
+		if(fieldType.isAssignableFrom(Map.class)){
+			return true;
+		}
+
+		Class<?> interfaces[] = fieldType.getInterfaces();
+		if(null != interfaces && Arrays.asList(interfaces).contains(Map.class)){
+			return true;
+		}
+		if("JSONOBJECT".equals(fieldType.getSimpleName().toUpperCase())){
+			return true;
+		}
+		return false;
 	}
 }

@@ -400,6 +400,7 @@ project(':future-http-client') {
         compile 'com.alibaba:fastjson:1.2.58'
         compile "ch.qos.logback:logback-core:${logback_version}"
         compile 'com.google.guava:guava:18.0'
+        compile 'org.apache.commons:commons-lang3:3.4'
 
     }
 }
