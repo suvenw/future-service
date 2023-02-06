@@ -16,8 +16,9 @@ import org.springframework.web.servlet.AsyncHandlerInterceptor;
  * 修改记录
  *    修改后版本:     修改人：  修改日期:     修改内容:
  * </pre>
- * @Copyright: (c) 2021 gc by https://www.66os.com
+ * @Copyright: (c) 2021 gc by https://www.suven.com
  **/
 
 public abstract class BaseHandlerInterceptorAdapter implements AsyncHandlerInterceptor {
+
 }

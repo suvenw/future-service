@@ -5,16 +5,13 @@ package com.suven.framework.http.interceptor;
 
 
 import com.suven.framework.http.validator.UserTokenHandlerValidator;
+import com.suven.framework.http.message.HttpRequestRemote;
+import com.suven.framework.http.message.ParamMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.AsyncHandlerInterceptor;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import com.suven.framework.http.exception.SystemRuntimeException;
-import com.suven.framework.http.message.ParamMessage;
-import com.suven.framework.http.message.HttpRequestRemote;
 import com.suven.framework.http.processor.url.UrlExplain;
 
 import javax.servlet.http.HttpServletRequest;

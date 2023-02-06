@@ -16,5 +16,4 @@ public interface InterceptorConstants {
     final String VERSION_HANDLER_VALIDATOR = "versionHandlerValidator";
 
     final String WHITE_HANDLER_VALIDATOR = "whiteHandlerValidator";
-
 }
