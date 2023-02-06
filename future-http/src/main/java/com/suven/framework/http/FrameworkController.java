@@ -109,7 +109,8 @@ public class FrameworkController {
 //        map.clear();
         final String md5Key = "H@s0zSix!fiNger8";
         HttpRequestParams params = HttpParseRequestParams.getHttpRequestParams(map,md5Key);
-        HttpClientUtil.getAsync("http://127.0.0.1:8080/api/sys/postParam",params.getParamsSign(),true);
+        params.signParamToBody();
+        HttpClientUtil.getAsync("http://127.0.0.1:8080/api/sys/postParam",params.getBodyMap(),true);
 
         out.writeSuccess();
     }

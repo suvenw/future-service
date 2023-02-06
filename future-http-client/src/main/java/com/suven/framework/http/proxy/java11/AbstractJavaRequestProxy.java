@@ -139,6 +139,7 @@ public abstract class AbstractJavaRequestProxy extends AbstractHttpProxy impleme
             builder.POST(HttpRequest.BodyPublishers.ofString(jsonData, HttpClientConstants.DEFAULT_ENCODING));
             builder.header(HttpClientConstants.CONTENT_ENCODING, HttpClientConstants.DEFAULT_ENCODING.displayName());
             builder.header(HttpClientConstants.CONTENT_TYPE, HttpClientConstants.CONTENT_TYPE_JSON);
+            builder.header(HttpClientConstants.CONTENT_JSON_KEY, HttpClientConstants.CONTENT_JSON_VALUE);
         } else {
             builder.POST(HttpRequest.BodyPublishers.noBody());
         }

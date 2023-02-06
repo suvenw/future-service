@@ -69,6 +69,15 @@ public interface HttpClientConstants {
 	String CONTENT_TYPE = "Content-Type";
 
 	/**
+	 * JSON
+	 */
+	String CONTENT_JSON_KEY ="Content-Json";
+	/**
+	 * JSON
+	 */
+	String CONTENT_JSON_VALUE ="true";
+
+	/**
 	 * Content-Encoding
 	 */
 	String CONTENT_ENCODING = "Content-Encoding";
@@ -77,6 +86,8 @@ public interface HttpClientConstants {
 	 * User-Agent
 	 */
 	String USER_AGENT = "User-Agent";
+
+
 
 	/**
 	 * 模拟 User-Agent

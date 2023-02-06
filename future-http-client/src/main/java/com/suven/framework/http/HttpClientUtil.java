@@ -16,19 +16,8 @@
 
 package com.suven.framework.http;
 
-import com.suven.framework.http.config.HttpClientConfig;
-import com.suven.framework.http.constants.HttpClientConstants;
-import com.suven.framework.http.exception.HttpClientRuntimeException;
-import com.suven.framework.http.proxy.HttpProxy;
 import com.suven.framework.http.proxy.HttpProxyHeader;
 import com.suven.framework.http.proxy.HttpClientResponse;
-import com.suven.framework.http.proxy.httpclient.ApacheHttpClientProxy;
-import com.suven.framework.http.proxy.hutool.HutoolHttpClientProxy;
-import com.suven.framework.http.proxy.java11.JavaHttpClientProxy;
-import com.suven.framework.http.proxy.okhttp3.OkHttp3HttpClientProxy;
-import com.suven.framework.http.util.ClassUtil;
-
-import java.net.Proxy;
 import java.util.Map;
 
 

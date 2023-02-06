@@ -17,9 +17,7 @@
 package com.suven.framework.http.util;
 
 import com.alibaba.fastjson.JSON;
-import com.suven.framework.http.client.HttpRequestBean;
 import com.suven.framework.http.client.HttpRequestParams;
-import com.suven.framework.http.config.HttpClientConfig;
 import com.suven.framework.http.constants.HttpClientConstants;
 import com.suven.framework.http.exception.HttpClientRuntimeException;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -299,6 +297,13 @@ public class HttpParamsUtil {
 		return params;
 	}
 
+	/**
+	 *  将参数按K-V方式增加到参数对象Map中;
+	 * @param params 参数对象Map
+	 * @param key 参数对象Map中的key
+	 * @param value 参数对象Map中的key对应的value值
+	 * @param decode 参数对象是否需要转码
+	 */
 	private static void addParam(Map<String, String> params, String key, String value, boolean decode) {
 		key = decode(key, decode);
 		value = decode(value, decode);
@@ -309,11 +314,22 @@ public class HttpParamsUtil {
 		}
 	}
 
+	/**
+	 * 字符串进行转码实现
+	 * @param str
+	 * @param decode
+	 * @return
+	 */
 	private static String decode(String str, boolean decode) {
 		return decode ? urlDecode(str) : str;
 	}
 
 
+	/**
+	 * 解释请求url,是否有问号(?)或井号(#),对应去除
+	 * @param str
+	 * @return
+	 */
 	private static String preProcess(String str) {
 		if (isEmpty(str)) {
 			return str;
@@ -333,6 +349,13 @@ public class HttpParamsUtil {
 		return str;
 	}
 
+	/***
+	 * 请求的url转换Map请求对象,其中urlParam支持两种格式转换,url格式或对象json字符串格式
+	 * @param urlParam 字符串类型ulr请求实现
+	 * @param decode 是否需要转码
+	 * @param isUrlNotJson 默认值为false,使用的是json格式转换内容
+	 * @return
+	 */
 	public static Map<String, String> toMapByString(String urlParam,boolean decode, boolean isUrlNotJson) {
 		if(isUrlNotJson){
 			Map<String, String>  treeMap = parseStringToTreeMap(urlParam,decode);
@@ -341,8 +364,15 @@ public class HttpParamsUtil {
 			Object object = JSON.parse(urlParam);
 			Map<String, String>  treeMap = toMap(object,decode);
 			return treeMap;
+
 		}
 	}
+	/***
+	 * 请求的内容体对象转换成请求Map<kv>格式对象,
+	 * @param object 内容体对象,或头部体对象
+	 * @param decode 是否需要转码,默认值为false
+	 * @return
+	 */
 	public static Map<String, String> toMap(Object object,boolean decode) {
 		if(object == null || isMapOrJsonClass(object.getClass()) ){
 			return (Map<String, String>)object;
@@ -368,12 +398,12 @@ public class HttpParamsUtil {
 	public static HttpRequestParams getClientSign(Object head,Object body,String md5Key,boolean decode)  {
 		//1.请求参数对象转换排序的map树
 		Map<String, String> dataMap = new TreeMap<>();
-		Map<String, String> headMap = null;
+		Map<String, String> headerMap = null;
 		Map<String, String> bodyMap = null;
 		if(null != head){
-			headMap = toMap(head,decode);
-			if(headMap != null && !headMap.isEmpty()){
-				dataMap.putAll(headMap);
+			headerMap = toMap(head,decode);
+			if(headerMap != null && !headerMap.isEmpty()){
+				dataMap.putAll(headerMap);
 			}
 		}
 		if(null != body){
@@ -385,7 +415,7 @@ public class HttpParamsUtil {
 		//2.请求的map 树转换url get请求规范的字符串
 		String urlParam = getSortedMapSign(dataMap,Arrays.asList("cliSign"));
 		String signParam = paramMd5length(urlParam,md5Key,8,24);
-		HttpRequestParams httpRequestParams = HttpRequestParams.build(bodyMap,headMap,decode,urlParam,signParam);
+		HttpRequestParams httpRequestParams = HttpRequestParams.build(bodyMap,headerMap,decode,urlParam,signParam);
 		return httpRequestParams;
 	}
 
@@ -420,8 +450,6 @@ public class HttpParamsUtil {
 		}
 		return strBody;
 	}
-
-
 
 
 	private static Map<String, String> getClientSignMap(Object head,Object body,boolean decode ){

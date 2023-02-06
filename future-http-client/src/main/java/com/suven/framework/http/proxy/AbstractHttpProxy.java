@@ -2,7 +2,9 @@ package com.suven.framework.http.proxy;
 
 import com.alibaba.fastjson.JSON;
 import com.suven.framework.http.config.HttpClientConfig;
+import com.suven.framework.http.constants.HttpClientConstants;
 import com.suven.framework.http.proxy.okhttp3.Okhttp3RequestBuilder;
+import okhttp3.Headers;
 
 import java.net.Proxy;
 
@@ -63,4 +65,39 @@ public abstract class AbstractHttpProxy implements HttpProxy {
 		return JSON.parseObject(body,parseJson);
 	}
 
+	/**
+	 * 添加request header
+	 *
+	 */
+	protected Headers initJsonHeaders(){
+		Headers headers = Headers.of(
+				HttpClientConstants.USER_AGENT, HttpClientConstants.USER_AGENT_DATA,
+				HttpClientConstants.CONTENT_TYPE, HttpClientConstants.CONTENT_TYPE_JSON,
+				HttpClientConstants.CONTENT_JSON_KEY, HttpClientConstants.CONTENT_JSON_VALUE);
+		return headers;
+	}
+
+	/**
+	 * 添加request header
+	 *
+	 */
+	protected boolean initJsonHeaders(HttpProxyHeader header){
+		if(header == null){
+			header = new HttpProxyHeader();
+		}
+		header.add(HttpClientConstants.USER_AGENT, HttpClientConstants.USER_AGENT_DATA)
+				.add(HttpClientConstants.CONTENT_TYPE, HttpClientConstants.CONTENT_TYPE_JSON)
+				.add(HttpClientConstants.CONTENT_JSON_KEY, HttpClientConstants.CONTENT_JSON_VALUE);
+		return true;
+	}
+
+	/**
+	 * 添加request header
+	 *
+	 */
+	protected Headers initFormHeaders(){
+		Headers headers = Headers.of(
+				HttpClientConstants.USER_AGENT, HttpClientConstants.USER_AGENT_DATA);
+		return headers;
+	}
 }

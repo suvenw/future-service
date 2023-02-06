@@ -1,8 +1,8 @@
 package com.suven.framework.http.client;
 
 
+
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * @Author 作者 : suven
@@ -24,60 +24,57 @@ import java.util.TreeMap;
 
 public class HttpRequestParams {
 
-    private Map<String, String> params;
-    private Map<String, String> headers;
+    private Map<String, String> bodyMap;
+    private Map<String, String> headerMap;
     private boolean encode;
     private  String urlParam;
     private String signParam;
 
     public HttpRequestParams() {
     }
-    public static HttpRequestParams build(Map<String, String> params,String urlParam) {
-        return build(params,null,true,urlParam,null);
+    public static HttpRequestParams build(Map<String, String> bodyMap,String urlParam) {
+        return build(bodyMap,null,true,urlParam,null);
     }
-    public static HttpRequestParams build( Map<String, String> params,Map<String, String> headers) {
-        return build(params,headers,true,null,null);
+    public static HttpRequestParams build( Map<String, String> bodyMap,Map<String, String> headers) {
+        return build(bodyMap,headers,true,null,null);
     }
-    public static HttpRequestParams build( Map<String, String> params, Map<String, String> headers,boolean encode,
+    public static HttpRequestParams build( Map<String, String> bodyMap, Map<String, String> headerMap,boolean encode,
                                            String urlParam,String signParam ) {
         HttpRequestParams request = new HttpRequestParams();
         request.urlParam = urlParam;
-        request.params = params;
-        request.headers = headers;
+        request.bodyMap = bodyMap;
+        request.headerMap = headerMap;
         request.encode = encode;
         request.signParam = signParam;
         return request;
     }
 
-    public String getUrlParam() {
-        return urlParam;
-    }
 
-    public void setUrlParam(String urlParam) {
-        this.urlParam = urlParam;
+    public Map<String, String> getSignToBodyMap() {
+        bodyMap.put("cliSign",this.getSignParam());
+        return bodyMap;
     }
-
-    public Map<String, String> getParams() {
-        return params;
-    }
-    public Map<String, String> getParamsSign() {
-        if(null == params){
-            params = new TreeMap<>();
-        }params.put("cliSign",this.signParam);
-        return params;
+    public Map<String, String> getSignToHeaderMap() {
+        headerMap.put("cliSign",this.getSignParam());
+        return headerMap;
     }
 
 
-    public void setParams(Map<String, String> params) {
-        this.params = params;
+
+    public Map<String, String> getBodyMap() {
+        return bodyMap;
     }
 
-    public Map<String, String> getHeaders() {
-        return headers;
+    public void setBodyMap(Map<String, String> bodyMap) {
+        this.bodyMap = bodyMap;
     }
 
-    public void setHeaders(Map<String, String> headers) {
-        this.headers = headers;
+    public Map<String, String> getHeaderMap() {
+        return headerMap;
+    }
+
+    public void setHeaderMap(Map<String, String> headerMap) {
+        this.headerMap = headerMap;
     }
 
     public boolean isEncode() {
@@ -86,6 +83,14 @@ public class HttpRequestParams {
 
     public void setEncode(boolean encode) {
         this.encode = encode;
+    }
+
+    public String getUrlParam() {
+        return urlParam;
+    }
+
+    public void setUrlParam(String urlParam) {
+        this.urlParam = urlParam;
     }
 
     public String getSignParam() {

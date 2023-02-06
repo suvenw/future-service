@@ -9,7 +9,7 @@ import okhttp3.*;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
+
 import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractOkHttp3RequestProxy  extends AbstractHttpProxy implements HttpRequestProxy<Okhttp3RequestBuilder> {
@@ -110,7 +110,7 @@ public abstract class AbstractOkHttp3RequestProxy  extends AbstractHttpProxy imp
         }
         //url
         HttpUrl httpUrl = urlBuilder.build();
-        Headers headers = initHeaders();
+        Headers headers = initFormHeaders();
         if (header != null ){
             headers = Headers.of(header.getHeaders());
         }
@@ -132,7 +132,7 @@ public abstract class AbstractOkHttp3RequestProxy  extends AbstractHttpProxy imp
         }
         FormBody body = formBuilder.build();
         //Headers
-        Headers headers = initHeaders();
+        Headers headers = initFormHeaders();
         if (header != null ){
             headers = Headers.of(header.getHeaders());
         }
@@ -156,7 +156,7 @@ public abstract class AbstractOkHttp3RequestProxy  extends AbstractHttpProxy imp
             jsonData = HttpParamsUtil.urlEncode(jsonData);
         }
         RequestBody body = RequestBody.create(jsonData, CONTENT_TYPE_JSON);
-        Headers headers = initHeaders();
+        Headers headers = initJsonHeaders();
         if (header != null ){
             headers = Headers.of(header.getHeaders());
         }
@@ -170,12 +170,5 @@ public abstract class AbstractOkHttp3RequestProxy  extends AbstractHttpProxy imp
 
     }
 
-    /**
-     * 添加request header
-     *
-     */
-    protected Headers initHeaders(){
-        Headers headers = Headers.of(HttpClientConstants.USER_AGENT, HttpClientConstants.USER_AGENT_DATA);
-        return headers;
-    }
+
 }

@@ -70,7 +70,14 @@ public class HttpClientUtilProxy {
         HttpProxy defaultProxy = null;
         ClassLoader classLoader = HttpClientUtil.class.getClassLoader();
 
-
+        // 基于 java 11 HttpClient
+        if (null == defaultProxy && ClassUtil.isPresent("java.net.http.HttpClient", classLoader)) {
+            defaultProxy = createHttpProxy(JavaHttpClientProxy.class);
+        }
+        // 基于 okhttp3
+        if (null == defaultProxy && ClassUtil.isPresent("okhttp3.OkHttpClient", classLoader)) {
+            defaultProxy = createHttpProxy(OkHttp3HttpClientProxy.class);
+        }
         // 基于 apache httpclient
         if (null == defaultProxy && ClassUtil.isPresent("org.apache.http.impl.client.HttpClients", classLoader)) {
             defaultProxy = createHttpProxy(ApacheHttpClientProxy.class);
@@ -79,15 +86,8 @@ public class HttpClientUtilProxy {
         if (null == defaultProxy && ClassUtil.isPresent("cn.hutool.http.HttpRequest", classLoader)) {
             defaultProxy = createHttpProxy(HutoolHttpClientProxy.class);
         }
-        // 基于 java 11 HttpClient
-        if (null == defaultProxy && ClassUtil.isPresent("java.net.http.HttpClient", classLoader)) {
-            defaultProxy = createHttpProxy(JavaHttpClientProxy.class);
-        }
 
-        // 基于 okhttp3
-        if (null == defaultProxy && ClassUtil.isPresent("okhttp3.OkHttpClient", classLoader)) {
-            defaultProxy = createHttpProxy(OkHttp3HttpClientProxy.class);
-        }
+
 
 
 

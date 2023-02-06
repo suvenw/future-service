@@ -60,25 +60,6 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
         asyncClient.start();
     }
 
-    public void test(){
-        // 设置连接参数
-        // 设置超时时长
-        RequestConfig.Builder requestConfig = RequestConfig.custom()
-                .setConnectTimeout(this.getTimeout())
-                .setSocketTimeout(this.getTimeout())
-                .setConnectionRequestTimeout(this.getTimeout());
-
-        final CompletableFuture<HttpResponse> result = new CompletableFuture<>();
-//        // 创建自定义的httpclient对象
-//        try (CloseableHttpAsyncClient httpclient = HttpAsyncClients.custom()
-//                .setDefaultRequestConfig(requestConfig.build())
-//                .setConnectionManager(connManager)
-//                .disableCookieManagement()
-//                .build()) {
-//
-//            return httpclient;
-
-    }
 
     @Override
     public HttpClientResponse execute(ApacheRequestBuilder httpRequestBuilder) {
@@ -215,6 +196,7 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
             entity.setContentType(HttpClientConstants.CONTENT_TYPE_JSON);
             request.setEntity(entity);
         }
+        initJsonHeaders(header);
         if (header != null) {
             HttpParamsUtil.forFunction(header.getHeaders(), request::addHeader);
         }else {

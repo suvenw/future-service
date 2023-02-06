@@ -5,6 +5,7 @@ import cn.hutool.http.HttpResponse;
 import com.suven.framework.http.config.HttpClientConfig;
 import com.suven.framework.http.proxy.*;
 import com.suven.framework.http.util.HttpParamsUtil;
+import okhttp3.Headers;
 
 import java.util.List;
 import java.util.Map;
@@ -114,7 +115,7 @@ public abstract class AbstractHutoolRequestProxy extends AbstractHttpProxy imple
         if (HttpParamsUtil.isNotEmpty(jsonData)) {
             request.body(jsonData);
         }
-
+        initJsonHeaders(header);
         if (header != null) {
             HttpParamsUtil.forFunction(header.getHeaders(), request::header);
         }
