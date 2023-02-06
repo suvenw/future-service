@@ -5,6 +5,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Configuration
 @ConfigurationProperties(prefix = GlobalConfigConstants.SYSTEM_PARAM_SETTINGS)
 @ConditionalOnProperty(name = GlobalConfigConstants.SYSTEM_PARAM_ENABLED,  matchIfMissing = true)
@@ -22,6 +26,7 @@ public class SystemParamSettings {
     private boolean logAop;
 
     private boolean isHeaderToken = false;
+    private String headerToBodyField = "userId,accessToken";
 
     private boolean checkBody = false;
 
@@ -109,5 +114,20 @@ public class SystemParamSettings {
 
     public void setCheckBody(boolean checkBody) {
         this.checkBody = checkBody;
+    }
+
+    public String getHeaderToBodyField() {
+        return headerToBodyField;
+    }
+    public List<String > getHeaderField() {
+        if(null != headerToBodyField){
+           return Arrays.asList(headerToBodyField.split(","));
+        }
+        return new ArrayList<>();
+    }
+
+
+    public void setHeaderToBodyField(String headerToBodyField) {
+        this.headerToBodyField = headerToBodyField;
     }
 }

@@ -57,7 +57,7 @@ public abstract class AbstractHandlerArgumentResolver<T> implements HandlerMetho
      * **/
     protected boolean requestContentTypeIsJson(NativeWebRequest webRequest){
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-        boolean requestJson = this.requestIsJsonFromContentType(request);
+        boolean requestJson = this.isJsonRequestFromContentType(request);
         return requestJson;
     }
 

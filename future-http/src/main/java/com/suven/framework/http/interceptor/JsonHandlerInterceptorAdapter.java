@@ -30,10 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -88,7 +85,7 @@ public class JsonHandlerInterceptorAdapter extends BaseHandlerInterceptorAdapter
         if(null != systemParamSettings && systemParamSettings.isHeaderToken()){
             Map<String, String>  headerInfoMap =  getHeadersInfo(request);
             message =  RequestParserVo.build().parseHeader(headerInfoMap, HttpRequestPostMessage.class);
-
+            this.convertBodyByHeaders(headerInfoMap,param);
         }else {
             message = RequestParserVo.build().parseFrom(param, HttpRequestPostMessage.class);
         }
@@ -104,14 +101,13 @@ public class JsonHandlerInterceptorAdapter extends BaseHandlerInterceptorAdapter
         message.setIp(NetworkUtil.getIpAddress(request));
         message.setUri(request.getRequestURI());
         message.setTimes(sysTime);
-
-        //将请求公共参数设置到当前线程安全队列容器中;方便后面业务需要获取;
-        ParamMessage.setRequestMessage(message);
-        //将获取的请求参数,排除过滤不需要参与加密验证参数;
-        ParamMessage.setJsonExcludeParamMap(url,param);
-        String serverMd5Sign = SignParam.getServerSign(param);
+        //兼容token验证
+        JsonHandlerInterceptorRequestExt.build().getTokenByHeader(message,request);
+        //初始请求数据到当前线程安全中,实现业务解耦,
+        ParamMessage.setRequestParamMessage(message,url,param);
         //收集来自请求接口的代理属性信息
         HttpRequestRemote remote = new HttpRequestRemote();
+        String serverMd5Sign = SignParam.getServerSign(param);
 
         remote.setJsonRequest(isJson);
         remote.setUrl(url);
@@ -123,6 +119,7 @@ public class JsonHandlerInterceptorAdapter extends BaseHandlerInterceptorAdapter
         remote.setNetTime(sysTime - netTime);
 
         ParamMessage.setRequestRemote(remote);
+
         logger.info("receive client request url=[{}],mode=[{}] ,param=[{}] ", url, request.getMethod(), JsonUtils.map2String(param));
         return true;
     }
@@ -165,8 +162,24 @@ public class JsonHandlerInterceptorAdapter extends BaseHandlerInterceptorAdapter
         return map;
     }
 
-
-
+    /** 通过配置 http Headers 的那些参数字段参与body加密实现**/
+    private  boolean convertBodyByHeaders(Map<String, String> headMap, Map<String, String> bodyMap){
+        List<String> convertKeyList =  systemParamSettings.getHeaderField();
+        if(headMap == null || headMap.isEmpty()) {
+            return false;
+        }
+        if(null == bodyMap || bodyMap.isEmpty()){
+            return false;
+        }
+        if(convertKeyList == null){
+            return false;
+        }
+        convertKeyList.forEach(key -> {
+            String value =  headMap.get( key);
+            bodyMap.put(key,value);
+        });
+        return true;
+    }
 
 
     /**

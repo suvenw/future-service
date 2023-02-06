@@ -65,6 +65,11 @@ public class ParamMessage {
         }
         remote.set(requestRemote);
     }
+    /**url参数 类型**/
+    public static void setRequestParamMessage(HttpRequestPostMessage requestPostMessage,String url, Map paramMap) {
+        setRequestMessage(requestPostMessage);
+        setJsonExcludeParamMap(url,paramMap);
+    }
 
 
 

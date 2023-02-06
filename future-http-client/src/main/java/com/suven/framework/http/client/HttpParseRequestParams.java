@@ -253,7 +253,7 @@ public class HttpParseRequestParams {
         if(headMap == null || headMap.isEmpty()) {
             return false;
         }
-        if(null != bodyMap && !bodyMap.isEmpty()){
+        if(null == bodyMap  || bodyMap.isEmpty()){
             return false;
         }
         if(convertKeyList == null){
