@@ -17,7 +17,6 @@
 package com.suven.framework.http.util;
 
 import com.alibaba.fastjson.JSON;
-import com.suven.framework.http.client.HttpRequestParams;
 import com.suven.framework.http.constants.HttpClientConstants;
 import com.suven.framework.http.exception.HttpClientRuntimeException;
 import org.apache.commons.lang3.reflect.FieldUtils;

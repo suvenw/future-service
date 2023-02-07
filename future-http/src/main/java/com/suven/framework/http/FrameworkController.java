@@ -5,7 +5,7 @@ import com.suven.framework.common.api.ApiDoc;
 import com.suven.framework.common.api.DocumentConst;
 import com.suven.framework.common.constants.GlobalConfigConstants;
 import com.suven.framework.core.redis.IRedisClusterServer;
-import com.suven.framework.http.client.HttpParseRequestParams;
+import com.suven.framework.http.client.HttpRequestParseApi;
 import com.suven.framework.http.client.HttpRequestParams;
 import com.suven.framework.http.data.vo.RequestParserVo;
 import com.suven.framework.http.handler.OutputAesResponse;
@@ -17,7 +17,6 @@ import com.suven.framework.http.message.HttpMsgEnumError;
 import com.suven.framework.http.message.HttpRequestGetMessage;
 import com.suven.framework.http.message.HttpRequestPostMessage;
 import com.suven.framework.http.processor.url.SysURLCommand;
-import com.suven.framework.http.util.HttpParamsUtil;
 import com.suven.framework.util.createcode.swagger.SwaggerReflectionsDoc;
 import com.suven.framework.util.createcode.swagger.SwaggerResultBean;
 import com.suven.framework.util.crypt.CryptUtil;
@@ -108,7 +107,7 @@ public class FrameworkController {
         map.put("times", System.currentTimeMillis());
 //        map.clear();
         final String md5Key = "H@s0zSix!fiNger8";
-        HttpRequestParams params = HttpParseRequestParams.getHttpRequestParams(map,md5Key);
+        HttpRequestParams params = HttpRequestParseApi.getHttpRequestParams(map,md5Key);
 
         HttpClientUtil.getAsync("http://127.0.0.1:8080/api/sys/postParam",params.getSignToBodyMap(),true);
 

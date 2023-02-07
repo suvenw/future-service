@@ -1,6 +1,8 @@
 package com.suven.framework.http.client;
 
 import com.suven.framework.http.util.HttpParamsUtil;
+
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +25,7 @@ import java.util.TreeMap;
  **/
 
 
-public class HttpParseRequestParams {
+public class HttpRequestParseApi implements  Serializable {
 
    private static List<String> convertKeyList = Arrays.asList("userId","accessToken");
     /**
@@ -35,7 +37,7 @@ public class HttpParseRequestParams {
      * @param md5Key 自定义的加密码字符串内容
      * @return
      */
-    public static HttpRequestParams getHttpRequestParams(Object body,String md5Key)  {
+    public static HttpRequestParams getHttpRequestParams(Object body, String md5Key)  {
         HttpRequestParams httpRequestParams  = getHttpRequestApiParam(null,false,body,convertKeyList,false,md5Key);
         return httpRequestParams;
     }
@@ -46,7 +48,7 @@ public class HttpParseRequestParams {
      * @param md5Key 自定义的加密码字符串内容
      * @return
      */
-    public static HttpRequestParams getHttpRequestParams(Object body,boolean decode,String md5Key)  {
+    public static HttpRequestParams getHttpRequestParams(Object body, boolean decode, String md5Key)  {
         HttpRequestParams httpRequestParams  = getHttpRequestApiParam(null,false,body,convertKeyList,decode,md5Key);
         return httpRequestParams;
     }
@@ -58,7 +60,7 @@ public class HttpParseRequestParams {
      * @param md5Key 自定义的加密码字符串内容
      * @return
      */
-    public static HttpRequestParams getHttpRequestParams(Object headers,Object body,boolean decode,String md5Key)  {
+    public static HttpRequestParams getHttpRequestParams(Object headers, Object body, boolean decode, String md5Key)  {
         HttpRequestParams httpRequestParams  = getHttpRequestApiParam(headers,false,body,convertKeyList,decode,md5Key);
         return httpRequestParams;
     }
@@ -71,7 +73,7 @@ public class HttpParseRequestParams {
      * @param md5Key 自定义的加密码字符串内容
      * @return
      */
-    public static HttpRequestParams getHttpRequestParams(Object headers,Object body,List<String> convertKeyList, boolean decode,String md5Key)  {
+    public static HttpRequestParams getHttpRequestParams(Object headers, Object body, List<String> convertKeyList, boolean decode, String md5Key)  {
         HttpRequestParams httpRequestParams  = getHttpRequestApiParam(headers,false,body,convertKeyList,decode,md5Key);
         return httpRequestParams;
     }
@@ -84,8 +86,8 @@ public class HttpParseRequestParams {
      * @param md5Key 自定义的加密码字符串内容
      * @return
      */
-    public static HttpRequestParams getHttpRequestParams(Object headers,boolean headersIsSignParam
-            ,Object body,List<String> convertKeyList, boolean decode,String md5Key)  {
+    public static HttpRequestParams getHttpRequestParams(Object headers, boolean headersIsSignParam
+            , Object body, List<String> convertKeyList, boolean decode, String md5Key)  {
         HttpRequestParams httpRequestParams  = getHttpRequestApiParam(headers,headersIsSignParam,body,convertKeyList,decode,md5Key);
         return httpRequestParams;
     }
@@ -97,7 +99,7 @@ public class HttpParseRequestParams {
      * @param md5Key 自定义的加密码字符串内容
      * @return
      */
-    public static HttpRequestParams getHttpRequestString(String  body,String md5Key)  {
+    public static HttpRequestParams getHttpRequestString(String  body, String md5Key)  {
         HttpRequestParams httpRequestParams  = getHttpRequestStringParam(null,false,body,true,convertKeyList,false,md5Key);
         return httpRequestParams;
     }
@@ -108,7 +110,7 @@ public class HttpParseRequestParams {
      * @param md5Key 自定义的加密码字符串内容
      * @return
      */
-    public static HttpRequestParams getHttpRequestString(String  body,boolean isUrlNotJson, String md5Key)  {
+    public static HttpRequestParams getHttpRequestString(String  body, boolean isUrlNotJson, String md5Key)  {
         HttpRequestParams httpRequestParams  = getHttpRequestStringParam(null,false,body,isUrlNotJson,convertKeyList,false,md5Key);
         return httpRequestParams;
     }
@@ -119,7 +121,7 @@ public class HttpParseRequestParams {
      * @param md5Key 自定义的加密码字符串内容
      * @return
      */
-    public static HttpRequestParams getHttpRequestString(String  body,boolean isUrlNotJson, boolean decode,String md5Key)  {
+    public static HttpRequestParams getHttpRequestString(String  body, boolean isUrlNotJson, boolean decode, String md5Key)  {
         HttpRequestParams httpRequestParams  = getHttpRequestStringParam(null,false,body,true,convertKeyList,decode,md5Key);
         return httpRequestParams;
     }
@@ -131,7 +133,7 @@ public class HttpParseRequestParams {
      * @param md5Key 自定义的加密码字符串内容
      * @return
      */
-    public static HttpRequestParams getHttpRequestString(Object headers,String  body,boolean decode,String md5Key)  {
+    public static HttpRequestParams getHttpRequestString(Object headers, String  body, boolean decode, String md5Key)  {
         HttpRequestParams httpRequestParams  = getHttpRequestStringParam(headers,false,body,true,convertKeyList,decode,md5Key);
         return httpRequestParams;
     }
@@ -145,7 +147,7 @@ public class HttpParseRequestParams {
      * @param md5Key 自定义的加密码字符串内容
      * @return
      */
-    public static HttpRequestParams getHttpRequestString(Object headers,boolean headersIsSignParam,String  body,boolean decode,String md5Key)  {
+    public static HttpRequestParams getHttpRequestString(Object headers, boolean headersIsSignParam, String  body, boolean decode, String md5Key)  {
         HttpRequestParams httpRequestParams  = getHttpRequestStringParam(headers,headersIsSignParam,body,true, convertKeyList,decode,md5Key);
         return httpRequestParams;
     }
@@ -160,7 +162,7 @@ public class HttpParseRequestParams {
      * @param md5Key 自定义的加密码字符串内容
      * @return
      */
-    public static HttpRequestParams getHttpRequestString(Object headers,boolean headersIsSignParam,String  body,List<String> convertKeyList, boolean decode,String md5Key)  {
+    public static HttpRequestParams getHttpRequestString(Object headers, boolean headersIsSignParam, String  body, List<String> convertKeyList, boolean decode, String md5Key)  {
         HttpRequestParams httpRequestParams  = getHttpRequestStringParam(headers,headersIsSignParam,body,true, convertKeyList,decode,md5Key);
         return httpRequestParams;
     }
@@ -174,7 +176,7 @@ public class HttpParseRequestParams {
      * @param md5Key 自定义的加密码字符串内容
      * @return
      */
-    private static HttpRequestParams getHttpRequestApiParam(Object headers,boolean headersIsSignParam,Object body,List<String> convertKeyList,boolean decode,String md5Key)  {
+    private static HttpRequestParams getHttpRequestApiParam(Object headers, boolean headersIsSignParam, Object body, List<String> convertKeyList, boolean decode, String md5Key)  {
         //1.请求参数对象转换排序的map树
         Map<String, String> dataMap = new TreeMap<>();
         Map<String, String> headMap = null;
@@ -215,7 +217,7 @@ public class HttpParseRequestParams {
      * @param md5Key 自定义的加密码字符串内容
      * @return
      */
-    private static HttpRequestParams getHttpRequestStringParam(Object headers,boolean headersIsSignParam,String body,boolean isUrlNotJson,List<String> convertKeyList, boolean decode,String md5Key)  {
+    private static HttpRequestParams getHttpRequestStringParam(Object headers, boolean headersIsSignParam, String body, boolean isUrlNotJson, List<String> convertKeyList, boolean decode, String md5Key)  {
         //1.请求参数对象转换排序的map树
         Map<String, String> dataMap = new TreeMap<>();
         Map<String, String> headMap = null;

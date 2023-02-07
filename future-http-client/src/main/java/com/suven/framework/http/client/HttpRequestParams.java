@@ -2,6 +2,7 @@ package com.suven.framework.http.client;
 
 
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -22,7 +23,7 @@ import java.util.Map;
  **/
 
 
-public class HttpRequestParams {
+public class HttpRequestParams implements Serializable {
 
     private Map<String, String> bodyMap;
     private Map<String, String> headerMap;
@@ -32,14 +33,14 @@ public class HttpRequestParams {
 
     public HttpRequestParams() {
     }
-    public static HttpRequestParams build(Map<String, String> bodyMap,String urlParam) {
+    public static HttpRequestParams build(Map<String, String> bodyMap, String urlParam) {
         return build(bodyMap,null,true,urlParam,null);
     }
-    public static HttpRequestParams build( Map<String, String> bodyMap,Map<String, String> headers) {
+    public static HttpRequestParams build(Map<String, String> bodyMap, Map<String, String> headers) {
         return build(bodyMap,headers,true,null,null);
     }
-    public static HttpRequestParams build( Map<String, String> bodyMap, Map<String, String> headerMap,boolean encode,
-                                           String urlParam,String signParam ) {
+    public static HttpRequestParams build(Map<String, String> bodyMap, Map<String, String> headerMap, boolean encode,
+                                          String urlParam, String signParam ) {
         HttpRequestParams request = new HttpRequestParams();
         request.urlParam = urlParam;
         request.bodyMap = bodyMap;
