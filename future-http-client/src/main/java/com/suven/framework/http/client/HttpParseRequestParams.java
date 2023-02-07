@@ -250,7 +250,7 @@ public class HttpParseRequestParams {
 
 
     private static boolean convertUserInfoToBodyByHeaders(Map<String, String> headMap, Map<String, String> bodyMap ,List<String> convertKeyList){
-        if(headMap == null || headMap.isEmpty()) {
+        if(null == headMap || headMap.isEmpty()) {
             return false;
         }
         if(null == bodyMap  || bodyMap.isEmpty()){

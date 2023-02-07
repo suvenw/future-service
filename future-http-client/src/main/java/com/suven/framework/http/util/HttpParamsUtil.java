@@ -395,29 +395,29 @@ public class HttpParamsUtil {
 		return  map;
 	}
 
-	public static HttpRequestParams getClientSign(Object head,Object body,String md5Key,boolean decode)  {
-		//1.请求参数对象转换排序的map树
-		Map<String, String> dataMap = new TreeMap<>();
-		Map<String, String> headerMap = null;
-		Map<String, String> bodyMap = null;
-		if(null != head){
-			headerMap = toMap(head,decode);
-			if(headerMap != null && !headerMap.isEmpty()){
-				dataMap.putAll(headerMap);
-			}
-		}
-		if(null != body){
-			bodyMap = toMap(body,decode);
-			if(bodyMap != null && !bodyMap.isEmpty()){
-				dataMap.putAll(bodyMap);
-			}
-		}
-		//2.请求的map 树转换url get请求规范的字符串
-		String urlParam = getSortedMapSign(dataMap,Arrays.asList("cliSign"));
-		String signParam = paramMd5length(urlParam,md5Key,8,24);
-		HttpRequestParams httpRequestParams = HttpRequestParams.build(bodyMap,headerMap,decode,urlParam,signParam);
-		return httpRequestParams;
-	}
+//	public static HttpRequestParams getClientSign(Object head,Object body,String md5Key,boolean decode)  {
+//		//1.请求参数对象转换排序的map树
+//		Map<String, String> dataMap = new TreeMap<>();
+//		Map<String, String> headerMap = null;
+//		Map<String, String> bodyMap = null;
+//		if(null != head){
+//			headerMap = toMap(head,decode);
+//			if(headerMap != null && !headerMap.isEmpty()){
+//				dataMap.putAll(headerMap);
+//			}
+//		}
+//		if(null != body){
+//			bodyMap = toMap(body,decode);
+//			if(bodyMap != null && !bodyMap.isEmpty()){
+//				dataMap.putAll(bodyMap);
+//			}
+//		}
+//		//2.请求的map 树转换url get请求规范的字符串
+//		String urlParam = getSortedMapSign(dataMap,Arrays.asList("cliSign"));
+//		String signParam = paramMd5length(urlParam,md5Key,8,24);
+//		HttpRequestParams httpRequestParams = HttpRequestParams.build(bodyMap,headerMap,decode,urlParam,signParam);
+//		return httpRequestParams;
+//	}
 
 
 
@@ -451,8 +451,14 @@ public class HttpParamsUtil {
 		return strBody;
 	}
 
-
-	private static Map<String, String> getClientSignMap(Object head,Object body,boolean decode ){
+	/**
+	 * 将头部对像或公共参数对像 和请求体对象进行汇总合并成一个map<K-v> bodyMap对像,内容是否需要decode
+	 * @param head 头部对像或公共参数对像
+	 * @param body 请求体对象
+	 * @param decode ,内容是否需要decode
+	 * @return
+	 */
+	public static Map<String, String> getClientSignMap(Object head,Object body,boolean decode ){
 		Map<String, String> dataMap = new TreeMap<>();
 		if(null != head){
 			Map<String, String> headMap = toMap(head,decode);
@@ -495,7 +501,7 @@ public class HttpParamsUtil {
 	}
 
 	/**
-	 * 将二进制转换成16进制
+	 * 将二进制转换成16进制字符串
 	 * @param bytes
 	 * @return
 	 */
@@ -512,6 +518,11 @@ public class HttpParamsUtil {
 	}
 
 
+	/**
+	 * 将字符串内容进行md5加密实现
+	 * @param src
+	 * @return
+	 */
 	private static String md5String(String src){
 		try {
 			MessageDigest alg = MessageDigest.getInstance(MD5_CRYPT);
@@ -521,6 +532,11 @@ public class HttpParamsUtil {
 		return "";
 	}
 
+	/**
+	 * 判断字段或类型是map或JSONOBJECT, 返回true, 否则返回false
+	 * @param fieldType
+	 * @return
+	 */
 	public static  boolean isMapOrJsonClass(Class<?> fieldType){
 		if(fieldType.isAssignableFrom(Map.class)){
 			return true;
