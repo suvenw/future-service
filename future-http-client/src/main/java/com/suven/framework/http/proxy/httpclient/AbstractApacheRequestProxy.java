@@ -8,6 +8,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -15,49 +16,58 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import javax.net.ssl.SSLContext;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy implements HttpRequestProxy<ApacheRequestBuilder> {
 
-    private final CloseableHttpClient httpClient;
-    private final CloseableHttpAsyncClient asyncClient;
+    private CloseableHttpClient httpClient;
+    private CloseableHttpAsyncClient asyncClient;
 
     public AbstractApacheRequestProxy() {
         super(new HttpClientConfig());
         this.httpClient = HttpClients.createDefault();
         this.asyncClient = HttpAsyncClients.createDefault();
-        asyncClient.start();
+        this.asyncClient.start();
     }
 
     public AbstractApacheRequestProxy(HttpClientConfig httpConfig) {
         super(httpConfig);
         this.httpClient = HttpClients.createDefault();
         this.asyncClient = HttpAsyncClients.createDefault();
-        asyncClient.start();
+        this.asyncClient.start();
     }
 
     public AbstractApacheRequestProxy(HttpClientConfig httpConfig, CloseableHttpClient httpClient,CloseableHttpAsyncClient asyncClient) {
         super(httpConfig);
         this.httpClient = httpClient;
         this.asyncClient = asyncClient;
-        asyncClient.start();
+        this.asyncClient.start();
+    }
+
+    private void initHttpClient(){
+            this.httpClient = HttpSSLCipherSuiteUtil.createHttpClient();
+            this.asyncClient =  HttpSSLCipherSuiteUtil.createHttpAsyncClient();
+            asyncClient.start();
     }
 
 
@@ -75,6 +85,8 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
             InetSocketAddress address = (InetSocketAddress) proxy.address();
             HttpHost host = new HttpHost(address.getHostName(), address.getPort(), proxy.type().name().toLowerCase());
             configBuilder.setProxy(host);
+        }if (isHttps()){
+            initHttpClient();
         }
 
         request.setConfig(configBuilder.build());
@@ -124,6 +136,8 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
                 InetSocketAddress address = (InetSocketAddress) proxy.address();
                 HttpHost host = new HttpHost(address.getHostName(), address.getPort(), proxy.type().name().toLowerCase());
                 configBuilder.setProxy(host);
+            }else if(isHttps()){
+
             }
 
             request.setConfig(configBuilder.build());

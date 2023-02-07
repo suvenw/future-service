@@ -401,6 +401,7 @@ project(':future-http-client') {
         compile "ch.qos.logback:logback-core:${logback_version}"
         compile 'com.google.guava:guava:18.0'
         compile 'org.apache.commons:commons-lang3:3.4'
+        compile 'org.openeuler:bgmprovider:1.0.3'
 
     }
 }

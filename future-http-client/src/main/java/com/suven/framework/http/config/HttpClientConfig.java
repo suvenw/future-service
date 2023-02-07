@@ -29,6 +29,8 @@ public class HttpClientConfig {
 	 */
 	private int timeout = HttpClientConstants.DEFAULT_TIMEOUT;
 
+	private boolean https = false;
+
 	/**
 	 * 针对国外服务可以单独设置代理,代理配置
 	 * HttpConfig config = new HttpConfig();
@@ -80,5 +82,13 @@ public class HttpClientConfig {
 
 	public void setProxy(Proxy proxy) {
 		this.proxy = proxy;
+	}
+
+	public boolean isHttps() {
+		return https;
+	}
+
+	public void setHttps(boolean https) {
+		this.https = https;
 	}
 }

@@ -99,4 +99,15 @@ public interface HttpClientConstants {
 	 */
 	String EMPTY = "";
 
+	/** HTTPS 请求**/
+	public static final String HTTPS = "HTTPS";
+	/** GMTLS 请求**/
+	public static final String GM_PROTOCOL = "GMTLS";
+	/** https 协议 版本号**/
+	public static final String INTERNATIONAL_PROTOCOL = "TLSv1.2";
+	/** sdk 加密实现**/
+	public static final String SIGNATURE_ALGORITHM_SDK_HMAC_SHA256 = "SDK-HMAC-SHA256";
+	/** sdk 加密实现**/
+	public static final String SIGNATURE_ALGORITHM_SDK_HMAC_SM3 = "SDK-HMAC-SM3";
+
 }

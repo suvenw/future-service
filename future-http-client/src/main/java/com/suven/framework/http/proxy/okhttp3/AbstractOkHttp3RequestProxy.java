@@ -6,6 +6,8 @@ import com.suven.framework.http.proxy.*;
 import com.suven.framework.http.util.HttpParamsUtil;
 import okhttp3.*;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -26,18 +28,26 @@ public abstract class AbstractOkHttp3RequestProxy  extends AbstractHttpProxy imp
         this.httpClientBuilder = httpClientBuilder;
     }
 
+
     @Override
     public HttpClientResponse execute(Okhttp3RequestBuilder httpRequestBuilder) {
         Request  request =  httpRequestBuilder.getRequest();
         OkHttpClient httpClient;
         // 设置代理
-        if (null != httpClientConfig.getProxy()) {
+        if (this.isProxy()) {
             httpClient = httpClientBuilder.connectTimeout(Duration
                             .ofMillis(this.getTimeout()))
                     .writeTimeout(Duration.ofMillis(this.getTimeout()))
                     .readTimeout(Duration.ofMillis(this.getTimeout()))
                     .proxy(this.getProxy()).build();
-        } else {
+        } else if (this.isHttps()) {
+            String protocol = HttpClientConstants.INTERNATIONAL_PROTOCOL;
+            HttpSSLCipherSuiteUtil.createOkHttpClientBuilder(protocol, httpClientBuilder);
+            httpClient = httpClientBuilder
+                    .connectTimeout(Duration.ofMillis(this.getTimeout()))
+                    .writeTimeout(Duration.ofMillis(this.getTimeout()))
+                    .readTimeout(Duration.ofMillis(this.getTimeout())).build();
+        }else {
             httpClient = httpClientBuilder
                     .connectTimeout(Duration.ofMillis(this.getTimeout()))
                     .writeTimeout(Duration.ofMillis(this.getTimeout()))

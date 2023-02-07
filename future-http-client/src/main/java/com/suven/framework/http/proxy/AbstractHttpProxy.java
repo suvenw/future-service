@@ -41,7 +41,16 @@ public abstract class AbstractHttpProxy implements HttpProxy {
 
 
 	public boolean isProxy(){
+		if(null == httpClientConfig){
+			return false;
+		}
 		return httpClientConfig.isProxy();
+	}
+	public boolean isHttps(){
+		if(null == httpClientConfig){
+			return false;
+		}
+		return httpClientConfig.isHttps();
 	}
 	public Proxy getProxy(){
 		return httpClientConfig.getProxy();
