@@ -165,9 +165,19 @@ server {
 #### 9.启动 服务相关脚本命令:
 
 ````
+
 # 不关闭防火墙的话无法使用
+1、命令行界面输入命令“systemctl status firewalld.service”并按下回车键。
+2、然后在下方可度以查看得到“active（running）”，此时说明防火墙已经被打开了。
+3、在命令行中输入systemctl stop firewalld.service命令，进行关闭防火墙。
+4、然后再使用命令systemctl status firewalld.service，在下方出现disavtive（dead），这权样就说明防火墙已经关闭。
+5、再在命令行中输入命令“systemctl disable firewalld.service”命令，即可永久关闭防火墙。
+
 systemctl stop firewalld.service #关闭
 systemctl restart firewalld.service #重启
+systemctl status firewalld.service #查看状态
+systemctl disable firewalld.service #永久关闭
+
 # tracker 服务脚本说明
 /etc/init.d/fdfs_trackerd start #启动tracker服务
 /etc/init.d/fdfs_trackerd restart #重启动tracker服务
