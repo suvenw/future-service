@@ -40,40 +40,110 @@ import java.util.Map;
 public interface HttpAsyncProxy {
 
 
+
 	/**
 	 * GET 请求
 	 *
 	 * @param url URL
 	 * @return 结果
 	 */
-	HttpClientResponse  getAsync(String url);
+	HttpClientResponse getAsync(String url);
+
+	/**
+	 * GET 请求
+	 * @param url URL
+	 * @param httpProxyRequest HttpProxyParameter
+	 *  timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+	 *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+	 *  encode 是否需要encode转码值为true 或 false, 默认为false
+	 *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
+	 * @return 结果
+	 */
+	HttpClientResponse getAsync(String url, HttpProxyRequest httpProxyRequest);
 
 
 
-
-
-
+	/**
+	 * GET 请求,获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *
+	 * @param url    URL
+	 * @param params 参数
+	 * @param timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *  httpProxyRequest HttpProxyParameter   网络请求,个性业务参数扩张请求接口类,具体默认值 HttpProxyDefaultParameter
+	 *  timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+	 *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+	 *  encode 是否需要encode转码值为true 或 false, 默认为false
+	 *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
+	 * @return 结果
+	 */
+	HttpClientResponse getAsync(String url, Map<String, String> params, int timeout);
 	/**
 	 * GET 请求
 	 *
 	 * @param url    URL
 	 * @param params 参数
+	 * @param encode 是否需要 url encode
+	 *  httpProxyRequest HttpProxyParameter   网络请求,个性业务参数扩张请求接口类,具体默认值 HttpProxyDefaultParameter
+	 *  timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+	 *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+	 *  encode 是否需要encode转码值为true 或 false, 默认为false
+	 *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
 	 * @return 结果
 	 */
-	HttpClientResponse getAsync(String url, Map<String, String> params);
-
+	HttpClientResponse getAsync(String url, Map<String, String> params, boolean encode);
 
 
 	/**
-	 * GET 请求
+	 * GET 表单 请求,获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *
+	 * @param url    URL
+	 * @param params 参数
+	 @param header 请求头
+	  *  httpProxyRequest HttpProxyParameter   网络请求,个性业务参数扩张请求接口类,具体默认值 HttpProxyDefaultParameter
+	  *  timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	  *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+	  *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+	  *  encode 是否需要encode转码值为true 或 false, 默认为false
+	  *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
+	  * @return 结果
+	 */
+	HttpClientResponse getAsync(String url, Map<String, String> params,HttpProxyHeader header );
+
+
+	/**
+	 * GET 表单 请求,获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *
+	 * @param url    URL
+	 * @param params 参数
+	 * @param httpProxyRequest HttpProxyParameter   网络请求,个性业务参数扩张请求接口类,具体默认值 HttpProxyDefaultParameter
+	 *  timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+	 *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+	 *  encode 是否需要encode转码值为true 或 false, 默认为false
+	 *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
+	 * @return 结果
+	 */
+	HttpClientResponse getAsync(String url, Map<String, String> params, HttpProxyRequest httpProxyRequest);
+
+
+	/**
+	 * GET  表单 请求,获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
 	 *
 	 * @param url    URL
 	 * @param params 参数
 	 * @param header 请求头
-	 * @param encode 是否需要 url encode
+	 * @param httpProxyRequest HttpProxyParameter   网络请求,个性业务参数扩张请求接口类,具体默认值 HttpProxyDefaultParameter
+	 *  timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+	 *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+	 *  encode 是否需要encode转码值为true 或 false, 默认为false
+	 *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
 	 * @return 结果
 	 */
-	HttpClientResponse getAsync(String url, Map<String, String> params, HttpProxyHeader header, boolean encode);
+	HttpClientResponse getAsync(String url, Map<String, String> params, HttpProxyHeader header , HttpProxyRequest httpProxyRequest);
 
 
 	/**
@@ -84,10 +154,8 @@ public interface HttpAsyncProxy {
 	 */
 	HttpClientResponse postAsync(String url);
 
-
-
 	/**
-	 * POST 请求
+	 * POST JSON 请求
 	 *
 	 * @param url  URL
 	 * @param data JSON 参数
@@ -95,55 +163,133 @@ public interface HttpAsyncProxy {
 	 */
 	HttpClientResponse postAsync(String url, String data);
 
-
+	/**
+	 * POST JSON 请求 ,获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *
+	 * @param url  URL
+	 * @param data JSON 参数
+	 * @param timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 * @return 结果
+	 */
+	HttpClientResponse postAsync(String url, String data, int timeout);
 
 	/**
-	 * POST 请求
+	 * POST JSON 请求 ,获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
 	 *
 	 * @param url    URL
-	 * @param data   JSON 参数
-	 * @param header 请求头
+	 * @param data JSON 参数
+	 *  httpProxyRequest HttpProxyParameter   网络请求,个性业务参数扩张请求接口类,具体默认值 HttpProxyDefaultParameter
+	 *  timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+	 *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+	 *  encode 是否需要encode转码值为true 或 false, 默认为false
+	 *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
 	 * @return 结果
 	 */
 	HttpClientResponse postAsync(String url, String data, HttpProxyHeader header);
 
+	/**
+	 * POST JSON 请求 ,获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *
+	 * @param url    URL
+	 * @param data JSON 参数
+	 * @param httpProxyRequest HttpProxyParameter   网络请求,个性业务参数扩张请求接口类,具体默认值 HttpProxyDefaultParameter
+	 *  timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+	 *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+	 *  encode 是否需要encode转码值为true 或 false, 默认为false
+	 *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
+	 * @return 结果
+	 */
+	HttpClientResponse postAsync(String url, String data,  HttpProxyRequest httpProxyRequest);
+
 
 
 	/**
-	 * POST 请求
+	 * POST JSON 请求 ,获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *
+	 * @param url    URL
+	 * @param data JSON 参数
+	 * @param header 请求头
+	 * @param httpProxyRequest HttpProxyParameter   网络请求,个性业务参数扩张请求接口类,具体默认值 HttpProxyDefaultParameter
+	 *  timeout() 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+	 *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+	 *  encode 是否需要encode转码值为true 或 false, 默认为false
+	 *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
+	 * @return 结果
+	 */
+	HttpClientResponse postAsync(String url, String data, HttpProxyHeader header, HttpProxyRequest httpProxyRequest);
+
+
+
+	/**
+	 *  POST 表单 请求, 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
 	 *
 	 * @param url    URL
 	 * @param params form 参数
-	 * @return 结果 是否需要 url encode
+	 * @param timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 * @param timeout 是否需要 url encode
+	 * @return 结果
 	 */
-	HttpClientResponse postAsync(String url, Map<String, String> params);
+	HttpClientResponse postAsync(String url, Map<String, String> params, int timeout);
+
+	/**
+	 *  POST 表单 请求 ,获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *
+	 * @param url    URL
+	 * @param params form 参数
+	 * @param encode 是否需要 url encode
+	 * @return 结果
+	 */
+	HttpClientResponse postAsync(String url, Map<String, String> params,  boolean encode);
 
 
 
 	/**
-	 * POST 请求,通过线程get()的阻塞式获取结果的实现
+	 *  POST 表单 请求 ,获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
 	 *
 	 * @param url    URL
 	 * @param params form 参数
 	 * @param header 请求头
-	 * @param encode 是否需要 url encode
+	 *  httpProxyRequest HttpProxyParameter   网络请求,个性业务参数扩张请求接口类 ,具体默认值 HttpProxyDefaultParameter
+	 *  timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+	 *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+	 *  encode 是否需要encode转码值为true 或 false, 默认为false
+	 *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
 	 * @return 结果
 	 */
-	HttpClientResponse postAsync(String url, Map<String, String> params, HttpProxyHeader header, boolean encode);
+	HttpClientResponse postAsync(String url, Map<String, String> params, HttpProxyHeader header);
 
-//	void getAsync(FutureCallbackProxy future,String url);
-//	void getAsync(FutureCallbackProxy future,String url, Map<String, String> params);
-//
-//	void getAsync(FutureCallbackProxy future,String url, Map<String, String> params,HttpProxyHeader header, boolean encode);
-//
-//
-//	void postAsync(FutureCallbackProxy future,String url);
-//
-//	void postAsync(FutureCallbackProxy future,String url, String data);
-//
-//	void postAsync(FutureCallbackProxy future,String url, String data, HttpProxyHeader header);
-//
-//	void postAsync(FutureCallbackProxy future,String url, Map<String, String> params);
-//
-//	void postAsync(FutureCallbackProxy future,String url, Map<String, String> params, HttpProxyHeader header, boolean encode);
+	/**
+	 *  POST 表单 请求 ,获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *
+	 * @param url    URL
+	 * @param params form 参数
+	 * @param httpProxyRequest HttpProxyParameter   网络请求,个性业务参数扩张请求接口类 ,具体默认值 HttpProxyDefaultParameter
+	 *  timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+	 *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+	 *  encode 是否需要encode转码值为true 或 false, 默认为false
+	 *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
+	 * @return 结果
+	 */
+	HttpClientResponse postAsync(String url, Map<String, String> params, HttpProxyRequest httpProxyRequest);
+
+	/**
+	 *  POST 表单 请求 ,获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *
+	 * @param url    URL
+	 * @param params form 参数
+	 * @param header 请求头
+	 * @param httpProxyRequest HttpProxyParameter   网络请求,个性业务参数扩张请求接口类,具体默认值 HttpProxyDefaultParameter
+	 *  timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+	 *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+	 *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+	 *  encode 是否需要encode转码值为true 或 false, 默认为false
+	 *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
+	 * @return 结果
+	 */
+	HttpClientResponse postAsync(String url, Map<String, String> params, HttpProxyHeader header, HttpProxyRequest httpProxyRequest);
 }

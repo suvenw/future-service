@@ -1,12 +1,16 @@
 package com.suven.framework.http.proxy.hutool;
 
+import cn.hutool.core.codec.Base64Encoder;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
+
 import com.suven.framework.http.config.HttpClientConfig;
+import com.suven.framework.http.constants.HttpClientConstants;
 import com.suven.framework.http.proxy.*;
 import com.suven.framework.http.util.HttpParamsUtil;
-import okhttp3.Headers;
+import org.apache.commons.io.IOUtils;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -17,12 +21,42 @@ public abstract class AbstractHutoolRequestProxy extends AbstractHttpProxy imple
        super(httpClientConfig);
     }
 
-    private HttpClientResponse execute(HutoolRequestBuilder httpRequestBuilder, boolean isAsync ,boolean isGetResult) {
+    private HttpClientResponse getHttpClientResponse(int bodyMediaType, HttpResponse response ) throws IOException {
+        int code = response.getStatus();
+        boolean successful = response.isOk();
+        Map<String, List<String>> headers = response.headers();
+
+        if (null == response.body()) {
+            return HttpClientResponse.build(successful, code, headers, "", null);
+        }
+        BodyMediaTypeEnum bodyMediaTypeEnum = BodyMediaTypeEnum.code(bodyMediaType);
+        String body = "";
+        switch (bodyMediaTypeEnum) {
+            case BODY_JSON:
+            case BODY_JSON_STRING:
+                body =  response.body();
+                return HttpClientResponse.build(successful, code, headers, body, null);
+            case BODY_BYTES:
+                body = Base64Encoder.encode(response.bodyBytes());
+                return HttpClientResponse.build(successful, code, headers, body, null);
+            case BODY_FILE:
+
+                body =  IOUtils.toString( response.bodyStream(), HttpClientConstants.DEFAULT_ENCODING);
+                return HttpClientResponse.build(successful, code, headers, body, null);
+            default:
+                return HttpClientResponse.build(successful, code, headers, body, null);
+        }
+    }
+
+
+
+    private HttpClientResponse execute(HutoolRequestBuilder httpRequestBuilder, boolean isAsync) {
         // 设置超时时长
         HttpRequest request = httpRequestBuilder.getRequest();
-        request = request.timeout(this.getTimeout());
+        HttpProxyRequest proxyRequest = httpRequestBuilder.getHttpProxyRequest();
+        request = request.timeout(proxyRequest.getTimeout());
         // 设置代理
-        if (isProxy()) {
+        if (proxyRequest.isProxy()) {
             request = request.setProxy(this.getProxy());
         }
 
@@ -30,7 +64,7 @@ public abstract class AbstractHutoolRequestProxy extends AbstractHttpProxy imple
             HttpResponse response = null;
             if(isAsync){
                 response = request.executeAsync();
-                if(!isGetResult){
+                if(!proxyRequest.isFutureResult()){
                     return null;
                 }
 
@@ -38,11 +72,8 @@ public abstract class AbstractHutoolRequestProxy extends AbstractHttpProxy imple
                 response = request.execute();
             };
 
-            int code = response.getStatus();
-            boolean successful = response.isOk();
-            String body = response.body();
-            Map<String, List<String>> headers = response.headers();
-            return  HttpClientResponse.build(successful, code, headers, body, null);
+            HttpClientResponse result = this.getHttpClientResponse(proxyRequest.getBodyMediaType(),response);
+            return  result;
         } catch (Exception e) {
             e.printStackTrace();
             return  HttpClientResponse.build(false, 500, null, null, e.getMessage());
@@ -51,18 +82,13 @@ public abstract class AbstractHutoolRequestProxy extends AbstractHttpProxy imple
 
     @Override
     public HttpClientResponse execute(HutoolRequestBuilder httpRequestBuilder) {
-        HttpClientResponse response =  this.execute(httpRequestBuilder,false,true);
+        HttpClientResponse response =  this.execute(httpRequestBuilder,false);
         return response;
     }
 
     @Override
     public HttpClientResponse executeAsync(HutoolRequestBuilder httpRequestBuilder, FutureCallbackProxy futureProxy) {
-        HttpClientResponse response =  this.execute(httpRequestBuilder,true,true);
-        return  response;
-    }
-    @Override
-    public HttpClientResponse executeAsync(HutoolRequestBuilder httpRequestBuilder, FutureCallbackProxy futureProxy, boolean isGetResult) {
-        HttpClientResponse response =  this.execute(httpRequestBuilder,true,isGetResult);
+        HttpClientResponse response =  this.execute(httpRequestBuilder,true);
         return  response;
     }
 
@@ -72,29 +98,29 @@ public abstract class AbstractHutoolRequestProxy extends AbstractHttpProxy imple
     }
 
     @Override
-    public HutoolRequestBuilder getRequest(String url, Map<String, String> params, HttpProxyHeader header, boolean encode )  {
-
+    public HutoolRequestBuilder getRequest(String url, Map<String, String> params, HttpProxyHeader header, HttpProxyRequest proxyRequest )  {
+        this.initHttpProxyRequest(proxyRequest);
         String requestUrl = url;
         if (HttpParamsUtil.isNotEmpty(params)) {
             String baseUrl = HttpParamsUtil.appendIfNotContain(url, "?", "&");
-            requestUrl = baseUrl + HttpParamsUtil.parseMapToString(params, encode);
+            requestUrl = baseUrl + HttpParamsUtil.parseMapToString(params,proxyRequest.isEncode());
         }
         HttpRequest request = HttpRequest.get(requestUrl);
 
         if (header != null) {
             HttpParamsUtil.forFunction(header.getHeaders(), request::header);
         }
-        HutoolRequestBuilder requestBuilder = new HutoolRequestBuilder(request);
+        HutoolRequestBuilder requestBuilder = new HutoolRequestBuilder(request,proxyRequest);
 
         return requestBuilder;
     }
 
 
     @Override
-    public HutoolRequestBuilder postFormRequest(String url, Map<String, String> params, HttpProxyHeader header, boolean encode )  {
+    public HutoolRequestBuilder postFormRequest(String url, Map<String, String> params, HttpProxyHeader header, HttpProxyRequest proxyRequest  )  {
         HttpRequest request = HttpRequest.post(url);
-
-        if (encode) {
+        this.initHttpProxyRequest(proxyRequest);
+        if (proxyRequest.isEncode()) {
             HttpParamsUtil.forFunction(params, (k, v) -> request.form(k, HttpParamsUtil.urlEncode(v)));
         } else {
             HttpParamsUtil.forFunction(params, request::form);
@@ -103,13 +129,13 @@ public abstract class AbstractHutoolRequestProxy extends AbstractHttpProxy imple
         if (header != null) {
             HttpParamsUtil.forFunction(header.getHeaders(), request::header);
         }
-        HutoolRequestBuilder requestBuilder = new HutoolRequestBuilder(request);
+        HutoolRequestBuilder requestBuilder = new HutoolRequestBuilder(request,proxyRequest);
         return requestBuilder;
 
     }
 
     @Override
-    public HutoolRequestBuilder postJsonRequest(String url, String jsonData, HttpProxyHeader header, boolean encode )  {
+    public HutoolRequestBuilder postJsonRequest(String url, String jsonData, HttpProxyHeader header, HttpProxyRequest  proxyRequest )  {
         HttpRequest request = HttpRequest.post(url);
 
         if (HttpParamsUtil.isNotEmpty(jsonData)) {
@@ -119,7 +145,7 @@ public abstract class AbstractHutoolRequestProxy extends AbstractHttpProxy imple
         if (header != null) {
             HttpParamsUtil.forFunction(header.getHeaders(), request::header);
         }
-        HutoolRequestBuilder requestBuilder = new HutoolRequestBuilder(request);
+        HutoolRequestBuilder requestBuilder = new HutoolRequestBuilder(request,proxyRequest);
         return requestBuilder;
 
 

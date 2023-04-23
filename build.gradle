@@ -1,12 +1,12 @@
 group 'com.suven.framework'
 version '1.0.0-SNAPSHOT'
 
-def mavenVersion = "1.0.3"
+def mavenVersion = "1.0.5"
 def mavenGroup = "com.suven.framework"
 
 def mavenUrl ="https://oa.sixeco.com/nexus"
-def mavenUserName='suven'
-def mavenPassword='xxxxx123'
+def mavenUserName='admin'
+def mavenPassword='sixeco123'
 def mainClassName = 'com.suven.framework.MqMain'
 
 
@@ -402,6 +402,7 @@ project(':future-http-client') {
         compile 'com.google.guava:guava:18.0'
         compile 'org.apache.commons:commons-lang3:3.4'
         compile 'org.openeuler:bgmprovider:1.0.3'
+        compile 'commons-io:commons-io:2.6'
 
     }
 }
@@ -461,7 +462,7 @@ project(':future-http') {
         compile fileTree( dir: "lib", include: '*.jar' )
         compile project(':future-utils')
         compile project(':future-doc')
-        compile project(':future-http-client')
+//        compile project(':future-http-client')
 
         compile("org.springframework.boot:spring-boot-starter-jetty:${spring_boot_version}")
         compile("org.springframework.boot:spring-boot-starter-websocket:${spring_boot_version}")

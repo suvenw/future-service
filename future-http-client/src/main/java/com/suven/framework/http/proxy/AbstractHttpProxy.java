@@ -1,13 +1,18 @@
 package com.suven.framework.http.proxy;
 
+import cn.hutool.core.codec.Base64Encoder;
 import com.alibaba.fastjson.JSON;
 import com.suven.framework.http.config.HttpClientConfig;
 import com.suven.framework.http.constants.HttpClientConstants;
 import com.suven.framework.http.proxy.okhttp3.Okhttp3RequestBuilder;
 import okhttp3.Headers;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
+import java.io.IOException;
 import java.net.Proxy;
-
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -39,24 +44,18 @@ public abstract class AbstractHttpProxy implements HttpProxy {
 		this.httpClientConfig = httpClientConfig;
 	}
 
-
-	public boolean isProxy(){
-		if(null == httpClientConfig){
-			return false;
-		}
-		return httpClientConfig.isProxy();
-	}
-	public boolean isHttps(){
-		if(null == httpClientConfig){
-			return false;
-		}
-		return httpClientConfig.isHttps();
-	}
 	public Proxy getProxy(){
+		if (null == httpClientConfig){
+			return null;
+		}
 		return httpClientConfig.getProxy();
 	}
-	public int getTimeout(){
-		return httpClientConfig.getTimeout();
+
+
+	public void  initHttpProxyRequest(HttpProxyRequest httpProxyRequest){
+		if( null ==  httpProxyRequest){
+			httpProxyRequest = HttpProxyDefaultRequest.builder();
+		}
 	}
 
 //	private boolean isSuccess(HttpResponse response) {

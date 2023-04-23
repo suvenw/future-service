@@ -3,6 +3,7 @@ package com.suven.framework.http.proxy;
 
 import com.suven.framework.http.constants.HttpClientConstants;
 import com.suven.framework.http.exception.HttpClientRuntimeException;
+import okhttp3.Response;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,7 +30,7 @@ public interface FutureCallbackProxy<FutureResponse,FutureCallback>  {
      *  通过调用线程,Future.get(),或 Future get(long timeout, TimeUnit unit)的方法实现结果,再转换
      *
      * **/
-    HttpClientResponse getResult();
+    HttpClientResponse getResult(int bodyMediaType);
 
 //    /** 3.返回业务的结果对象,实现自己需要实现的逻辑**/
 //     void initCompleted(FutureResponse futureResponse);
@@ -67,7 +68,7 @@ public interface FutureCallbackProxy<FutureResponse,FutureCallback>  {
      * @param response
      * @return
      */
-    String getBody(FutureResponse response) throws Exception;
+    String getBody(FutureResponse response, int bodyMediaType) throws Exception;
 
     /**
      * 返回统一正常结果实现

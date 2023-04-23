@@ -1,7 +1,9 @@
 package com.suven.framework.http.proxy.okhttp3;
 
+import cn.hutool.core.codec.Base64Encoder;
 import com.suven.framework.http.constants.HttpClientConstants;
 import com.suven.framework.http.exception.HttpClientRuntimeException;
+import com.suven.framework.http.proxy.BodyMediaTypeEnum;
 import com.suven.framework.http.proxy.FutureCallbackProxy;
 import com.suven.framework.http.proxy.HttpClientResponse;
 import okhttp3.Call;
@@ -49,7 +51,7 @@ public class OkHttp3FutureCallback   extends CompletableFuture<Response> impleme
     }
 
     @Override
-    public HttpClientResponse getResult() {
+    public HttpClientResponse getResult(int bodyMediaType) {
         try {
             Response httpResponse = getFutureResponse();
             if(null == httpResponse){
@@ -58,7 +60,7 @@ public class OkHttp3FutureCallback   extends CompletableFuture<Response> impleme
             int code = this.getStatusCode(httpResponse);
             boolean successful = this.isSuccess(httpResponse);
             Map<String, List<String>> headers = getHeaders(httpResponse);
-            String body = this.getBody(httpResponse);
+            String body = this.getBody(httpResponse,bodyMediaType);
             HttpClientResponse result = HttpClientResponse.build(successful,code,headers,body,null);
             return result;
 
@@ -104,9 +106,26 @@ public class OkHttp3FutureCallback   extends CompletableFuture<Response> impleme
     }
 
     @Override
-    public String getBody(Response response) throws Exception {
+    public String getBody(Response response, int bodyMediaType) throws Exception {
+        String body = "";
+        BodyMediaTypeEnum bodyMediaTypeEnum = BodyMediaTypeEnum.code(bodyMediaType);
+        if (null == response || null == response.body() || null == bodyMediaTypeEnum) {
+            return body;
+        }
         ResponseBody responseBody = response.body();
-        String body = null == responseBody ? null : responseBody.string();
+        switch (bodyMediaTypeEnum) {
+            case BODY_JSON:
+            case BODY_JSON_STRING:
+                body = responseBody.string();
+                break;
+            case BODY_BYTES:
+                body = Base64Encoder.encode(responseBody.bytes());
+                break;
+            case BODY_FILE:
+                body = responseBody.byteString().base64();
+                break;
+            default:
+        }
         return body;
     }
     public InputStream getContent(Response response) {

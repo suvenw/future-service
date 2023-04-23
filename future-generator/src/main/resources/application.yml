@@ -12,10 +12,10 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     #MySQL配置
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1/suven_acgn
-    username: dev
-    password: dev123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://sixeco-gz-prod.mysql.rds.aliyuncs.com/gc_deploy
+    username: sixeco_prod_db
+    password: Sixeco@prod#321
 
 
   jackson:

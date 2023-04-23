@@ -1,11 +1,13 @@
 package com.suven.framework.http.proxy.java11;
 
+import cn.hutool.core.codec.Base64Encoder;
 import com.suven.framework.http.config.HttpClientConfig;
 import com.suven.framework.http.constants.HttpClientConstants;
 import com.suven.framework.http.proxy.*;
 import com.suven.framework.http.util.HttpParamsUtil;
 import okhttp3.*;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -30,57 +32,99 @@ public abstract class AbstractJavaRequestProxy extends AbstractHttpProxy impleme
         this.httpClientBuilder = httpClientBuilder;
     }
 
+
+    private HttpClientResponse getHttpClientResponse(int bodyMediaType, HttpResponse<String> httpResponse) throws IOException {
+        int code = httpResponse.statusCode();
+        boolean successful = isSuccess(httpResponse);
+        Map<String, List<String>> headers = httpResponse.headers().map();
+
+        BodyMediaTypeEnum bodyMediaTypeEnum = BodyMediaTypeEnum.code(bodyMediaType);
+        String body = "";
+        switch (bodyMediaTypeEnum) {
+            case BODY_JSON:
+            case BODY_JSON_STRING:
+                body = httpResponse.body();
+                return HttpClientResponse.build(successful, code, headers, body, null);
+            case BODY_BYTES:
+            case BODY_FILE:
+                byte[] bytes = httpResponse.body().getBytes();
+                body = Base64Encoder.encode(bytes);
+                return HttpClientResponse.build(successful, code, headers, body, null);
+            default:
+                return HttpClientResponse.build(successful, code, headers, body, null);
+        }
+
+    }
+    /**
+     *  同步执行逻辑请求的方法实现
+     * @param httpRequestBuilder
+     *  httpProxyRequest HttpProxyRequest   网络请求,个性业务参数扩张请求接口类,具体默认值 HttpProxyDefaultParameter
+     *  timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+     *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+     *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+     *  encode 是否需要encode转码值为true 或 false, 默认为false
+     *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
+     *  https 是否使用证书  https 的值为 true 或 false, 默认为false
+     * @return
+     */
     @Override
     public HttpClientResponse execute(JavaRequestBuilder httpRequestBuilder) {
+        HttpProxyRequest httpProxyRequest = httpRequestBuilder.getHttpProxyRequest();
         HttpRequest request =  httpRequestBuilder.getRequest();
         try {
             HttpClient client;
-            if (this.isProxy()) {
-                client = httpClientBuilder.connectTimeout(Duration.ofMillis(this.getTimeout()))
+            if ( httpProxyRequest.isProxy()) {
+                client = httpClientBuilder.connectTimeout(Duration.ofMillis(httpProxyRequest.getTimeout()))
                         .proxy(new DefaultProxySelector(httpClientConfig)).build();
             } else {
-                client = httpClientBuilder.connectTimeout(Duration.ofMillis(this.getTimeout())).build();
+                client = httpClientBuilder.connectTimeout(Duration.ofMillis(httpProxyRequest.getTimeout())).build();
             }
             HttpResponse<String> httpResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            int code = httpResponse.statusCode();
-            boolean successful = isSuccess(httpResponse);
-            Map<String, List<String>> headers = httpResponse.headers().map();
-            String body = httpResponse.body();
-            return  HttpClientResponse.build(successful, code, headers, body, null);
+            HttpClientResponse  response = this.getHttpClientResponse(httpProxyRequest.getBodyMediaType(),httpResponse);
+            return  response;
         } catch (Exception e) {
             e.printStackTrace();
             return  HttpClientResponse.build(false, 500, null, null, e.getMessage());
         }
     }
+
+    /**
+     *  异步执行逻辑请求的方法实现,默认是读取返回结果
+     * @param httpRequestBuilder 代码各业务的请求的Request
+     * @param future FutureCallbackProxy 返回处理的异步线程
+     *  httpProxyRequest HttpProxyRequest   网络请求,个性业务参数扩张请求接口类,具体默认值 HttpProxyDefaultParameter
+     *  timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+     *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+     *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+     *  encode 是否需要encode转码值为true 或 false, 默认为false
+     *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
+     *  https 是否使用证书  https 的值为 true 或 false, 默认为false
+     * @return HttpClientResponse 代码请求对象
+     * @return
+     */
     @Override
-    public HttpClientResponse executeAsync(JavaRequestBuilder httpRequestBuilder, FutureCallbackProxy futureProxy) {
-        return executeAsync(httpRequestBuilder,futureProxy,true);
-    }
-    @Override
-    public HttpClientResponse executeAsync(JavaRequestBuilder httpRequestBuilder, FutureCallbackProxy futureProxy,boolean isGetResult) {
+    public HttpClientResponse executeAsync(JavaRequestBuilder httpRequestBuilder, FutureCallbackProxy future ) {
+        HttpProxyRequest httpProxyRequest = httpRequestBuilder.getHttpProxyRequest();
         HttpRequest  request =  httpRequestBuilder.getRequest();
         try {
             HttpClient client;
 
-            if (this.isProxy()) {
-                client = httpClientBuilder.connectTimeout(Duration.ofMillis(this.getTimeout()))
+            if (httpProxyRequest.isProxy()) {
+                client = httpClientBuilder.connectTimeout(Duration.ofMillis(httpProxyRequest.getTimeout()))
                         .proxy(new DefaultProxySelector(httpClientConfig)).build();
             } else {
-                client = httpClientBuilder.connectTimeout(Duration.ofMillis(this.getTimeout())).build();
+                client = httpClientBuilder.connectTimeout(Duration.ofMillis(httpProxyRequest.getTimeout())).build();
             }
-            Future<HttpResponse<String>> future = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-            if(!isGetResult){
+            Future<HttpResponse<String>> futureProxy = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            if(!httpProxyRequest.isFutureResult()){
                 return null;
             }
 
-            HttpResponse<String> httpResponse = future.get(this.getTimeout(), TimeUnit.MILLISECONDS);
+            HttpResponse<String> httpResponse = futureProxy.get(httpProxyRequest.getTimeout(), TimeUnit.MILLISECONDS);
 
-            int code = httpResponse.statusCode();
-            boolean successful = isSuccess(httpResponse);
-            Map<String, List<String>> headers = httpResponse.headers().map();
-            String body = httpResponse.body();
-            return  HttpClientResponse.build(successful, code, headers, body, null);
+            HttpClientResponse  response = this.getHttpClientResponse(httpProxyRequest.getBodyMediaType(),httpResponse);
+            return  response;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,31 +132,64 @@ public abstract class AbstractJavaRequestProxy extends AbstractHttpProxy impleme
         }
     }
 
+    /**
+     * GET 方式 提交表单实现的业务,转换请求执行的逻辑的实现方法,返回各业务的请求对像的代理对象HttpRequestBuilder
+     * @param url 请求url
+     * @param params 请求参数 Map的k-v集合
+     * @param header 请求头部参数
+     * @param httpProxyRequest HttpProxyRequest   网络请求,个性业务参数扩张请求接口类,具体默认值 HttpProxyDefaultParameter
+     *  timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+     *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+     *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+     *  encode 是否需要encode转码值为true 或 false, 默认为false
+     *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
+     *  https 是否使用证书  https 的值为 true 或 false, 默认为false
+     * @return HttpRequestBuilder 代码请求对象
+     */
     @Override
-    public JavaRequestBuilder getRequest(String url, Map<String, String> params, HttpProxyHeader header, boolean encode )  {
-
+    public JavaRequestBuilder getRequest(String url, Map<String, String> params, HttpProxyHeader header, HttpProxyRequest httpProxyRequest )  {
+        if( null ==  httpProxyRequest){
+            httpProxyRequest = HttpProxyDefaultRequest.builder();
+        }
         String baseUrl = HttpParamsUtil.appendIfNotContain(url, "?", "&");
-        String reqUrl = baseUrl + HttpParamsUtil.parseMapToString(params, encode);
+        String reqUrl = baseUrl + HttpParamsUtil.parseMapToString(params, httpProxyRequest.isEncode());
 
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(URI.create(reqUrl)).GET()
-                .timeout(Duration.ofMillis(this.getTimeout()));
+                .timeout(Duration.ofMillis(httpProxyRequest.getTimeout()));
 
         if (header != null) {
             HttpParamsUtil.forFunction(header.getHeaders(), requestBuilder::header);
         }
         HttpRequest request = requestBuilder.build();
-        JavaRequestBuilder requestBean = new JavaRequestBuilder(request);
+        JavaRequestBuilder requestBean = new JavaRequestBuilder(request,httpProxyRequest);
 
         return requestBean;
     }
 
 
+    /**
+     * POST 表单 方式 提交表单实现的业务,转换请求执行的逻辑的实现方法,返回各业务的请求对像的代理对象HttpRequestBuilder
+     * @param url 请求url
+     * @param params 请求参数 Map的k-v集合
+     * @param header 请求头部参数
+     * @param httpProxyRequest HttpProxyRequest   网络请求,个性业务参数扩张请求接口类,具体默认值 HttpProxyDefaultParameter
+     *  timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+     *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+     *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+     *  encode 是否需要encode转码值为true 或 false, 默认为false
+     *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
+     *  https 是否使用证书  https 的值为 true 或 false, 默认为false
+     * @return HttpRequestBuilder 代码请求对象
+     */
     @Override
-    public JavaRequestBuilder postFormRequest(String url, Map<String, String> params, HttpProxyHeader header, boolean encode )  {
+    public JavaRequestBuilder postFormRequest(String url, Map<String, String> params, HttpProxyHeader header,  HttpProxyRequest httpProxyRequest )  {
+        if( null ==  httpProxyRequest){
+            httpProxyRequest = HttpProxyDefaultRequest.builder();
+        }
          String requestUrl = url;
         if (HttpParamsUtil.isNotEmpty(params)) {
             String baseUrl = HttpParamsUtil.appendIfNotContain(url, "?", "&");
-            requestUrl = baseUrl + HttpParamsUtil.parseMapToString(params, encode);
+            requestUrl = baseUrl + HttpParamsUtil.parseMapToString(params, httpProxyRequest.isEncode());
         }
         HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(URI.create(requestUrl)).timeout(Duration.ofMillis(httpClientConfig.getTimeout()));
@@ -122,18 +199,35 @@ public abstract class AbstractJavaRequestProxy extends AbstractHttpProxy impleme
         }
         builder.POST(HttpRequest.BodyPublishers.noBody());
         HttpRequest request  = builder.build();
-        JavaRequestBuilder requestProxy = new JavaRequestBuilder(request);
+        JavaRequestBuilder requestProxy = new JavaRequestBuilder(request,httpProxyRequest);
         return requestProxy;
 
     }
 
+    /**
+     * POST JSON 方式 提交表单实现的业务,转换请求执行的逻辑的实现方法,返回各业务的请求对像的代理对象HttpRequestBuilder
+     * @param url 请求url
+     * @param jsonData 请求参数 JSON 格式数据
+     * @param header 请求头部参数
+     * @param httpProxyRequest HttpProxyRequest   网络请求,个性业务参数扩张请求接口类,具体默认值 HttpProxyDefaultParameter
+     *  timeout 获取超时间,单位为毫秒,方法传过来,按方法执行,否则按系统配置默认执行
+     *  bodyMediaType 自定义返回文件类型,（默认值 0）0/1.为JSON字符串,2.为文件流byte[]数组, 3.为文件流
+     *  futureResult 的值为 true 或false ,true时,为主线程读取异步线程的结果,false为由异步线程 Callback ,返回HttpClientResponse为null
+     *  encode 是否需要encode转码值为true 或 false, 默认为false
+     *  proxy 是否使用代理 proxy的值为 true 或 false, 默认为false
+     *  https 是否使用证书  https 的值为 true 或 false, 默认为false
+     * @return HttpRequestBuilder 代码请求对象
+     */
     @Override
-    public JavaRequestBuilder postJsonRequest(String url, String jsonData, HttpProxyHeader header, boolean encode )  {
+    public JavaRequestBuilder postJsonRequest(String url, String jsonData, HttpProxyHeader header, HttpProxyRequest httpProxyRequest )  {
+        if( null ==  httpProxyRequest){
+            httpProxyRequest = HttpProxyDefaultRequest.builder();
+        }
         HttpRequest.Builder builder = HttpRequest.newBuilder()
-                .uri(URI.create(url)).timeout(Duration.ofMillis(httpClientConfig.getTimeout()));
+                .uri(URI.create(url)).timeout(Duration.ofMillis(httpProxyRequest.getTimeout()));
 
         if (HttpParamsUtil.isNotEmpty(jsonData)) {
-            if(encode){
+            if(httpProxyRequest.isEncode()){
                 jsonData = HttpParamsUtil.urlEncode(jsonData);
             }
             builder.POST(HttpRequest.BodyPublishers.ofString(jsonData, HttpClientConstants.DEFAULT_ENCODING));
@@ -148,7 +242,7 @@ public abstract class AbstractJavaRequestProxy extends AbstractHttpProxy impleme
             HttpParamsUtil.forFunction(header.getHeaders(), builder::header);
         }
         HttpRequest request  = builder.build();
-        JavaRequestBuilder requestProxy = new JavaRequestBuilder(request);
+        JavaRequestBuilder requestProxy = new JavaRequestBuilder(request,httpProxyRequest);
         return requestProxy;
 
 

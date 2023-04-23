@@ -36,6 +36,8 @@ public class SysDataConfig {
 //        pathMap.putIfAbsent(1,projectPathConfig);
         pathMap.putIfAbsent(2,ProjectPathConfig.init2());
         pathMap.putIfAbsent(3,ProjectPathConfig.init3());
+        pathMap.putIfAbsent(4,ProjectPathConfig.init4());
+
     }
 
     public GeneratorDao getGeneratorDao(){

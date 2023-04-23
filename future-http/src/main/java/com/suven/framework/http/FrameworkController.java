@@ -5,8 +5,6 @@ import com.suven.framework.common.api.ApiDoc;
 import com.suven.framework.common.api.DocumentConst;
 import com.suven.framework.common.constants.GlobalConfigConstants;
 import com.suven.framework.core.redis.IRedisClusterServer;
-import com.suven.framework.http.client.HttpRequestParseApi;
-import com.suven.framework.http.client.HttpRequestParams;
 import com.suven.framework.http.data.vo.RequestParserVo;
 import com.suven.framework.http.handler.OutputAesResponse;
 import com.suven.framework.http.handler.OutputAllResponse;
@@ -88,31 +86,31 @@ public class FrameworkController {
         out.writeSuccess();
     }
 
-    @ApiDoc(
-            value = "接口服务基本响应",
-            request = HttpRequestGetMessage.class,
-            response = long.class
-    )
-
-    @RequestMapping(value = SysURLCommand.sys_get_framework_http, method = RequestMethod.GET)
-    public void getFrameworkApiHttp(OutputResponse out, HttpRequestGetMessage jsonParse)  {
-        String json = JsonUtils.toJson(jsonParse);
-        Map map  = JsonUtils.toMap(json);
-        map.put("sysVersion", "android");
-        map.put("version", "1001001");
-        map.put("appId", "1000");
-        map.put("userId", 123456);
-        map.put("accessToken", "123456");
-        map.put("device", "3f25d333755240e");
-        map.put("times", System.currentTimeMillis());
-//        map.clear();
-        final String md5Key = "H@s0zSix!fiNger8";
-        HttpRequestParams params = HttpRequestParseApi.getHttpRequestParams(map,md5Key);
-
-        HttpClientUtil.getAsync("http://127.0.0.1:8080/api/sys/postParam",params.getSignToBodyMap(),true);
-
-        out.writeSuccess();
-    }
+//    @ApiDoc(
+//            value = "接口服务基本响应",
+//            request = HttpRequestGetMessage.class,
+//            response = long.class
+//    )
+//
+//    @RequestMapping(value = SysURLCommand.sys_get_framework_http, method = RequestMethod.GET)
+//    public void getFrameworkApiHttp(OutputResponse out, HttpRequestGetMessage jsonParse)  {
+//        String json = JsonUtils.toJson(jsonParse);
+//        Map map  = JsonUtils.toMap(json);
+//        map.put("sysVersion", "android");
+//        map.put("version", "1001001");
+//        map.put("appId", "1000");
+//        map.put("userId", 123456);
+//        map.put("accessToken", "123456");
+//        map.put("device", "3f25d333755240e");
+//        map.put("times", System.currentTimeMillis());
+////        map.clear();
+//        final String md5Key = "H@s0zSix!fiNger8";
+//        HttpRequestParams params = HttpRequestParseApi.getHttpRequestParams(map,md5Key);
+//
+//        HttpClientUtil.getAsync("http://127.0.0.1:8080/api/sys/postParam",params.getSignToBodyMap(),true);
+//
+//        out.writeSuccess();
+//    }
 
 
     @ApiDoc(

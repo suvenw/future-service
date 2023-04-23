@@ -47,6 +47,8 @@ public interface HttpProxy extends HttpSyncProxy,HttpAsyncProxy {
 	 */
      void setHttpConfig(HttpClientConfig httpClientConfig);
 
+
 	  <T> T  getData(String body, Class<T> parseJson);
+
 
 }

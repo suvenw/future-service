@@ -8,26 +8,20 @@ import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.concurrent.FutureCallback;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import javax.net.ssl.SSLContext;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.ArrayList;
@@ -74,18 +68,19 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
     @Override
     public HttpClientResponse execute(ApacheRequestBuilder httpRequestBuilder) {
         HttpRequestBase request =  httpRequestBuilder.getRequest();
+        HttpProxyRequest httpProxyRequest = httpRequestBuilder.getHttpProxyRequest();
         // 设置超时时长
         RequestConfig.Builder configBuilder = RequestConfig.custom()
-                .setConnectTimeout(this.getTimeout())
-                .setSocketTimeout(this.getTimeout())
-                .setConnectionRequestTimeout(this.getTimeout());
+                .setConnectTimeout(httpProxyRequest.getTimeout())
+                .setSocketTimeout(httpProxyRequest.getTimeout())
+                .setConnectionRequestTimeout(httpProxyRequest.getTimeout());
         // 设置代理
-        if (isProxy()) {
+        if (httpProxyRequest.isProxy()) {
             Proxy proxy = this.getProxy();
             InetSocketAddress address = (InetSocketAddress) proxy.address();
             HttpHost host = new HttpHost(address.getHostName(), address.getPort(), proxy.type().name().toLowerCase());
             configBuilder.setProxy(host);
-        }if (isHttps()){
+        }if (httpProxyRequest.isHttps()){
             initHttpClient();
         }
 
@@ -113,30 +108,28 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
         }
     }
 
-    @Override
-    public HttpClientResponse executeAsync(ApacheRequestBuilder httpRequestBuilder, FutureCallbackProxy future) {
-        return executeAsync(httpRequestBuilder,future,true);
-    }
+
 
     @Override
-    public HttpClientResponse executeAsync(ApacheRequestBuilder httpRequestBuilder, FutureCallbackProxy futureProxy, boolean isGetResult) {
+    public HttpClientResponse executeAsync(ApacheRequestBuilder httpRequestBuilder, FutureCallbackProxy futureProxy) {
         HttpRequestBase  request =  httpRequestBuilder.getRequest();
+        HttpProxyRequest httpProxyRequest = httpRequestBuilder.getHttpProxyRequest();
         try {
             // 设置超时时长
             RequestConfig.Builder configBuilder = RequestConfig.custom()
-                    .setConnectTimeout(this.getTimeout())
-                    .setSocketTimeout(this.getTimeout())
-                    .setConnectionRequestTimeout(this.getTimeout());
+                    .setConnectTimeout(httpProxyRequest.getTimeout())
+                    .setSocketTimeout(httpProxyRequest.getTimeout())
+                    .setConnectionRequestTimeout(httpProxyRequest.getTimeout());
 
 
 
             // 设置代理
-            if (isProxy()) {
+            if (httpProxyRequest.isProxy()) {
                 Proxy proxy = this.getProxy();
                 InetSocketAddress address = (InetSocketAddress) proxy.address();
                 HttpHost host = new HttpHost(address.getHostName(), address.getPort(), proxy.type().name().toLowerCase());
                 configBuilder.setProxy(host);
-            }else if(isHttps()){
+            }else if(httpProxyRequest.isHttps()){
 
             }
 
@@ -144,14 +137,14 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
 
             ApacheFutureCallback futureCallback = (ApacheFutureCallback)futureProxy.getFutureCallbackProxy();
             Future<HttpResponse> future = this.asyncClient.execute(request, futureCallback);
-            if(!isGetResult){
+            if(!httpProxyRequest.isFutureResult()){
                 return null;
             }
             //获取线程结果
-            HttpResponse response = futureCallback.getFuture().get(getTimeout(), TimeUnit.MILLISECONDS);
+            HttpResponse response = futureCallback.getFuture().get(httpProxyRequest.getTimeout(), TimeUnit.MILLISECONDS);
             futureProxy.isSuccess(response);
 
-            HttpClientResponse result = futureProxy.getResult();
+            HttpClientResponse result = futureProxy.getResult(httpProxyRequest.getBodyMediaType());
             return result;
         }catch (Exception e){
             e.printStackTrace();
@@ -160,12 +153,12 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
     }
 
     @Override
-    public ApacheRequestBuilder getRequest(String url, Map<String, String> params, HttpProxyHeader header, boolean encode )  {
-
+    public ApacheRequestBuilder getRequest(String url, Map<String, String> params, HttpProxyHeader header, HttpProxyRequest httpProxyRequest)  {
+        this.initHttpProxyRequest(httpProxyRequest);
         String requestUrl = url;
         if (HttpParamsUtil.isNotEmpty(params)) {
             String baseUrl = HttpParamsUtil.appendIfNotContain(url, "?", "&");
-            requestUrl = baseUrl + HttpParamsUtil.parseMapToString(params, encode);
+            requestUrl = baseUrl + HttpParamsUtil.parseMapToString(params,httpProxyRequest.isEncode());
         }
 
         HttpGet request = new HttpGet(requestUrl);
@@ -174,16 +167,16 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
         }else {
             addHeader(request);
         }
-        ApacheRequestBuilder requestBean = new ApacheRequestBuilder(request);
+        ApacheRequestBuilder requestBean = new ApacheRequestBuilder(request,httpProxyRequest);
 
         return requestBean;
     }
 
 
     @Override
-    public ApacheRequestBuilder postFormRequest(String url, Map<String, String> params, HttpProxyHeader header, boolean encode )  {
+    public ApacheRequestBuilder postFormRequest(String url, Map<String, String> params, HttpProxyHeader header, HttpProxyRequest httpProxyRequest)  {
         HttpPost request = new HttpPost(url);
-
+        this.initHttpProxyRequest(httpProxyRequest);
         if (HttpParamsUtil.isNotEmpty(params)) {
             List<NameValuePair> form = new ArrayList<>();
             HttpParamsUtil.forFunction(params, (k, v) -> form.add(new BasicNameValuePair(k, v)));
@@ -195,14 +188,15 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
         }else {
             addHeader(request);
         }
-        ApacheRequestBuilder requestProxy = new ApacheRequestBuilder(request);
+        ApacheRequestBuilder requestProxy = new ApacheRequestBuilder(request,httpProxyRequest);
         return requestProxy;
 
     }
 
     @Override
-    public ApacheRequestBuilder postJsonRequest(String url, String jsonData, HttpProxyHeader header, boolean encode )  {
+    public ApacheRequestBuilder postJsonRequest(String url, String jsonData, HttpProxyHeader header,  HttpProxyRequest httpProxyRequest )  {
         HttpPost request = new HttpPost(url);
+        this.initHttpProxyRequest(httpProxyRequest);
 
         if (HttpParamsUtil.isNotEmpty(jsonData)) {
             StringEntity entity = new StringEntity(jsonData, HttpClientConstants.DEFAULT_ENCODING);
@@ -217,7 +211,7 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
             addHeader(request);
         }
 
-        ApacheRequestBuilder requestProxy = new ApacheRequestBuilder(request);
+        ApacheRequestBuilder requestProxy = new ApacheRequestBuilder(request,httpProxyRequest);
         return requestProxy;
 
 
