@@ -1,9 +1,12 @@
 package com.suven.framework.http.proxy.httpclient;
 
+import cn.hutool.core.codec.Base64Encoder;
 import com.suven.framework.http.constants.HttpClientConstants;
 import com.suven.framework.http.exception.HttpClientRuntimeException;
+import com.suven.framework.http.proxy.BodyMediaTypeEnum;
 import com.suven.framework.http.proxy.FutureCallbackProxy;
 import com.suven.framework.http.proxy.HttpClientResponse;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.concurrent.FutureCallback;
@@ -44,13 +47,13 @@ public class ApacheFutureCallback   implements FutureCallback<HttpResponse> , Fu
     }
 
     @Override
-    public HttpClientResponse getResult() {
+    public HttpClientResponse getResult(int bodyMediaType ) {
         HttpResponse httpResponse = getFutureResponse();
         int code = this.getStatusCode(httpResponse);
         try {
             boolean successful = this.isSuccess(httpResponse);
             Map<String, List<String>> headers = getHeaders(httpResponse);
-            String body = this.getBody(httpResponse);
+            String body = this.getBody(httpResponse,bodyMediaType);
             HttpClientResponse result = successfulResponse(successful,code,headers,body);
             return result;
 
@@ -97,13 +100,28 @@ public class ApacheFutureCallback   implements FutureCallback<HttpResponse> , Fu
     }
 
     @Override
-    public String getBody(HttpResponse httpResponse) throws Exception{
-        StringBuffer body = new StringBuffer();
+    public String getBody(HttpResponse httpResponse,int bodyMediaType) throws Exception{
+        String body = "";
         if (httpResponse.getEntity() != null) {
-            body.append(EntityUtils.toString(httpResponse.getEntity(), HttpClientConstants.DEFAULT_ENCODING));
+            BodyMediaTypeEnum bodyMediaTypeEnum = BodyMediaTypeEnum.code(bodyMediaType);
+            switch (bodyMediaTypeEnum) {
+                case BODY_JSON:
+                case BODY_JSON_STRING:
+                    body =  EntityUtils.toString(httpResponse.getEntity(), HttpClientConstants.DEFAULT_ENCODING);
+                    return body;
+                case BODY_BYTES:
+                    String content  =  EntityUtils.toString(httpResponse.getEntity(), HttpClientConstants.DEFAULT_ENCODING);
+                    body = Base64Encoder.encode(content);
+                    return body;
+                case BODY_FILE:
+                    body =  IOUtils.toString( httpResponse.getEntity().getContent(), HttpClientConstants.DEFAULT_ENCODING);
+                    return body;
+                default:
+            }
         }
-        return body.toString();
+        return body;
     }
+
 
     public InputStream getContent(HttpResponse response) {
         if(null == response){

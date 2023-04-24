@@ -8,6 +8,7 @@ import com.suven.framework.http.proxy.okhttp3.Okhttp3RequestBuilder;
 import okhttp3.Headers;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import org.apache.http.client.methods.CloseableHttpResponse;
 
 import java.io.IOException;
 import java.net.Proxy;
@@ -58,16 +59,23 @@ public abstract class AbstractHttpProxy implements HttpProxy {
 		}
 	}
 
-//	private boolean isSuccess(HttpResponse response) {
-//		if (response == null) {
-//			return false;
-//		}
-//		if (response.getStatusLine() == null) {
-//			return false;
-//		}
-//		return response.getStatusLine().getStatusCode() >= 200 && response.getStatusLine().getStatusCode() < 300;
-//	}
+	/**
+	 *  根据请求参数类型,根据网络架构的返回数据结果,转换到统一规范对象HttpClientResponse
+	 * @param bodyMediaType ,根据请求参数类型, 0/1为 json 字符串,2.为文件流
+	 * @param httpResponse 网络架构的返回数据结果
+	 * @return
+	 * @throws IOException
+	 */
+	public abstract HttpClientResponse getHttpClientResponse(int bodyMediaType, Object httpResponse) throws IOException;
 
+
+	/**
+	 * 通过JSON 字符串转换成对象类对象的实现方法
+	 * @param body
+	 * @param parseJson
+	 * @param <T>
+	 * @return
+	 */
 	@Override
 	public <T> T getData(String body, Class<T> parseJson) {
 		return JSON.parseObject(body,parseJson);

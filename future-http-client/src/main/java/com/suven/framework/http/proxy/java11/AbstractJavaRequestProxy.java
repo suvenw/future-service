@@ -33,21 +33,30 @@ public abstract class AbstractJavaRequestProxy extends AbstractHttpProxy impleme
     }
 
 
-    private HttpClientResponse getHttpClientResponse(int bodyMediaType, HttpResponse<String> httpResponse) throws IOException {
-        int code = httpResponse.statusCode();
-        boolean successful = isSuccess(httpResponse);
-        Map<String, List<String>> headers = httpResponse.headers().map();
+    /**
+     *  根据请求参数类型,根据网络架构的返回数据结果,转换到统一规范对象HttpClientResponse
+     * @param bodyMediaType ,根据请求参数类型, 0/1为 json 字符串,2.为文件流
+     * @param httpResponse 网络架构的返回数据结果
+     * @return
+     * @throws IOException
+     */
+    @Override
+    public  HttpClientResponse getHttpClientResponse(int bodyMediaType, Object httpResponse ) throws IOException {
+        HttpResponse<String> response = ( HttpResponse<String>)httpResponse;
+        int code = response.statusCode();
+        boolean successful = isSuccess(response);
+        Map<String, List<String>> headers = response.headers().map();
 
         BodyMediaTypeEnum bodyMediaTypeEnum = BodyMediaTypeEnum.code(bodyMediaType);
         String body = "";
         switch (bodyMediaTypeEnum) {
             case BODY_JSON:
             case BODY_JSON_STRING:
-                body = httpResponse.body();
+                body = response.body();
                 return HttpClientResponse.build(successful, code, headers, body, null);
             case BODY_BYTES:
             case BODY_FILE:
-                byte[] bytes = httpResponse.body().getBytes();
+                byte[] bytes = response.body().getBytes();
                 body = Base64Encoder.encode(bytes);
                 return HttpClientResponse.build(successful, code, headers, body, null);
             default:

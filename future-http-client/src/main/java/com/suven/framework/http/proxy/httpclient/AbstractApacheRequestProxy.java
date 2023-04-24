@@ -1,9 +1,11 @@
 package com.suven.framework.http.proxy.httpclient;
 
+import cn.hutool.core.codec.Base64Encoder;
 import com.suven.framework.http.config.HttpClientConfig;
 import com.suven.framework.http.constants.HttpClientConstants;
 import com.suven.framework.http.proxy.*;
 import com.suven.framework.http.util.HttpParamsUtil;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -22,6 +24,7 @@ import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.ArrayList;
@@ -64,6 +67,45 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
             asyncClient.start();
     }
 
+    /**
+     *  根据请求参数类型,根据网络架构的返回数据结果,转换到统一规范对象HttpClientResponse
+     * @param bodyMediaType ,根据请求参数类型, 0/1为 json 字符串,2.为文件流
+     * @param httpResponse 网络架构的返回数据结果
+     * @return
+     * @throws IOException
+     */
+    @Override
+    public HttpClientResponse getHttpClientResponse(int bodyMediaType, Object httpResponse) throws IOException {
+        CloseableHttpResponse response = (CloseableHttpResponse)httpResponse;
+        int code = response.getStatusLine().getStatusCode();
+        boolean successful = isSuccess(response);
+        Map<String, List<String>> headers = Arrays.stream(response.getAllHeaders())
+                .collect(Collectors.toMap(Header::getName, (value) -> {
+                    ArrayList<String> headerValue = new ArrayList<>();
+                    headerValue.add(value.getValue());
+                    return headerValue;
+                }, (oldValue, newValue) -> newValue));
+        if (null == response.getEntity()) {
+            return HttpClientResponse.build(successful, code, headers, "", null);
+        }
+        BodyMediaTypeEnum bodyMediaTypeEnum = BodyMediaTypeEnum.code(bodyMediaType);
+        String body = "";
+            switch (bodyMediaTypeEnum) {
+                case BODY_JSON:
+                case BODY_JSON_STRING:
+                    body = EntityUtils.toString(response.getEntity(), HttpClientConstants.DEFAULT_ENCODING);
+                    return HttpClientResponse.build(successful, code, headers, body, null);
+                case BODY_BYTES:
+                    String content = EntityUtils.toString(response.getEntity(), HttpClientConstants.DEFAULT_ENCODING);
+                    body = Base64Encoder.encode(content);
+                    return HttpClientResponse.build(successful, code, headers, body, null);
+                case BODY_FILE:
+                    body = IOUtils.toString(response.getEntity().getContent(), HttpClientConstants.DEFAULT_ENCODING);
+                    return HttpClientResponse.build(successful, code, headers, body, null);
+                default:
+        }
+        return HttpClientResponse.build(successful, code, headers, "", null);
+    }
 
     @Override
     public HttpClientResponse execute(ApacheRequestBuilder httpRequestBuilder) {
@@ -87,21 +129,8 @@ public abstract class AbstractApacheRequestProxy extends AbstractHttpProxy imple
         request.setConfig(configBuilder.build());
 
         try (CloseableHttpResponse response = this.httpClient.execute(request)) {
-
-            StringBuffer body = new StringBuffer();
-            if (response.getEntity() != null) {
-                body.append(EntityUtils.toString(response.getEntity(), HttpClientConstants.DEFAULT_ENCODING));
-            }
-
-            int code = response.getStatusLine().getStatusCode();
-            boolean successful = isSuccess(response);
-            Map<String, List<String>> headers = Arrays.stream(response.getAllHeaders())
-                    .collect(Collectors.toMap(Header::getName, (value) -> {
-                        ArrayList<String> headerValue = new ArrayList<>();
-                        headerValue.add(value.getValue());
-                        return headerValue;
-                    }, (oldValue, newValue) -> newValue));
-            return  HttpClientResponse.build(successful, code, headers, body.toString(), null);
+            HttpClientResponse result =  getHttpClientResponse(httpProxyRequest.getBodyMediaType(),response);
+            return  result;
         } catch (Exception e) {
             e.printStackTrace();
             return  HttpClientResponse.build(false, 500, null, null, e.getMessage());

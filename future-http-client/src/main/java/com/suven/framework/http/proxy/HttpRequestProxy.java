@@ -3,9 +3,12 @@ package com.suven.framework.http.proxy;
 
 
 
+import java.io.IOException;
 import java.util.Map;
 
 public interface HttpRequestProxy <T extends HttpRequestBuilder>{
+
+
 
     /**
      *  同步执行逻辑请求的方法实现

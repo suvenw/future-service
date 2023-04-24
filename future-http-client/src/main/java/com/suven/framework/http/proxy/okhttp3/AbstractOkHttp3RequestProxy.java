@@ -27,7 +27,16 @@ public abstract class AbstractOkHttp3RequestProxy  extends AbstractHttpProxy imp
         this.httpClientBuilder = httpClientBuilder;
     }
 
-    private HttpClientResponse getHttpClientResponse(int bodyMediaType, Response response) throws IOException {
+    /**
+     *  根据请求参数类型,根据网络架构的返回数据结果,转换到统一规范对象HttpClientResponse
+     * @param bodyMediaType ,根据请求参数类型, 0/1为 json 字符串,2.为文件流
+     * @param httpResponse 网络架构的返回数据结果
+     * @return
+     * @throws IOException
+     */
+    @Override
+    public  HttpClientResponse getHttpClientResponse(int bodyMediaType, Object httpResponse ) throws IOException {
+        Response response = (Response) httpResponse;
         int code = response.code();
         boolean successful = response.isSuccessful();
         Map<String, List<String>> headers = response.headers().toMultimap();
