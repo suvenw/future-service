@@ -1,0 +1,35 @@
+// 项目名称描述,统一请求入口拦截和返回处理架构
+description = 'future-http-system'
+//引用项目的公共版包版本信息
+def libs = rootProject.ext.libVersions
+
+project(':future-http-system') {
+    jar.exclude 'env.conf'
+    jar.exclude 'logback.xml'
+    jar.exclude '*.sh'
+    jar.exclude '*.yml'
+    dependencies{
+        compile fileTree( dir: "lib", include: '*.jar' )
+        compile project(':future-utils')
+        compile project(':future-http')
+        compile project(':future-global')
+        compile project(':future-doc')
+
+        compile 'com.suven.framework:swagger-ui-layer:1.0.7'
+        compile 'io.jsonwebtoken:jjwt-api:0.10.7'
+
+        compile'io.jsonwebtoken:jjwt-jackson:0.11.2'
+        compile 'io.jsonwebtoken:jjwt-impl:0.11.2'
+        compile 'io.jsonwebtoken:jjwt-api:0.11.2'
+        compile 'org.apache.shiro:shiro-spring:1.8.0'
+        compile 'org.apache.shiro:shiro-core:1.8.0'
+        compile 'org.apache.shiro:shiro-web:1.8.0'
+        compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.authzserver:1.0.2'
+
+        runtime 'io.jsonwebtoken:jjwt-impl:0.10.7'
+        runtime 'io.jsonwebtoken:jjwt-jackson:0.10.7'
+
+    }
+}
+
+

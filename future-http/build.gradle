@@ -1,0 +1,38 @@
+// 项目名称描述,统一请求入口拦截和返回处理架构
+description = 'future-http'
+//引用项目的公共版包版本信息
+def libs = rootProject.ext.libVersions
+
+project(':future-http') {
+    jar.exclude 'env.conf'
+    jar.exclude 'logback.xml'
+    jar.exclude '*.sh'
+    jar.exclude '*.yml'
+    dependencies{
+        compile fileTree( dir: "lib", include: '*.jar' )
+        compile project(':future-utils')
+        compile project(':future-http-client')
+
+        compile("org.springframework.boot:spring-boot-starter-jetty:${libs.spring_boot_version}")
+        compile("org.springframework.boot:spring-boot-starter-websocket:${libs.spring_boot_version}")
+        compile "io.dropwizard.metrics:metrics-jetty9:${libs.metrics_version}"
+        compile 'org.eclipse.jetty:jetty-jmx:9.4.6.v20170531'
+
+        compile "org.eclipse.jetty:jetty-annotations:${libs.jetty_version}"
+        compile "org.eclipse.jetty:jetty-client:${libs.jetty_version}"
+        compile "org.eclipse.jetty:jetty-continuation:${libs.jetty_version}"
+        compile "org.eclipse.jetty:jetty-http:${libs.jetty_version}"
+        compile "org.eclipse.jetty:jetty-io:${libs.jetty_version}"
+        compile "org.eclipse.jetty:jetty-plus:${libs.jetty_version}"
+        compile "org.eclipse.jetty:jetty-security:${libs.jetty_version}"
+        compile "org.eclipse.jetty:jetty-server:${libs.jetty_version}"
+        compile "org.eclipse.jetty:jetty-servlet:${libs.jetty_version}"
+        compile "org.eclipse.jetty:jetty-servlets:${libs.jetty_version}"
+        compile "org.eclipse.jetty:jetty-util:${libs.jetty_version}"
+        compile "org.eclipse.jetty:jetty-webapp:${libs.jetty_version}"
+        compile "org.eclipse.jetty:jetty-xml:${libs.jetty_version}"
+        compile 'com.auth0:java-jwt:3.4.0'
+    }
+}
+
+

@@ -17,7 +17,7 @@ spring:
 
 dubbo:
   scan:
-    basePackages: com.sixeco.framework.dubbo
+    basePackages: com.suven.framework.dubbo
   application:
     name: ${spring.application.name}
   protocol:

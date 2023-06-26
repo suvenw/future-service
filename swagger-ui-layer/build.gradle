@@ -1,0 +1,17 @@
+project(':swagger-ui-layer') {
+    dependencies{
+        sourceSets {
+            main {
+                java {
+                    srcDir 'src'
+                    exclude '**/Test*.java'
+                }
+                resources {
+                    srcDir 'resources'
+                    include 'META-INF/**'
+                }
+            }
+        }
+    }
+}
+

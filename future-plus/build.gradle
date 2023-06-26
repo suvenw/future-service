@@ -1,0 +1,32 @@
+// 项目名称描述,统一架构扩展
+description = 'future-plus'
+//引用项目的公共版包版本信息
+def libs = rootProject.ext.libVersions
+
+
+project(':future-plus') {
+    dependencies{
+
+        compile fileTree( dir: "lib", include: '*.jar' )
+        compile project(':future-global')
+        compile project(':future-utils')
+
+        compile 'org.springframework.kafka:spring-kafka:2.5.8.RELEASE'
+        compile 'org.apache.curator:curator-framework:2.12.0'
+        compile 'com.baidu.aip:java-sdk:4.5.0'
+        compile 'org.apache.rocketmq:rocketmq-client:4.9.1'
+        compile 'org.apache.rocketmq:rocketmq-spring-boot-starter:2.2.1'
+        compile 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.0.0'
+        compile "org.springframework.boot:spring-boot-starter-data-elasticsearch:${libs.spring_boot_version}"
+
+        compile 'org.apache.shiro:shiro-core:1.4.0:'
+        compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.authzserver:1.0.2'
+
+        compile 'com.aliyun.oss:aliyun-sdk-oss:3.7.0'
+        compile 'com.aliyun:aliyun-java-sdk-core:4.4.1'
+        compile 'com.aliyun:aliyun-java-sdk-dysmsapi:1.1.0'
+
+    }
+}
+
+

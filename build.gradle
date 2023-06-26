@@ -14,7 +14,7 @@ def mainClassName = 'com.suven.framework.MqMain'
 // 全局参数配置
 ext {
     configuration = [
-            package          : "com.sixeco.framework",
+            package          : "com.suven.framework",
             buildToolsVersion: "23.0.1",
             compileVersion   : 23,
             version_code     : 1,

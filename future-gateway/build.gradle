@@ -1,0 +1,49 @@
+// 项目名称描述
+description = 'future-gateway'
+//引用项目的公共版包版本信息
+def libs = rootProject.ext.libVersions
+
+project(':future-gateway') {
+    jar.exclude 'env.conf'
+    jar.exclude 'logback.xml'
+    jar.exclude '*.sh'
+    jar.exclude '*.yml'
+    dependencies{
+
+        compile fileTree( dir: "lib", include: '*.jar' )
+
+        compile "org.springframework.boot:spring-boot-starter-web:${libs.spring_boot_version}"
+        compile "org.springframework.boot:spring-boot-starter:${libs.spring_boot_version}"
+        compile "org.springframework.boot:spring-boot-starter-webflux:${libs.spring_boot_version}"
+
+        // ===================== 微服务服务 使用 spring cloud gateway 服务启动依赖包 =====================
+        compile "org.springframework.cloud:spring-cloud-dependencies:${libs.spring_cloud_dds_version}"
+        compile "org.springframework.cloud:spring-cloud-starter-gateway:${libs.spring_cloud_version}"
+        compile "org.springframework.cloud:spring-cloud-starter-bootstrap:${libs.spring_cloud_version}"
+        compile "org.springframework.cloud:spring-cloud-starter-openfeign:${libs.spring_cloud_version}"
+        compile "org.springframework.cloud:spring-cloud-loadbalancer:${libs.spring_cloud_version}"
+        compile "io.netty:netty-all:${libs.netty_all_version}"
+        compile "net.logstash.logback:logstash-logback-encoder:5.3"
+        compile 'org.reflections:reflections:0.9.10'
+        // ===================== 微服务服务 使用 spring cloud gateway 服务启动依赖包 =====================
+
+
+        // ===================== 微服务服务 使用 nacos 作注册配置中心服务启动依赖包 =====================
+        compile "com.alibaba.cloud:spring-cloud-alibaba-dependencies:${libs.spring_cloud_alibaba_version}"
+//      compile "com.alibaba.cloud:spring-cloud-starter-alibaba-sentinel:${libs.spring_cloud_alibaba_version}"
+//      compile "com.alibaba.cloud:spring-cloud-starter-alibaba-seata:${libs.spring_cloud_alibaba_version}"
+        compile "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:${libs.spring_cloud_alibaba_version}"
+        compile "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config:${libs.spring_cloud_alibaba_version}"
+        compile "com.alibaba.cloud:spring-cloud-starter-dubbo:${libs.spring_cloud_alibaba_version}"
+        compile 'com.alibaba.spring:spring-context-support:1.0.11'
+
+        compile "com.alibaba.nacos:nacos-api:${libs.alibaba_nacos_version}"
+        compile "com.alibaba.nacos:nacos-common:${libs.alibaba_nacos_version}"
+        compile "com.alibaba.nacos:nacos-client:${libs.alibaba_nacos_version}"
+        // ===================== 微服务服务 使用 nacos 作注册配置中心服务启动依赖包 =====================
+
+
+
+
+    }
+}

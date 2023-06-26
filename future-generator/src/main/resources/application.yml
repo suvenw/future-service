@@ -13,9 +13,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     #MySQL配置
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://sixeco-gz-prod.mysql.rds.aliyuncs.com/gc_deploy
-    username: sixeco_prod_db
-    password: Sixeco@prod#321
+    url: jdbc:mysql://suven-gz-prod.mysql.rds.aliyuncs.com/gc_deploy
+    username: suven_prod_db
+    password: suven@prod#321
 
 
   jackson:
