@@ -266,7 +266,7 @@ public abstract class AbstractOkHttp3RequestProxy  extends AbstractHttpProxy imp
         if(httpProxyRequest.isEncode()){
             jsonData = HttpParamsUtil.urlEncode(jsonData);
         }
-        RequestBody body = RequestBody.create(jsonData, CONTENT_TYPE_JSON);
+        RequestBody body = RequestBody.create(jsonData, httpProxyRequest.getMediaType());
         Headers headers = initJsonHeaders();
         if (header != null ){
             headers = Headers.of(header.getHeaders());

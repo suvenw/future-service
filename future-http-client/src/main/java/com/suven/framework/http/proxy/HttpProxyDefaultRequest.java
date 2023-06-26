@@ -17,6 +17,9 @@
 package com.suven.framework.http.proxy;
 
 
+import com.suven.framework.http.constants.HttpClientConstants;
+import okhttp3.MediaType;
+
 /**
  * @Author 作者 : suven.wang
  * @CreateDate 创建时间: 2021-09-13
@@ -53,6 +56,8 @@ public class HttpProxyDefaultRequest implements HttpProxyRequest {
 
 	/** proxy 是否使用代理 proxy的值为 true 或 false, 默认为false **/
 	private boolean https = false;
+	/** mediaType 请求参数数据类型, mediaType默认值为 "application/json; charset=utf-8" **/
+	private MediaType mediaType = MediaType.get(HttpClientConstants.CONTENT_TYPE_JSON);
 
 	public static HttpProxyDefaultRequest builder(){
 		return new HttpProxyDefaultRequest();
@@ -107,6 +112,15 @@ public class HttpProxyDefaultRequest implements HttpProxyRequest {
 		return https;
 	}
 
+	/**
+	 * application/json; charset=utf-8
+	 * An rfc_2045 Media Type, appropriate to describe the content type of an HTTP request or response body
+	 **/
+	@Override
+	public MediaType getMediaType() {
+		return mediaType;
+	}
+
 	public HttpProxyRequest setEncode(boolean encode) {
 		this.encode = encode;
 		return this;
@@ -129,4 +143,8 @@ public class HttpProxyDefaultRequest implements HttpProxyRequest {
 		return this;
 	}
 
+	public HttpProxyRequest setMediaType(MediaType mediaType) {
+		this.mediaType = mediaType;
+		return this;
+	}
 }

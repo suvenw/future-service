@@ -1,5 +1,7 @@
 package com.suven.framework.http.proxy;
 
+import okhttp3.MediaType;
+
 import java.util.Objects;
 
 /**
@@ -43,6 +45,9 @@ public interface HttpProxyRequest {
 
     /** https 是否使用 https 证书请求 https 的值为 true 或 false, 默认为false **/
     boolean isHttps();
+    /** application/json; charset=utf-8
+     *  An rfc_2045 Media Type, appropriate to describe the content type of an HTTP request or response body**/
+    MediaType getMediaType();
 
     public static void initHttpProxyRequest(HttpProxyRequest httpProxyRequest){
         if(Objects.isNull(httpProxyRequest)){
