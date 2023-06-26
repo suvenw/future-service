@@ -1,9 +1,8 @@
 rootProject.name = 'future-service'
 
-
 include 'future-http' ,'future-utils','future-global','future-generator','future-plus','future-http-client'
 
-include 'future-http-file','future-http-system','swagger-ui-layer','future-doc'
-
-
+include 'future-http-file','future-http-system','swagger-ui-layer','future-doc','future-gateway'
+include 'future-spring-cloud','future-spring-dubbo'
+include 'future-spring-dubbo-consumer'
 

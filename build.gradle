@@ -1,27 +1,56 @@
 group 'com.suven.framework'
 version '1.0.0-SNAPSHOT'
 
-def mavenVersion = "1.0.7"
+def mavenVersion = "0.0.162"
 def mavenGroup = "com.suven.framework"
 
-def mavenUrl ="https://oa.sixeco.com/nexus"
-def mavenUserName='admin'
-def mavenPassword='sixeco123'
+//def mavenUrl = "http://nexus.7955.com"
+//https://oa.sixeco.com/nexus/content/groups/public/
+def mavenUrl = "https://oa.sixeco.com/nexus"
+def mavenUserName = 'admin'
+def mavenPassword = 'sixeco123'
 def mainClassName = 'com.suven.framework.MqMain'
 
+// 全局参数配置
+ext {
+    configuration = [
+            package          : "com.sixeco.framework",
+            buildToolsVersion: "23.0.1",
+            compileVersion   : 23,
+            version_code     : 1,
+            version_name     : "0.0.1",
+    ]
 
+    libVersions = [
+            slf4j_version               : '1.7.25', //1.7.25', '1.8.0-beta2'
+            logback_version             : '1.2.3',   //'1.2.3','1.3.0-alpha4'
+            metrics_version             : '4.2.13',
+            spring_version              : '5.3.21',
+            spring_security_version     : '5.7.0',
+            spring_boot_version         : '2.6.9',//  spring_boot_version  :'2.1.6.RELEASE'
+            spring_cloud_version        : '3.1.1',
+            spring_cloud_dds_version    : '2022.0.0',
+            spring_cloud_alibaba_version: '2021.1',
+            jetty_version               : '9.4.12.v20180830',
+            mybatis_plus_version        : '3.2.0',
+            dubbo_spring_boot_version   : '3.1.9',
+            dubbo_version               : '3.1.9',
+            alibaba_nacos_version       : '2.1.2',
+            netty_all_version           : '4.1.77.Final'
+    ]
+}
+// 全局脚本配置
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.7.0"
+        classpath 'org.jacoco:org.jacoco.core:0.8.1'
 
-
-def sourceCompatibility = 1.8
-def slf4j_version='1.7.25' //1.7.25', '1.8.0-beta2'
-def logback_version='1.2.3'   //'1.2.3','1.3.0-alpha4'
-def metrics_version ='3.2.2'
-
-def spring_boot_version ='2.4.1'
-def spring_version ='5.3.2'
-def jetty_version ='9.4.12.v20180830'
-def mybatis_plus_version = '3.2.0'
-
+    }
+}
+// 全局脚本配置
 allprojects {
     apply {
         plugin 'idea'
@@ -30,39 +59,19 @@ allprojects {
         plugin 'eclipse'
 //        plugin 'war'
     }
-    [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
-    sourceCompatibility =  1.8
-    targetCompatibility =  1.8
-    sourceSets.main.java.srcDirs += ["src/gen/java"]
-
-}
-
-
-buildscript {
     repositories {
-        mavenCentral()
-        //maven { url "${mavenUrl}/content/groups/public/" }
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.2.2.RELEASE")
-        classpath 'org.jacoco:org.jacoco.core:0.8.1'
-
-    }
-}
-
-subprojects {
-
-    sourceSets.main.java.srcDirs += ["src/gen/java"]
-
-
-    repositories {
-        maven { url  "${mavenUrl}/content/groups/public/" }
-        maven { url "http://pypi.doubanio.com/simple/" }
+        maven { url "${mavenUrl}/content/groups/public/" }
+        maven { url "https://pypi.doubanio.com/simple/" }
         maven { url "https://repo.maven.apache.org/maven2/" }
         maven { url "https://mvnrepository.com/artifact/" }
         maven { url "https://maven.springframework.org/release/" }
 
     }
+
+    [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    sourceSets.main.java.srcDirs += ["src/gen/java"]
 
     jar {
         exclude 'logback.xml'
@@ -71,7 +80,7 @@ subprojects {
         exclude '*.properties'
     }
     configurations {
-        provided
+//        provided
         compile.extendsFrom provided
         all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
         all*.exclude group: 'commons-logging', module: 'commons-logging'
@@ -85,6 +94,7 @@ subprojects {
         all*.exclude group: 'org.codehaus.groovy', module: 'groovy-all'
         all*.exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed'
         all*.exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+        all*.exclude group: 'com.intellij', module: 'openapi'
 
     }
 
@@ -100,7 +110,7 @@ subprojects {
             pom.whenConfigured { pom ->
                 pom.dependencies.forEach { dep ->
                     if (dep.getVersion() == "unspecified") {
-                        println("--modify the dependenies module in pom.xml--->>" + dep.getArtifactId() )
+                        println("--modify the dependenies module in pom.xml--->>" + dep.getArtifactId())
                         dep.setGroupId("${mavenGroup}")
                         dep.setVersion("${mavenVersion}")
                     }
@@ -108,14 +118,20 @@ subprojects {
             }
         }
     }
-  //  processResources << {
-   //     file("$destinationDir/version.properties").text = 'version=' + project.version
-   // }
+    //  processResources << {
+    //     file("$destinationDir/version.properties").text = 'version=' + project.version
+    // }
 
     task lib(type: Sync, dependsOn: jar) {
         from configurations.compile
         from jar.archivePath
         into 'build/lib'
+    }
+
+    task copylib(type: Copy) {
+        from 'build/lib'
+        into 'build/lib_ext'
+        include 'future*.jar', 'future2*.jar'
     }
 
     task webapp(type: Sync) {
@@ -124,9 +140,9 @@ subprojects {
     }
     task copyEtc(type: Sync) {
         from '../future-utils/src/main/resources'
-        into 'build/etc'
+        into 'build/config/etc'
         from 'src/main/resources'
-        into 'build/etc'
+        into 'build/config/etc'
 
     }
 
@@ -140,6 +156,7 @@ subprojects {
     }
 
     task ziplib(type: Zip) {
+        from 'build/config'
         from 'src/dist'
         into('lib') {
             from configurations.runtime
@@ -164,248 +181,11 @@ subprojects {
 }
 
 
-dependencies {
-    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-}
+//dependencies {
+//    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+//}
 
 
-project(':future-global') {
-    dependencies {
-
-        compile fileTree(dir: "lib", include: '*.jar')
-
-
-        compile "ch.qos.logback:logback-classic:${logback_version}"
-        compile "ch.qos.logback:logback-core:${logback_version}"
-        compile "ch.qos.logback:logback-access:${logback_version}"
-        compile "org.slf4j:slf4j-api:${slf4j_version}"
-        compile "org.slf4j:slf4j-log4j12:${slf4j_version}"
-        compile "org.slf4j:slf4j-ext:${slf4j_version}"
-        compile "org.slf4j:jcl-over-slf4j:${slf4j_version}"
-        compile "org.slf4j:log4j-over-slf4j:${slf4j_version}"
-        compile 'net.logstash.logback:logstash-logback-encoder:5.1'
-
-        compile "org.springframework:spring-core:${spring_version}"
-        compile "org.springframework:spring-context:${spring_version}"
-        compile "org.springframework:spring-web:${spring_version}"
-        compile "org.springframework:spring-aop:${spring_version}"
-        compile "org.springframework:spring-beans:${spring_version}"
-        compile "com.baomidou:mybatis-plus-annotation:${mybatis_plus_version}"
-        compile 'org.aspectj:aspectjrt:1.9.3'
-        compile 'org.aspectj:aspectjweaver:1.9.3'
-
-        compile 'com.alibaba:easyexcel:2.1.3'
-        compile 'com.alibaba:fastjson:1.2.58'
-        compile 'com.google.guava:guava:18.0'
-        compile 'com.googlecode.json-simple:json-simple:1.1.1'
-        compile 'org.reflections:reflections:0.9.9-RC1'
-        compile 'com.google.protobuf:protobuf-java:3.6.1'
-        compile 'com.googlecode.protobuf-java-format:protobuf-java-format:1.4'
-        compile 'io.protostuff:protostuff-core:1.6.0'
-        compile 'io.protostuff:protostuff-runtime:1.6.0'
-        compile 'org.apache.commons:commons-lang3:3.4'
-
-        compile 'javax.servlet:javax.servlet-api:3.1.0'
-        compile 'commons-io:commons-io:2.6'
-
-//        compile 'com.alibaba.nacos:nacos-api:1.2.0'
-//        compile 'com.alibaba.nacos:nacos-common:1.2.0'
-//        compile 'com.alibaba.nacos:nacos-client:1.2.0'
-
-
-    }
-}
-
-
-project(':future-plus') {
-    dependencies{
-
-        compile fileTree( dir: "lib", include: '*.jar' )
-        compile project(':future-global')
-        compile project(':future-utils')
-
-
-//        compile 'com.aliyun:aliyun-java-sdk-core:4.3.8'
-
-//        compile 'org.apache.kafka:kafka-clients:2.2.0'
-//        compile 'org.apache.kafka:kafka-streams:2.2.0'
-        compile 'org.springframework.kafka:spring-kafka:2.5.8.RELEASE'
-
-        compile 'org.apache.dubbo:dubbo:2.7.3'
-        //使用dubboRpc 实现
-//        compile 'org.apache.dubbo:dubbo-spring-boot-starter:2.7.3'
-
-
-//        compile 'com.alibaba.nacos:nacos-api:1.2.0'
-//
-//        compile 'com.alibaba.boot:nacos-config-spring-boot-autoconfigure:0.2.7'
-//        compile 'com.alibaba.boot:nacos-config-spring-boot-actuator:0.2.7'
-//        compile 'com.alibaba.boot:nacos-config-spring-boot-starter:0.2.7'
-//        compile 'com.alibaba.boot:nacos-discovery-spring-boot-starter:0.2.7'
-//        compile 'com.alibaba.nacos:nacos-spring-context:0.3.6'
-//
-//
-//        compile 'com.alibaba.csp:sentinel-core:1.7.0'
-//        compile 'com.alibaba.csp:sentinel-dubbo-adapter:1.7.0'
-//        compile 'com.alibaba.csp:sentinel-annotation-aspectj:1.7.0'
-//        compile 'com.alibaba.csp:sentinel-transport-simple-http:1.7.0'
-//        compile 'com.alibaba.csp:sentinel-datasource-nacos:1.7.0'
-
-
-        compile 'org.apache.zookeeper:zookeeper:3.4.9'
-        compile 'com.github.sgroschupf:zkclient:0.1'
-        compile 'org.apache.curator:curator-framework:2.12.0'
-        compile 'com.baidu.aip:java-sdk:4.5.0'
-
-        compile 'org.apache.rocketmq:rocketmq-client:4.6.0'
-        compile 'org.apache.rocketmq:rocketmq-spring-boot-starter:2.0.4'
-        compile 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.0.0'
-        compile "org.springframework.boot:spring-boot-starter-data-elasticsearch:${spring_boot_version}"
-
-        compile 'org.apache.shiro:shiro-core:1.4.0:'
-        compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.authzserver:1.0.2'
-
-        compile 'com.aliyun.oss:aliyun-sdk-oss:3.7.0'
-        compile 'com.aliyun:aliyun-java-sdk-core:4.4.1'
-        compile 'com.aliyun:aliyun-java-sdk-dysmsapi:1.1.0'
-
-        compile 'me.zhyd.oauth:JustAuth:1.16.5'
-        compile 'com.squareup.okio:okio:2.10.0'
-        compile 'com.xkcoding.http:simple-http:1.0.5'
-        compile 'com.squareup.okhttp3:okhttp:4.9.2'
-
-    }
-}
-project(':future-utils') {
-    dependencies{
-
-        compile fileTree( dir: "lib", include: '*.jar' )
-        compile project(':future-global')
-        compile project(':future-doc')
-
-
-        compile "org.springframework.boot:spring-boot-autoconfigure:${spring_boot_version}"
-        compile "org.springframework.boot:spring-boot-starter-web:${spring_boot_version}"
-        compile "org.springframework.boot:spring-boot-starter-jetty:${spring_boot_version}"
-        compile "org.springframework.boot:spring-boot-starter-actuator:${spring_boot_version}"
-        compile "org.springframework.boot:spring-boot-starter-jdbc:${spring_boot_version}"
-        compile "org.springframework.boot:spring-boot-starter-log4j2:${spring_boot_version}"
-        compile "org.springframework.boot:spring-boot-starter-logging:${spring_boot_version}"
-
-        compile "org.springframework:spring-core:${spring_version}"
-        compile "org.springframework:spring-context:${spring_version}"
-        compile "org.springframework:spring-web:${spring_version}"
-        compile "org.springframework:spring-aop:${spring_version}"
-        compile "org.springframework:spring-beans:${spring_version}"
-        compile "org.springframework:spring-webmvc:${spring_version}"
-        compile "org.springframework:spring-expression:${spring_version}"
-        compile "org.springframework:spring-jdbc:${spring_version}"
-        compile "org.springframework:spring-tx:${spring_version}"
-
-
-        compile "io.dropwizard.metrics:metrics-core:${metrics_version}"
-        compile "io.dropwizard.metrics:metrics-graphite:${metrics_version}"
-        compile "io.dropwizard.metrics:metrics-jetty9:${metrics_version}"
-        compile "io.dropwizard.metrics:metrics-servlet:${metrics_version}"
-        compile "io.dropwizard.metrics:metrics-servlets:${metrics_version}"
-        compile "io.dropwizard.metrics:metrics-httpclient:${metrics_version}"
-
-        compile 'redis.clients:jedis:2.9.0'
-        compile 'com.squareup.okhttp3:okhttp:4.9.2'
-
-        compile 'net.sf.ezmorph:ezmorph:1.0.6'
-        compile 'commons-codec:commons-codec:1.12'
-        compile 'commons-io:commons-io:2.6'
-        compile 'org.apache.commons:commons-lang3:3.4'
-        compile 'org.apache.httpcomponents:httpclient:4.5.10'
-        compile 'org.apache.httpcomponents:httpmime:4.5.3'
-        compile 'org.apache.httpcomponents:httpcore:4.4.12'
-        compile 'org.apache.httpcomponents:httpasyncclient:4.1.2'
-        compile 'org.hibernate:hibernate-validator:5.3.5.Final'
-
-        compile 'org.freemarker:freemarker:2.3.28'
-        compile 'org.scala-lang:scala-library:2.13.0-RC1'
-        compile 'org.mockito:mockito-all:1.9.5'
-        compile 'commons-beanutils:commons-beanutils:1.9.3'
-        compile 'org.aspectj:aspectjrt:1.9.3'
-        compile 'org.aspectj:aspectjweaver:1.9.3'
-
-        compile 'javax.mail:mail:1.4.7'
-
-        compile 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
-        compile 'com.fasterxml.jackson.datatype:jackson-datatype-json-org:2.9.8'
-        compile 'mysql:mysql-connector-java:8.0.16'
-
-        compile "org.mybatis:mybatis:3.5.0"
-        compile "com.baomidou:mybatis-plus:${mybatis_plus_version}"
-        compile "com.baomidou:mybatis-plus-core:${mybatis_plus_version}"
-        compile "com.baomidou:mybatis-plus-annotation:${mybatis_plus_version}"
-        compile "com.baomidou:mybatis-plus-extension:${mybatis_plus_version}"
-        compile "com.baomidou:mybatis-plus-boot-starter:${mybatis_plus_version}"
-        compile 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.1'
-        
-        compile 'com.github.pagehelper:pagehelper:5.1.8'
-        compile 'org.javassist:javassist:3.25.0-GA'
-
-        compile 'com.google.zxing:core:3.3.0'
-        compile 'com.google.zxing:javase:3.3.0'
-
-
-
-
-        compile 'org.databene:feed4junit:1.2.0'
-        compile 'org.databene:databene-commons:1.0.11'
-        compile 'org.databene:databene-benerator:0.9.8'
-        compile 'org.mockito:mockito-all:2.0.2-beta'
-
-        compile 'com.alibaba:druid:1.1.21'
-        compile 'com.alibaba:druid-spring-boot-starter:1.1.21'
-
-
-        compile 'org.lionsoul:ip2region:1.4'
-        compile 'cglib:cglib:3.1'
-        compile 'org.apache.poi:poi:3.17'
-        compile 'org.apache.poi:poi-ooxml:3.17'
-        compile 'com.alibaba:easyexcel:2.1.3'
-//        compile "com.auth0:java-jwt:3.8.3"
-
-        compile 'com.fasterxml.jackson.core:jackson-core:2.12.0'
-        compile 'org.yaml:snakeyaml:1.25'
-        compile 'org.projectlombok:lombok:1.18.22'
-
-        testCompile 'org.springframework:spring-test:4.3.2.RELEASE'
-        testCompile 'junit:junit:4.11'
-        testCompile 'org.jmock:jmock:2.6.0'
-        testCompile 'org.jmock:jmock-legacy:2.6.0'
-        testCompile 'org.hamcrest:hamcrest-core:1.3'
-        testCompile "org.springframework.boot:spring-boot-test:${spring_boot_version}"
-
-
-
-
-    }
-}
-
-
-
-project(':future-http-client') {
-    dependencies{
-
-        compile fileTree( dir: "lib", include: '*.jar' )
-
-        compile 'com.squareup.okhttp3:okhttp:4.9.2'
-        compile 'cn.hutool:hutool-all:5.7.14'
-        compile 'org.apache.httpcomponents:httpclient:4.5.13'
-        compile 'org.apache.httpcomponents:httpasyncclient:4.1.5'
-        compile 'com.alibaba:fastjson:1.2.58'
-        compile "ch.qos.logback:logback-core:${logback_version}"
-        compile 'com.google.guava:guava:18.0'
-        compile 'org.apache.commons:commons-lang3:3.4'
-        compile 'org.openeuler:bgmprovider:1.0.3'
-        compile 'commons-io:commons-io:2.6'
-
-    }
-}
 /*project(':future-cat'){
     jar.exclude 'env.conf'
     jar.exclude 'logback.xml'
@@ -453,203 +233,7 @@ project(':future-http-client') {
 }*/
 
 
-project(':future-http') {
-    jar.exclude 'env.conf'
-    jar.exclude 'logback.xml'
-    jar.exclude '*.sh'
-    jar.exclude '*.yml'
-    dependencies{
-        compile fileTree( dir: "lib", include: '*.jar' )
-        compile project(':future-utils')
-        compile project(':future-doc')
-//        compile project(':future-http-client')
 
-        compile("org.springframework.boot:spring-boot-starter-jetty:${spring_boot_version}")
-        compile("org.springframework.boot:spring-boot-starter-websocket:${spring_boot_version}")
-        compile "io.dropwizard.metrics:metrics-jetty9:${metrics_version}"
-        compile 'org.eclipse.jetty:jetty-jmx:9.4.6.v20170531'
-
-        compile "org.eclipse.jetty:jetty-annotations:${jetty_version}"
-        compile "org.eclipse.jetty:jetty-client:${jetty_version}"
-        compile "org.eclipse.jetty:jetty-continuation:${jetty_version}"
-        compile "org.eclipse.jetty:jetty-http:${jetty_version}"
-        compile "org.eclipse.jetty:jetty-io:${jetty_version}"
-        compile "org.eclipse.jetty:jetty-plus:${jetty_version}"
-        compile "org.eclipse.jetty:jetty-security:${jetty_version}"
-        compile "org.eclipse.jetty:jetty-server:${jetty_version}"
-        compile "org.eclipse.jetty:jetty-servlet:${jetty_version}"
-        compile "org.eclipse.jetty:jetty-servlets:${jetty_version}"
-        compile "org.eclipse.jetty:jetty-util:${jetty_version}"
-        compile "org.eclipse.jetty:jetty-webapp:${jetty_version}"
-        compile "org.eclipse.jetty:jetty-xml:${jetty_version}"
-    }
-}
-
-project(':future-generator') {
-    jar.exclude 'env.conf'
-    jar.exclude 'logback.xml'
-    jar.exclude '*.sh'
-    jar.exclude '*.yml'
-    dependencies{
-        compile fileTree( dir: "lib", include: '*.jar' )
-
-
-        compile 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1'
-        compile 'com.baomidou:mybatis-plus-annotation:3.1.2'
-        compile 'org.mybatis:mybatis:3.5.0'
-        compile 'com.alibaba:druid:1.1.12'
-        compile 'commons-lang:commons-lang:2.6'
-        compile 'commons-io:commons-io:2.6'
-        compile 'commons-configuration:commons-configuration:1.10'
-        compile 'com.alibaba:fastjson:1.2.58'
-        compile 'org.apache.velocity:velocity:1.7'
-        compile 'com.github.pagehelper:pagehelper-spring-boot-starter:1.2.5'
-        compile 'mysql:mysql-connector-java:8.0.16'
-        compile 'org.postgresql:postgresql:42.2.5'
-        compile 'javax.servlet:javax.servlet-api:3.1.0'
-        compile 'org.apache.commons:commons-lang3:3.4'
-        compile 'org.reflections:reflections:0.9.9-RC1'
-
-        compile "org.springframework.boot:spring-boot-starter-web:${spring_boot_version}"
-        compile "org.springframework.boot:spring-boot-autoconfigure:${spring_boot_version}"
-        compile  "org.springframework.boot:spring-boot-starter-web:${spring_boot_version}"
-        compile "org.springframework.boot:spring-boot-starter-jetty:${spring_boot_version}"
-        compile "org.springframework.boot:spring-boot-starter-actuator:${spring_boot_version}"
-        compile "org.springframework.boot:spring-boot-starter-jdbc:${spring_boot_version}"
-        compile "org.springframework.boot:spring-boot-starter-log4j2:${spring_boot_version}"
-        compile "org.springframework.boot:spring-boot-starter-logging:${spring_boot_version}"
-
-        compile "org.springframework.boot:spring-boot-maven-plugin:${spring_boot_version}"
-        compile "org.springframework.boot:spring-boot-devtools:${spring_boot_version}"
-
-        compile "org.springframework:spring-core:${spring_version}"
-        compile "org.springframework:spring-context:${spring_version}"
-        compile "org.springframework:spring-web:${spring_version}"
-        compile "org.springframework:spring-aop:${spring_version}"
-        compile "org.springframework:spring-beans:${spring_version}"
-        compile "org.springframework:spring-webmvc:${spring_version}"
-        compile "org.springframework:spring-expression:${spring_version}"
-        compile "org.springframework:spring-jdbc:${spring_version}"
-        compile "org.springframework:spring-tx:${spring_version}"
-
-
-        testCompile 'org.springframework:spring-test:4.3.2.RELEASE'
-        testCompile 'junit:junit:4.11'
-        testCompile 'org.jmock:jmock:2.6.0'
-        testCompile 'org.jmock:jmock-legacy:2.6.0'
-        testCompile 'org.hamcrest:hamcrest-core:1.3'
-        testCompile "org.springframework.boot:spring-boot-test:${spring_boot_version}"
-    }
-}
-
-
-
-project(':future-http-system') {
-    jar.exclude 'env.conf'
-    jar.exclude 'logback.xml'
-    jar.exclude '*.sh'
-    jar.exclude '*.yml'
-    dependencies{
-        compile fileTree( dir: "lib", include: '*.jar' )
-        compile project(':future-utils')
-        compile project(':future-http')
-        compile project(':future-global')
-        compile project(':future-doc')
-        compile 'com.suven.framework:swagger-ui-layer:1.0.3'
-//        compile 'com.suven.framework:future-http-system:1.0.3'
-
-        compile 'io.jsonwebtoken:jjwt-api:0.10.7'
-
-        compile'io.jsonwebtoken:jjwt-jackson:0.11.2'
-        compile 'io.jsonwebtoken:jjwt-impl:0.11.2'
-        compile 'io.jsonwebtoken:jjwt-api:0.11.2'
-        compile 'org.apache.shiro:shiro-spring:1.8.0'
-        compile 'org.apache.shiro:shiro-core:1.8.0'
-        compile 'org.apache.shiro:shiro-web:1.8.0'
-        compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.authzserver:1.0.2'
-        runtime 'io.jsonwebtoken:jjwt-impl:0.10.7','io.jsonwebtoken:jjwt-jackson:0.10.7'
-
-//        compile 'com.github.caspar-chen:swagger-ui-layer:1.1.9'
-
-    }
-}
-
-
-project(':future-http-file') {
-    jar.exclude 'env.conf'
-    jar.exclude 'logback.xml'
-    jar.exclude '*.sh'
-    jar.exclude '*.yml'
-    dependencies{
-
-        compile fileTree( dir: "lib", include: '*.jar' )
-        compile project(':future-utils')
-        compile project(':future-http')
-        compile project(':future-global')
-        compile project(':future-doc')
-
-        compile 'com.github.tobato:fastdfs-client:1.26.5'
-        compile 'com.aliyun.oss:aliyun-sdk-oss:3.7.0'
-        compile 'com.aliyun:aliyun-java-sdk-core:4.4.1'
-        compile 'com.aliyun:aliyun-java-sdk-dysmsapi:1.1.0'
-        compile 'com.suven.framework:swagger-ui-layer:1.0.3'
-
-        compile 'org.apache.curator:curator-framework:2.12.0'
-
-    }
-}
-
-
-
-project(':future-doc') {
-    jar.exclude 'env.conf'
-    jar.exclude 'logback.xml'
-    jar.exclude '*.sh'
-    jar.exclude '*.yml'
-    dependencies{
-
-        compile fileTree( dir: "lib", include: '*.jar' )
-        compile "ch.qos.logback:logback-classic:${logback_version}"
-        compile "ch.qos.logback:logback-core:${logback_version}"
-        compile "ch.qos.logback:logback-access:${logback_version}"
-        compile "org.slf4j:slf4j-api:${slf4j_version}"
-        compile "org.slf4j:slf4j-log4j12:${slf4j_version}"
-        compile "org.slf4j:slf4j-ext:${slf4j_version}"
-        compile "org.slf4j:jcl-over-slf4j:${slf4j_version}"
-        compile "org.slf4j:log4j-over-slf4j:${slf4j_version}"
-        compile 'net.logstash.logback:logstash-logback-encoder:5.1'
-
-        compile "org.springframework:spring-core:${spring_version}"
-        compile "org.springframework:spring-context:${spring_version}"
-        compile "org.springframework:spring-web:${spring_version}"
-        compile "org.springframework:spring-aop:${spring_version}"
-        compile "org.springframework:spring-beans:${spring_version}"
-        compile "org.springframework.boot:spring-boot-autoconfigure:${spring_boot_version}"
-        compile "com.baomidou:mybatis-plus-annotation:${mybatis_plus_version}"
-        compile 'com.alibaba:fastjson:1.2.58'
-        compile 'org.reflections:reflections:0.9.9-RC1'
-        compile 'commons-lang:commons-lang:2.6'
-        compile 'org.apache.commons:commons-lang3:3.4'
-
-    }
-}
-
-project(':swagger-ui-layer') {
-    dependencies{
-        sourceSets {
-            main {
-                java {
-                    srcDir 'src'
-                    exclude '**/Test*.java'
-                }
-                resources {
-                    srcDir 'resources'
-                    include 'META-INF/**'
-                }
-            }
-        }
-    }
-}
 
 
 
