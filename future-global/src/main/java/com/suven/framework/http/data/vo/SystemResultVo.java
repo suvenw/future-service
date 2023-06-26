@@ -3,7 +3,6 @@ package com.suven.framework.http.data.vo;
 import com.alibaba.fastjson.JSONObject;
 import com.suven.framework.common.api.ApiDesc;
 import com.suven.framework.common.enums.SystemMsgCodeEnum;
-import org.apache.commons.lang3.ClassUtils;
 
 import java.io.Serializable;
 

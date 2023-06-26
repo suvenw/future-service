@@ -2,8 +2,6 @@ package com.suven.framework.http.data.vo;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.suven.framework.http.inters.IResultCodeEnum;
-import org.apache.commons.lang3.ClassUtils;
 
 import java.io.Serializable;
 
@@ -65,7 +63,7 @@ public class ResponseResultVo<T> implements IResponseResult<T>, Serializable {
 	public IResponseResult buildResultVo(boolean success, int code, String message, Object result) {
 		this.code = code;
 		this.msg = message;
-		this.setData(result);
+		this.data = this.initData(result);
 		return this;
 	}
 
@@ -88,9 +86,8 @@ public class ResponseResultVo<T> implements IResponseResult<T>, Serializable {
 		return data;
 	}
 
-	public void setData(Object data) {
-		this.data = this.initData(data);;
-	}
+
+
 
 	@Override
 	public String toString(){

@@ -27,7 +27,6 @@ public interface IRequestVo {
     <T> T parseJson(String jsonString, Class<T> clazz);
 
 
-
     /**
      * http json提交参数头部实现java反射类对象;
      * @param headersMap http头的聚合信息
@@ -36,4 +35,5 @@ public interface IRequestVo {
      */
 
     <T> T parseHeader(Map<String,String> headersMap, Class<T> clazz) ;
+
 }

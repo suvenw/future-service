@@ -1,15 +1,16 @@
 package com.suven.framework.http.data.vo;
 
 import com.suven.framework.common.api.IRequestVo;
-import org.apache.commons.lang3.reflect.FieldUtils;
+import com.suven.framework.common.data.BaseBeanClone;
 import com.suven.framework.http.JsonParse;
+import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Map;
 
-public class RequestParserVo implements IRequestVo, Serializable {
+public class RequestParserVo extends BaseBeanClone implements IRequestVo, Serializable {
 
 
     public static RequestParserVo build(){
@@ -46,7 +47,7 @@ public class RequestParserVo implements IRequestVo, Serializable {
         T header = null;
         try{
             header = clazz.newInstance();
-            Field[] fields = FieldUtils.getAllFields(clazz.getClass());
+            Field[] fields = FieldUtils.getAllFields(clazz);
             for (Field field : fields) {
                 try {
                     int mod = field.getModifiers();

@@ -2,8 +2,6 @@ package com.suven.framework.http.exception;
 
 import com.suven.framework.http.inters.IResultCodeEnum;
 
-import java.util.Arrays;
-
 /**
  * Created by Alex on 2014/9/3
  */
