@@ -1,5 +1,6 @@
 package com.suven.framework.generator;
 
+import com.github.pagehelper.autoconfigure.PageHelperAutoConfiguration;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,7 @@ import org.springframework.core.env.Environment;
 
 import java.net.InetAddress;
 
-@SpringBootApplication
+@SpringBootApplication(exclude={PageHelperAutoConfiguration.class})
 @MapperScan("com.suven")
 public class GeneratorMain {
 
