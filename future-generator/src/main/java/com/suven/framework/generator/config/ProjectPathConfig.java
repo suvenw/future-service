@@ -145,10 +145,9 @@ public class ProjectPathConfig implements IProjectPathConfig{
                 .setHtmlPath("/http-vue/src/")
                 .setTemplatesPath("/Users/suven/project/workspace/st-video-service/templates/templates/");
                 }
-    // /Users/sixeco/suven/workspace/suvenw/weixue-service
     public static ProjectPathConfig init3(){
         return build().setId(3).setUserNme("Suven").setIsUse(1)
-                .setBaseProjectPath("/Users/sixeco/suven/workspace/suvenw/weixue-service")
+                .setBaseProjectPath("/Users/mac/suven/workspace/suvenw/weixue-service")
                 .setApiProjectPath("api-poems-service")
                 .setHttpProjectPath("http-poems-service")
                 .setRpcProjectPath("rpc-poems-service")

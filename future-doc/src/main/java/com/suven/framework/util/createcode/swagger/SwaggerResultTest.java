@@ -14,11 +14,7 @@ public class SwaggerResultTest {
         SwaggerRequestMethodBean methodBean = SwaggerRequestMethodBean.init();
 
         SwaggerRequestMethodMap methodMap = SwaggerRequestMethodMap.build().put(RequestMethod.POST.name(),methodBean);
-
-       ;
         SwaggerPathsMap paths =  SwaggerPathsMap.build().put("url",methodMap);
-
-
         bean.setInfo(SwaggerInfo.init());
 
         bean.setBasePath("/soft").setHost("192.168.2.1:19030").setSwagger("2.0")

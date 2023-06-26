@@ -1,44 +1,32 @@
 package com.suven.framework.util.createcode.swagger;
 
 
+
+import com.suven.framework.common.api.ApiCmd;
 import com.suven.framework.common.api.ApiDesc;
 import com.suven.framework.common.api.ApiDoc;
 import com.suven.framework.common.api.DocConstants;
 import com.suven.framework.util.createcode.doc.SwaggerRequestVo;
 import com.suven.framework.util.createcode.doc.SwaggerResponseVo;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.reflections.Reflections;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-
-/**
- * @Author 作者 : suven.wang
- * @CreateDate 创建时间: 2022-01-13
- * @WeeK 星期: 星期四
- * @Version 版本: v1.0.0
- * <pre>
- *
- *  @Description (说明):  扫描控制类
- *
- * </pre>
- * <pre>
- * 修改记录
- *    修改后版本:  1.0   修改人：suven  修改日期: 20220113    修改内容:重构逻辑
- * </pre>
- * @Copyright: (c) 2021 gc by https://www.suven.top
- **/
+import java.util.stream.Collectors;
 
 @ConditionalOnProperty(name = DocConstants.TOP_SERVER_API_ENABLED,  matchIfMissing = false)
-@ConfigurationProperties(prefix = DocConstants.TOP_SERVER_API)
 @Configuration
 public class SwaggerReflectionsDoc {
 
@@ -46,20 +34,18 @@ public class SwaggerReflectionsDoc {
 
 
 
-    private static List<Class> controllerClassList = new ArrayList<>();
+    private static Set<String> urlSet = new HashSet<>();
+    private static List<Class> controllerClass = new ArrayList<>();
 
 
-    private  Map<String, Map<String, SwaggerMethodBean>> controllerRequestClass = new TreeMap<>();
+    private static Map<String, Map<String, SwaggerMethodBean>> requestClass = new TreeMap<>();
 //    private static Map<String, String > classDescription = new HashMap<>();
-    /** 统计所有接口控制层的实现map,key->类型名,value -> 类型的文档标签 **/
-    private  Map<String,ApiDoc> controllerClassToGroup = new TreeMap<>();//k-v->class-group
-    private  Map<String,String> controllerApiDocGroup = new HashMap<>();//k-v->class-group
+    private static Map<String,ApiDoc> classToGroup = new TreeMap<>();//k-v->class-group
+    private static Map<String,SwaggerTagBean> groupToBean = new TreeMap<>();//k-v->group-bean
 
-
-
-
-    private  Map<String, SwaggerResponseParameterMap> responseParameterBeanMap = new TreeMap<>();
-    private  Map<String, String> responseClassNameAndSimpleNameMap = new HashMap<>();
+    private static Map<String, List<SwaggerParameterBean>> requestVoMap = new TreeMap<>();
+    private static Map<String, SwaggerResponseParameterMap> responseVoMap = new TreeMap<>();
+    private static Map<String, String> responseUrlMap = new TreeMap<>();
 
     private String spance = "&nbsp&nbsp&nbsp&nbsp";
     private static Map<String,SwaggerResultBean> apiDoc = new TreeMap<>();
@@ -67,8 +53,6 @@ public class SwaggerReflectionsDoc {
 
     @Autowired
     private SwaggerReflection swaggerReflection;
-    @Autowired
-    private ReflectionsController reflectionsController;
 
     public static SwaggerResultBean getApiDoc(String search){
         SwaggerResultBean resultBean =  apiDoc.get("api");
@@ -154,7 +138,6 @@ public class SwaggerReflectionsDoc {
 
 
 
-
     /**
      * 获取指定文件下面的RequestMapping方法保存在mapp中
      * T extends Annotation
@@ -162,70 +145,82 @@ public class SwaggerReflectionsDoc {
      */
     @PostConstruct
     public void init() {
-        logger.info(" -------------Swagger Reflections document  start init --------- PostConstruct -------------"  );
-        Map controllerTreeClass = reflectionsController.getControllerClass(swaggerReflection);
-        controllerClassList.addAll(controllerTreeClass.values());
+        //初始化扫描包;
+        Reflections reflections = swaggerReflection.getReflections();
+        Set<Class<?>> classesList = reflections.getTypesAnnotatedWith(Controller.class);
+        Set<Class<?>> restList = reflections.getTypesAnnotatedWith(RestController.class);
+        Set<Class<?>> apiDocList = reflections.getTypesAnnotatedWith(ApiDoc.class);
+        TreeMap<String,Class> controllerTreeClass = new TreeMap<>();
+        controllerTreeClass.putAll( classesList.stream().collect(Collectors.toMap(Class::getSimpleName, clazz -> clazz)));
+        controllerTreeClass.putAll(restList.stream().collect(Collectors.toMap(Class::getSimpleName, clazz -> clazz)));
+        controllerTreeClass.putAll(apiDocList.stream().collect(Collectors.toMap(Class::getSimpleName, clazz -> clazz)));
+
+        controllerClass.addAll(controllerTreeClass.values());
         // 存放url和   RequestMapping 的对应关系
-        for (Class controllerClass : controllerClassList) {
+        for (Class classes : controllerClass) {
             //得到该类下面的所有方法
-            Method[] controllerMethodList = controllerClass.getDeclaredMethods();
-            if (null == controllerMethodList || controllerMethodList.length == 0){
+            Method[] methods = classes.getDeclaredMethods();
+            if (null == methods || methods.length == 0){
                 continue;
             }
-            String controllerClassName = controllerClass.getName();
 
-            ApiDoc table = AnnotationUtils.findAnnotation(controllerClass, ApiDoc.class);
+            ApiDoc table = AnnotationUtils.findAnnotation(classes, ApiDoc.class);
             if(table != null){
-                controllerClassToGroup.put(controllerClassName,table);
+//                String desc = table.module() == null ? table.value() : table.module();
+//                desc =  desc == null ? classes.getSimpleName() : desc;
+//                desc = notEquals(table.groupDesc()) ? table.groupDesc() : desc;
+//
+//                String groupName = notEquals(table.group()) ? table.group():classes.getSimpleName();
+                classToGroup.put(classes.getName(),table);
+//                classDescription.put(classes.getName(), desc);
             }
-            Map<String, SwaggerMethodBean> requestMethodGroupMap  = new TreeMap<>();
-            controllerRequestClass.put(controllerClassName,requestMethodGroupMap);
-
-            /** 按类解释每个方法的实现 **/
-            for (Method controllerMethod : controllerMethodList) {
+            for (Method method : methods) {
                 try {
                     //得到该类下面的RequestMapping注解
-                    ApiDoc apiDoc =  controllerMethod.getAnnotation(ApiDoc.class);
+                    ApiDoc apiDoc =  method.getAnnotation(ApiDoc.class);
                     if(null == apiDoc){
                         continue;
                     }
                     SwaggerMethodBean methodBean =  SwaggerMethodBean.build();
-                    /** 解释方法的请求方式和url **/
-                    reflectionsController.getMappingMethodTypeUrl(controllerMethod,methodBean, apiDoc);
-                    String requestPath  = methodBean.getRequestUrl();
-                    if (null == requestPath ) {
+                    String path  = methodMapping(method,methodBean, apiDoc);
+
+                    if (null == path ) {
                         continue;
                     }
 
-                    /** 解释或通过构造器,获得返回类信息 **/
-                    Class apiDocResponseClass = reflectionsController.getApiDocResponseClass(apiDoc);
-                    String apiDocResponseName = apiDocResponseClass != null ? apiDocResponseClass.getName() : null;
+                    Class apiDocResponse = null;
+                    String apiDocResponseName = null;
+                    if(null !=  apiDoc.response()){
+                        if(apiDoc.response().length == 1){
+                            apiDocResponse = apiDoc.response()[0];
+                            apiDocResponseName = apiDocResponse.getName();
+                        }else {
+                            apiDocResponse = getConstructorClass(apiDoc.response());
+                            if(apiDocResponse != null){
+                                apiDocResponseName = apiDocResponse.getName();
+                            }
+                        }
+                    }
 
-                    /**通过指定实现分组 **/
-                    String moduleGroupName = table.group();
-                    moduleGroupName = (moduleGroupName != null)  ? moduleGroupName : controllerClass.getSimpleName();
-                    controllerApiDocGroup.put(controllerClassName,moduleGroupName);
-
-                    /**构造请求参数文档 **/
-                    List<SwaggerParameterBean>  requestParameterList = requestParameterConverterBean(apiDoc.request()[0]);
-
-                    /** 把每个方法的信息汇总到 methodBean 对象中**/
                     methodBean.setRequestInfo(apiDoc.value())
-                            .setRequestUrl(requestPath)
                             .setRequestName(apiDoc.request()[0].getName())
                             .setResponseName(apiDocResponseName)
                             .setRequestAuthor(apiDoc.author())
-                            .setSourceClassName(controllerClassName)
-                            .setModuleGroupName(moduleGroupName)
-                            .setRequestMethodName(controllerMethod.getName())
                     ;
-                    /** 设置请求参数对象解释后对象信息 **/
-                    methodBean.setRequestParameterList(requestParameterList);
 
-                    requestMethodGroupMap.put(methodBean.getRequestUrl(),methodBean);
-                    /**构造返回参数文档 **/
-                    responseParameterConverterBean(apiDocResponseClass);
+                    Map<String, SwaggerMethodBean> methodClass =  requestClass.get(classes.getName());
+                    if(methodClass == null){
+                        methodClass = new HashMap<>();
+                    }
+                    methodClass.put(path,methodBean);
+                    requestClass.put(classes.getName(),methodClass);
 
+                    converterParameterBean(apiDoc.request()[0]);
+
+
+
+                    converterResponseVo(apiDocResponse);
+                    urlSet.add(path);
                 } catch (Exception e) {
                     logger.error("SwaggerReflectionsDoc init exception: [{}]", e);
                     e.printStackTrace();
@@ -233,40 +228,117 @@ public class SwaggerReflectionsDoc {
 
             }
         }
-        outSwaggerDoc();
+        out();
         logger.info(" -------------Swagger Reflections document  end init --------- PostConstruct -------------"  );
+
     }
 
+    private  String methodMapping(Method method, SwaggerMethodBean methodBean, ApiDoc apiDoc){
+        methodBean.setRequestMethodName(method.getName());
 
+        RequestMapping mapping =  method.getAnnotation(RequestMapping.class);
+        if (notNull(mapping) && notOne(mapping.value())) {
+            methodBean.setRequestUrl(mapping.value()[0]);
+            if (null != mapping.method() && mapping.method().length >= 1){
+                methodBean.setRequestMethodType(mapping.method()[0].name());
+            }else {
+                methodBean.setRequestMethodType("GET");
+            }
+            return mapping.value()[0];
+        }
+        PostMapping post =  method.getAnnotation(PostMapping.class);
+        if (notNull(post) && notOne(post.value())) {
+            methodBean.setRequestUrl(post.value()[0]);
+            methodBean.setRequestMethodType("POST");
+            return post.value()[0];
+        }
+        GetMapping get =  method.getAnnotation(GetMapping.class);
+        if (notNull(get) && notOne(get.value())) {
+            methodBean.setRequestUrl(get.value()[0]);
+            methodBean.setRequestMethodType("GET");
+            return get.value()[0];
+        }
+        DeleteMapping delete =  method.getAnnotation(DeleteMapping.class);
+        if (notNull(delete) && notOne(delete.value())) {
+            methodBean.setRequestUrl(delete.value()[0]);
+            methodBean.setRequestMethodType("DELETE");
+            return delete.value()[0];
+        }
+        PatchMapping patch =  method.getAnnotation(PatchMapping.class);
+        if (notNull(patch) && notOne(patch.value())) {
+            methodBean.setRequestUrl(patch.value()[0]);
+            methodBean.setRequestMethodType("PATCH");
+            return patch.value()[0];
+        }
+        ApiCmd apiCmd =  method.getAnnotation(ApiCmd.class);
+        if (notNull(apiCmd) && notOne(apiCmd.cmd())) {
+            String cmd = apiDoc.cmd();
+            methodBean.setRequestUrl(cmd);
+            methodBean.setRequestMethodType(apiCmd.methodType());
+            return cmd;
+        }
+        if(notNull(apiDoc) ){
+            String apiMethodType  = apiDoc.methodType();
+            String cmd = apiDoc.cmd();
+            methodBean.setRequestUrl(cmd);
+            methodBean.setRequestMethodType(apiMethodType);
+            return cmd;
+        }
+        return null;
 
+    }
 
-    private   List<SwaggerParameterBean>  requestParameterConverterBean(Class requestParameterClass){
+    private boolean notEquals(Object patch){
+        return patch != null && !"".equals(patch) ;
+    }
+    private boolean notNull(Object patch){
+        return patch != null;
+    }
+    private boolean notOne(String... path){
+        if (null != path && path.length == 1 )  {
+            return true;
+        }
+        return false;
+
+    }
+
+    private Class<?> getConstructorClass(Class<?>[] response){
+        try{
+            Class[] classes = new Class[response.length - 1];
+            System.arraycopy(response, 1, classes, 0, classes.length);
+            Constructor constructor = response[0].getDeclaredConstructor(classes);
+            return constructor.getClass();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private  void converterParameterBean(Class entityClazz){
 //        List<Field> fieldList = FieldUtils.getAllFieldsList(entityClazz);
-        List<SwaggerParameterBean>  parameterList = new ArrayList();
-        /** 请求参数,是否有复合实现对象,如果有则执行分隔线类型 addSeparateInfo **/
+        List<SwaggerParameterBean>  list = new ArrayList();
         Map<Class,String> compoundMap = new LinkedHashMap<>();
 
-        List<SwaggerParameterBean>  beanParameterList = converterParameterClassParameterBean(requestParameterClass,compoundMap);
-        parameterList.addAll(beanParameterList);
+        List<SwaggerParameterBean>  beanList = converterParameterClassParameterBean(entityClazz,compoundMap);
+        list.addAll(beanList);
 
         if(compoundMap.size() > 0){
             for (Class classKey : compoundMap.keySet()) {
                 String fieldType = compoundMap.get(classKey);
-                /** 如果是复合类组,增加分隔线说明 **/
+                //如果是复合类组,增加分隔线说明
                 List<SwaggerParameterBean> separate =  addSeparateInfo(classKey.getSimpleName(),fieldType);
                 List<SwaggerParameterBean>  beanList2 =  converterParameterClassParameterBean(classKey, null);
-                parameterList.addAll(separate);
-                parameterList.addAll(beanList2);
+                list.addAll(separate);
+                list.addAll(beanList2);
             }
 
         }
-        return  parameterList;
-
+        requestVoMap.put(entityClazz.getName(),list);
     }
 
     private List<SwaggerParameterBean>  converterParameterClassParameterBean(Class entityClazz, Map<Class,String> compoundMap){
         List<Field> fieldList = FieldUtils.getAllFieldsList(entityClazz);
-        List<SwaggerParameterBean>  list = new ArrayList<>();
+        List list = new ArrayList();
 
         for (Field field : fieldList) {
             ApiDesc apiDesc = field.getAnnotation(ApiDesc.class);
@@ -283,8 +355,7 @@ public class SwaggerReflectionsDoc {
             if(0 == apiDesc.isHide()){
                 list.add(parameterBean);
             }
-            /** 获取参数属性是否包括对象类 **/
-           converterParameterizedType(entityClazz,field,compoundMap,type);
+            SwaggerClassUtil.converterParameterizedType(entityClazz,field,compoundMap,type);
 
 
         }
@@ -316,37 +387,10 @@ public class SwaggerReflectionsDoc {
         return Arrays.asList(parameterBean1,parameterBean2,parameterBean3);
     }
 
-    /**
-     * 判断类属性 是objet 对象或聚合,如果是则添加到compoundList聚合中
-     * @param entityClazz
-     * @param field
-     * @param compoundList 复合统计map
-     * @return
-     */
-    private boolean converterParameterizedType(Class entityClazz,Field field,Map<Class,String> compoundList,String paramType){
-        Class fieldType = field.getType();
-        /** 1.如果 全是基本属性正常结果; **/
-         if (SwaggerClassUtil.isPrimitiveType(fieldType) || compoundList == null ) {
-            return false;
-        }
-        /** 2.如果数组或不是字节数据组时,进入复合统计中;; **/
-        if (!SwaggerClassUtil.isIterable(fieldType)) {
-            compoundList.put(fieldType,paramType);
-            return true;
-        }
-        /** 获取属性是否复合类对象,并且不为基类对象 **/
-        Class genericClass =  SwaggerClassUtil.getGenericTypeToCompound(entityClazz, field);
-        if(genericClass != null){
-            compoundList.put(genericClass,paramType);
-        }
-        return false;
-    }
 
 
 
-
-
-    private  void responseParameterConverterBean(Class entityClazz){
+    private  void converterResponseVo(Class entityClazz){
         if(entityClazz == null){
             entityClazz = Long.class;
         }
@@ -404,13 +448,19 @@ public class SwaggerReflectionsDoc {
                 if (null != apiDesc) {
                     descValue = apiDesc.value();
                 }
-                //排除类和属性
-                boolean  isExcludeFieldOrClass= SwaggerClassUtil.excludeFieldOrClass(entityClazz, field);
-                if (isExcludeFieldOrClass){
+                // 如果是类或集合,从新回调;
+                Class<?> fieldType = field.getType();
+                if (SwaggerClassUtil.isTypeClass(field)) { //过滤 排除 静态,或final类型
+                    continue;
+                } //过滤
+                if(SwaggerClassUtil.isMapOrJson(fieldType)){
+                    logger.warn("entityClazz is map Object  pass return fieldType[{}]..........,",fieldType);
+                    continue;
+                } //过滤 类自己本身，如果出现迭归类，会出现死循环
+                if(SwaggerClassUtil.isOneselfClass(fieldType,entityClazz)){
                     continue;
                 }
 
-                Class<?> fieldType = field.getType();
                 SwaggerResponseProperty property = SwaggerResponseProperty.build();
                 if (SwaggerClassUtil.isPrimitiveType(fieldType)) {
                     property.setType(field.getType().getSimpleName()).setDescription(descValue);
@@ -422,7 +472,10 @@ public class SwaggerReflectionsDoc {
                     if (genericType != null && genericType instanceof ParameterizedType) {
                         //得到泛型里的class类型对象。
                         Class<?> genericClazz = SwaggerClassUtil.getRawType(genericType);
-                        //过滤 类自己本身，如果出现迭归类，会出现死循环,和 genericClazz 为 null
+                        if(genericClazz == null){
+                            continue;
+                        }
+                        //过滤 类自己本身，如果出现迭归类，会出现死循环
                         if(SwaggerClassUtil.isOneselfClass(genericClazz,entityClazz)){
                             continue;
                         }
@@ -457,10 +510,8 @@ public class SwaggerReflectionsDoc {
     }
 
 
-
-
     private void primitiveTypeClass(Class clazz){
-        if( null !=  responseParameterBeanMap.get(clazz.getName())){
+        if( null !=  responseVoMap.get(clazz.getName())){
             return;
         }
         Map<String, SwaggerResponseProperty> map = new TreeMap<>();
@@ -485,108 +536,109 @@ public class SwaggerReflectionsDoc {
         SwaggerResponseParameterMap parameterBean = SwaggerResponseParameterMap.build();
         parameterBean.responseResultVo(clazz.getSimpleName());
         parameterBean.responseDataVo(clazz.getSimpleName(),map);
-
-        responseClassNameAndSimpleNameMap.put(clazz.getName(),clazz.getSimpleName());
-        responseParameterBeanMap.put(clazz.getName(),parameterBean);
+        responseUrlMap.put(clazz.getName(),clazz.getSimpleName());
+        responseVoMap.put(clazz.getName(),parameterBean);
     }
 
-    public void outSwaggerDoc(){
+
+    public void out(){
         try {
             SwaggerResultBean bean = new SwaggerResultBean();
             swaggerReflection.initSwaggerInfo(bean);
-            bean.setPaths(SwaggerPathsMap.build()).setDefinitionsAll(responseParameterBeanMap.values());
+            bean.setPaths(SwaggerPathsMap.build()).setDefinitionsAll(responseVoMap.values());
 
-            /** 统计所有接口 分组实现 map,key->默认是类名,如果ApiDoc标签存在按标签 group值分组,value -> 具体的实现方法对象 **/
-            Map<String,SwaggerTagBean> requestMethodBeanGroup = new TreeMap<>();//k-v->group-bean
-
-            for(Class controllerClass : controllerClassList){
+            for(Class classes : controllerClass){
+//            SwaggerRequestMethodBean methodBean = SwaggerRequestMethodBean.init();
                 try {
-                    /** 通过类,获取所有的接口方法 **/
-                    Map<String, SwaggerMethodBean> controllerClassMethodMap =  controllerRequestClass.get(controllerClass.getName());
-                    if(null == controllerClassMethodMap ){
+                    Map<String, SwaggerMethodBean> methodUrlMap =  requestClass.get(classes.getName());
+                    if(null == methodUrlMap){
                         continue;
                     }
-                    /** 获取类对象的分类 **/
-                    ApiDoc table   = controllerClassToGroup.get(controllerClass.getName());
-                    String moduleGroupName = controllerApiDocGroup.get(controllerClass.getName());
-                    if(moduleGroupName == null){
-                        continue;
-                    }
-                    SwaggerTagBean swaggerTagBean = requestMethodBeanGroup.get(moduleGroupName);
-                    if(null == swaggerTagBean) {
-                        swaggerTagBean = SwaggerTagBean.init(moduleGroupName, table);
-                        bean.setTags(swaggerTagBean);//只初始化一次
-                        requestMethodBeanGroup.put(moduleGroupName,swaggerTagBean);
-                    }
-//
 
-                    for (String url : controllerClassMethodMap.keySet()){
+                    ApiDoc table   = classToGroup.get(classes.getName());
+
+                    SwaggerTagBean swaggerTagBean = null;
+                    /**通过指定实现分组 **/
+                   String className = table == null ? null : table.group();
+                   if(className == null) {
+                       //若没有指定分级,则通过类名组分组;
+                       className =  classes.getSimpleName();
+                   }
+
+                    swaggerTagBean = groupToBean.get(className);
+                    if(null == swaggerTagBean) {
+                        if(table != null){
+                            swaggerTagBean = SwaggerTagBean.init(className, table);
+                        }else {
+                            swaggerTagBean = SwaggerTagBean.init(className, className);
+                        }
+                        bean.setTags(swaggerTagBean);
+                        groupToBean.put(className,swaggerTagBean);
+                    }
+//                    swaggerTagBean = SwaggerTagBean.init(groupName, classDesc);
+//                    bean.setTags(swaggerTagBean);
+
+                    for (String url : methodUrlMap.keySet()){
                         try {
 
-                            SwaggerMethodBean swaggerMethodBean =  controllerClassMethodMap.get(url);
-
+                            SwaggerMethodBean swaggerMethodBean =  methodUrlMap.get(url);
                             SwaggerRequestMethodBean methodBean = SwaggerRequestMethodBean.init();
 
                             StringBuilder sb = new StringBuilder().append(swaggerMethodBean.getRequestMethodName()).
-                                    append(controllerClass.getSimpleName()).append(swaggerMethodBean.getRequestMethodType());
+                                    append(classes.getSimpleName()).append(swaggerMethodBean.getRequestMethodType());
 
-                            String responseUrl = responseClassNameAndSimpleNameMap.get(swaggerMethodBean.getResponseName());
+                            String responseUrl = responseUrlMap.get(swaggerMethodBean.getResponseName());
 
 //                            methodBean.setTags((classes.getSimpleName()));
-                            methodBean.setTags(moduleGroupName);
+                            methodBean.setTags(className);
                             methodBean.setSummary(swaggerMethodBean.getRequestMethodName() + spance + swaggerMethodBean.getRequestInfo());
                             methodBean.setDescription(swaggerMethodBean.getRequestInfo());
                             methodBean.setAuthor(swaggerMethodBean.getRequestAuthor());
                             methodBean.setOperationId(sb.toString());
-                            methodBean.setParameters(swaggerMethodBean.getRequestParameterList());
+                            methodBean.setParameters(requestVoMap.get(swaggerMethodBean.getRequestName()));
 
                             methodBean.setResponses(SwaggerResponseResultMap.build().setCode().setResponse(responseUrl));
                             methodBean .setDeprecated(false);
-
 
                             SwaggerRequestMethodMap methodMap = SwaggerRequestMethodMap.build().put(swaggerMethodBean.getRequestMethodType(),methodBean);
 
                             //                paths.put(url,methodMap);
                             bean.getPaths().put(url,methodMap);
                         }catch (Exception e){
-                            logger.error("Exception classes :[{}] request methodUrl : [{}], printStackTrace :[{}] ",controllerClass, url,e);
+                            logger.error("Exception classes :[{}] request methodUrl : [{}], printStackTrace :[{}] ",classes, url,e);
                             e.printStackTrace();
                         }
                     }
                 }catch (Exception e){
-                    logger.error("Exception classes :[{}] request SwaggerMethodBean bean : [{}], printStackTrace :[{}] ",controllerClass, bean.toString(),e);
+                    logger.error("Exception classes :[{}] request SwaggerMethodBean bean : [{}], printStackTrace :[{}] ",classes, bean.toString(),e);
                     e.printStackTrace();
                 }
 
-            } apiDoc.put("api", bean);
+            }
+            apiDoc.put("api", bean);
             cleanAllParam();
         }catch (Exception e){
-            logger.error("Exception classes :[{}] request Method out , printStackTrace :[{}] ", SwaggerReflectionsDoc.class,e);
+            logger.error("Exception classes :[{}] request Method out , printStackTrace :[{}] ",SwaggerReflectionsDoc.class,e);
             e.printStackTrace();
         }
     }
 
 
     private void cleanAllParam(){
-        controllerClassList = null;
-        responseParameterBeanMap = null;
-        responseClassNameAndSimpleNameMap = null;
-        controllerClassToGroup = null;
+        urlSet = null;
+        controllerClass = null;
+        requestVoMap = null;
+        responseVoMap = null;
+        responseUrlMap = null;
+        classToGroup = null;
+        groupToBean = null;
     }
 
     public static void main(String[] agr){
         SwaggerReflectionsDoc doc =  new SwaggerReflectionsDoc();
         Class[] classes = {SwaggerResponseVo.class, SwaggerRequestVo.class};
-//        doc.getConstructorClass(classes);
+        doc.getConstructorClass(classes);
 
-//        doc.out();
-//        doc.converterResponseVo(SwaggerResponse2Vo.class);
 
-//        Set<Class<?>> module = reflections.getSubTypesOf(RequestMapping.class);
-//
-//        for (Class claxx : module) {
-//            //获取该类上指定Observer标签的方法
-//           System.out.println(claxx);
-//        }
     }
 }

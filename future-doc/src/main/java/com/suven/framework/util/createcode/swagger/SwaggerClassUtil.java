@@ -157,4 +157,97 @@ public class SwaggerClassUtil {
         }
     }
 
+    /**
+     * 判断类属性 是objet 对象或聚合,如果是则添加到compoundList聚合中
+     * @param entityClazz
+     * @param field
+     * @param compoundList
+     * @return
+     */
+    public static boolean converterParameterizedType(Class entityClazz,Field field,Map<Class,String> compoundList,String paramType){
+        Class fieldType = field.getType();
+        if (isPrimitiveType(fieldType) || compoundList == null ) {
+            return false;
+        }
+        if (!isIterable(fieldType)) {
+            compoundList.put(fieldType,paramType);
+            return true;
+        }
+        Type genericType = field.getGenericType();
+        if (genericType != null && genericType instanceof ParameterizedType) {
+            //得到泛型里的class类型对象。
+            Class<?> genericClazz = getRawType(genericType);
+            if(genericClazz == null){
+                return false;
+            }
+            //过滤 类自己本身，如果出现迭归类，会出现死循环
+            if(isOneselfClass(genericClazz,entityClazz)){
+                return false;
+            }
+            compoundList.put(genericClazz,paramType);
+            return true;
+        }
+        return false;
+    }
+
+
+//    /**
+//     * 排除 静态,或final类型
+//     * @param field
+//     * @return
+//     */
+//    public static boolean isTypeClass(Field field) {
+//        boolean isStatic = Modifier.isStatic(field.getModifiers());
+//        boolean isFinal = Modifier.isFinal(field.getModifiers());
+////			boolean isTyep = RedisSetEnum.isContains(property.getType().getSimpleName());
+//        return isStatic || isFinal;
+//    }
+//    /**属性类型**/
+//    public static boolean isPrimitiveType(Class<?> fieldType) {
+//        return ClassUtils.isPrimitiveOrWrapper(fieldType)
+//                || fieldType == String.class || fieldType == Date.class || fieldType == byte[].class ;
+//    }
+//
+//    //排除map类
+//    private static  boolean isMapOrJson(Class<?> fieldType){
+//        boolean isLog = isMapOrJsonClass(fieldType);
+//        if(isLog){
+//            logger.warn("entityClazz is map Object  pass return entityClazz[{}]..........,",fieldType);
+//        }
+//        return isLog;
+//    }
+//    public static  boolean isMapOrJsonClass(Class<?> fieldType){
+//        if(fieldType.isAssignableFrom(Map.class)){
+//            return true;
+//        }
+//
+//        Class<?> interfaces[] = fieldType.getInterfaces();
+//        if(null != interfaces && Arrays.asList(interfaces).contains(Map.class)){
+//            return true;
+//        }
+//        if("JSONOBJECT".equals(fieldType.getSimpleName().toUpperCase())){
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    /** 排队类本身，解决迭归类死循环问题 **/
+//    public static  boolean isOneselfClass(Class<?> fieldType,Class<?> entityClazz){
+//        boolean isOwnerClazz = fieldType.equals(entityClazz) || entityClazz.getSimpleName().equals(fieldType.getSimpleName());
+//        if(isOwnerClazz){
+//            logger.warn(" class isOneselfClass is contains    fieldType:[{}] and entityClazz:[{}]..........,",fieldType,entityClazz);
+//        }
+//        return isOwnerClazz;
+//    }
+//
+//
+//    /**
+//     * 数组或集合类型
+//     * @param clazz
+//     * @return
+//     */
+//    public static boolean isIterable(Class<?> clazz) {
+//        return (clazz.isArray() || Collection.class.isAssignableFrom(clazz))
+//                && !byte[].class.isAssignableFrom(clazz);
+//    }
 }

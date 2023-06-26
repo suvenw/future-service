@@ -1,6 +1,5 @@
 package com.suven.framework.util.createcode.swagger;
 
-import java.util.HashMap;
 import java.util.TreeMap;
 
 public class SwaggerResponseProperty extends TreeMap {

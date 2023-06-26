@@ -1,5 +1,6 @@
 package com.suven.framework.util.createcode.swagger;
 
+import com.suven.framework.common.api.ApiPackages;
 import com.suven.framework.common.api.DocConstants;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -16,10 +17,7 @@ import org.springframework.core.env.Environment;
 
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @Author 作者 : suven.wang
@@ -58,7 +56,7 @@ public class SwaggerReflection {
         logger.info(" -------------Swagger initReflections document  start init --------- PostConstruct -------------"  );
         Map<String, ApiPackages> apiPackagesMap = applicationContext.getBeansOfType(ApiPackages.class);
         Set<String> packageList  = new HashSet(16);
-        packageList.add("com");
+//        packageList.add("com");
         if(apiPackagesMap != null && !apiPackagesMap.isEmpty()){
             apiPackagesMap.values().forEach(com ->{
                 if(null != com.getPackages()) {
@@ -115,13 +113,5 @@ public class SwaggerReflection {
         return this.reflections;
     }
 
-//    /**
-//     * 获取指定文件下面的RequestMapping方法保存在mapp中
-//     * T extends Annotation
-//     * @return
-//     */
-//    @PostConstruct
-//    public void init() {
-//
-//    }
+
 }

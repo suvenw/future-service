@@ -1,4 +1,4 @@
-package com.suven.framework.util.createcode.swagger;
+package com.suven.framework.common.api;
 
 /**
  * @Author 作者 : suven.wang
