@@ -12,7 +12,7 @@ import org.springframework.core.env.Environment;
 
 import java.net.InetAddress;
 
-@SpringBootApplication(exclude={PageHelperAutoConfiguration.class})
+@SpringBootApplication
 @MapperScan("com.suven")
 public class GeneratorMain {
 
