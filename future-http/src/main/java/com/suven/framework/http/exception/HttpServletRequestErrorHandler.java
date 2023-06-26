@@ -80,7 +80,7 @@ public class HttpServletRequestErrorHandler extends GlobalExceptionErrorResponse
      *
      * @return the error path
      */
-    @Override
+//    @Override
     public String getErrorPath() {
         String url =  ParamMessage.getRequestMessage().getUri();
         return url;

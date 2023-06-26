@@ -33,7 +33,7 @@ project(':future-global') {
         compile 'com.alibaba:fastjson:1.2.58'
         compile 'com.google.guava:guava:18.0'
         compile 'com.googlecode.json-simple:json-simple:1.1.1'
-        compile 'org.reflections:reflections:0.9.9-RC1'
+        compile 'org.reflections:reflections:0.9.10'
         compile 'com.google.protobuf:protobuf-java:3.6.1'
         compile 'com.googlecode.protobuf-java-format:protobuf-java-format:1.4'
         compile 'io.protostuff:protostuff-core:1.6.0'

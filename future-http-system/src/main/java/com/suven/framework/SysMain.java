@@ -19,6 +19,6 @@ public class SysMain extends AbstractJettyAppServer {
 
     @Override
     protected IProjectModule getServiceName() {
-        return ProjectModuleEnum.HTTP_DEFAULT;
+        return ProjectModuleEnum.HTTP_SYSTEM;
     }
 }

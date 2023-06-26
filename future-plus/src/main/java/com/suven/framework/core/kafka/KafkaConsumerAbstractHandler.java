@@ -1,10 +1,10 @@
 package com.suven.framework.core.kafka;
 
 import com.suven.framework.util.json.JsonUtils;
-import org.apache.dubbo.common.utils.ReflectUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -67,9 +67,10 @@ public abstract class KafkaConsumerAbstractHandler<T>{
 
     }
 
-    private static Method getMethodByName(Class<?> clazz, String methodName) {
+    private static Method getMethodByName(Class<?> clazz, String methodName,Class<?>... paramTypes) {
         try {
-            return ReflectUtils.findMethodByMethodName(clazz, methodName);
+            Method method = ReflectionUtils.findMethod(clazz, methodName,paramTypes);
+            return method;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

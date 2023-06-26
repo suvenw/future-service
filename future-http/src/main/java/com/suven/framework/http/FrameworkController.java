@@ -18,7 +18,6 @@ import com.suven.framework.http.processor.url.SysURLCommand;
 import com.suven.framework.util.createcode.swagger.SwaggerReflectionsDoc;
 import com.suven.framework.util.createcode.swagger.SwaggerResultBean;
 import com.suven.framework.util.crypt.CryptUtil;
-import com.suven.framework.util.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

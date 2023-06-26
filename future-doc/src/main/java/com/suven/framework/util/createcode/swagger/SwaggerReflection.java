@@ -36,7 +36,6 @@ import java.util.*;
  * @Copyright: (c) 2021 gc by https://www.suven.top
  **/
 @ConditionalOnProperty(name = DocConstants.TOP_SERVER_API_ENABLED,  matchIfMissing = false)
-@ConfigurationProperties(prefix = DocConstants.TOP_SERVER_API)
 @AutoConfigureBefore({SwaggerReflectionsDoc.class})
 @Configuration
 public class SwaggerReflection {
@@ -46,10 +45,10 @@ public class SwaggerReflection {
     @Autowired
     private ApplicationContext applicationContext;
 
-    private Reflections reflections;
+    private Reflections reflections ;
 
 
-    @Bean("initReflections")
+//    @Bean("initReflections")
     @ConditionalOnMissingBean
     @PostConstruct
     public Reflections initReflections() {
@@ -107,9 +106,6 @@ public class SwaggerReflection {
     }
 
     public Reflections getReflections(){
-        if(reflections == null){
-            initReflections();
-        }
         return this.reflections;
     }
 

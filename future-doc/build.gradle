@@ -1,0 +1,25 @@
+// 项目名称描述
+description = 'future-doc'
+//引用项目的公共版包版本信息
+def libs = rootProject.ext.libVersions
+
+project(':future-doc') {
+    jar.exclude 'env.conf'
+    jar.exclude 'logback.xml'
+    jar.exclude '*.sh'
+    jar.exclude '*.yml'
+    dependencies{
+
+        compile fileTree( dir: "lib", include: '*.jar' )
+        compile "org.springframework:spring-context:${libs.spring_version}"
+        compile "org.springframework.boot:spring-boot-starter-web:${libs.spring_boot_version}"
+        compile 'com.alibaba:fastjson:1.2.58'
+        compile 'org.reflections:reflections:0.9.10'
+        compile 'commons-lang:commons-lang:2.6'
+        compile 'org.apache.commons:commons-lang3:3.4'
+
+    }
+}
+
+
+
