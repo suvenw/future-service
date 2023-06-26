@@ -5,8 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.suven.framework.http.inters.IResultCodeEnum;
 
-import java.util.Arrays;
-
 
 /**
  * @author vincentdeng
@@ -51,6 +49,14 @@ public class SystemRuntimeException extends RuntimeException{
 		this.error = error;
 
     }
+
+	public SystemRuntimeException(IResultCodeEnum error, Object... errParam)  {
+		super(null == errParam ? error.getMsg() : String.format(error.getMsg(), errParam));
+		this.errorCode =  error.getCode();
+		this.errorMessage = super.getMessage();
+		this.error = error;
+	}
+
 	public SystemRuntimeException setResponse(Object response) {
 		this.response = response;
 		return this;

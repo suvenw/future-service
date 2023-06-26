@@ -75,6 +75,11 @@ public class BasePage<T> implements Serializable {
 		return build.toPageNo(pageNo).toPageSize(pageSize);
 	}
 
+	public static <T> BasePage<T> build(T paramObject, int pageNo, int pageSize){
+		BasePage<T> build = build();
+		return build.toPageNo(pageNo).toPageSize(pageSize).toParamObject(paramObject);
+	}
+
 	
 	public int getIndexId() {
 		return indexId;

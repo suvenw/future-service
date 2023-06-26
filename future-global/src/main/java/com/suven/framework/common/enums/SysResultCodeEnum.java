@@ -1,10 +1,7 @@
 package com.suven.framework.common.enums;
 
 
-import com.suven.framework.common.constants.ReflectionsScan;
 import com.suven.framework.http.inters.IResultCodeEnum;
-
-import java.util.*;
 
 /**
  * @Title: MsgEnumType.java

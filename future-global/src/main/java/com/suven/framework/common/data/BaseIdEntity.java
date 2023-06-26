@@ -1,14 +1,8 @@
 package com.suven.framework.common.data;
 
-import com.alibaba.excel.annotation.ExcelIgnore;
-import com.alibaba.excel.annotation.ExcelProperty;
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.suven.framework.common.api.ApiDesc;
 import com.suven.framework.common.api.IBaseApi;
 import com.suven.framework.common.api.IBeanClone;
-
-import java.util.Date;
 
 
 /**
