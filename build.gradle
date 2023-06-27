@@ -57,6 +57,7 @@ allprojects {
         plugin 'java'
         plugin 'maven'
         plugin 'eclipse'
+        plugin 'maven-publish'
 //        plugin 'war'
     }
     repositories {
@@ -180,6 +181,25 @@ allprojects {
 
 }
 
+subprojects {
+    publishing {
+        repositories {
+            maven {
+                name = "com.suven.framework"
+                url = uri("https://github.com/jovenwang/future-service.git")
+                credentials {
+                    username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                    password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+                }
+            }
+        }
+        publications {
+            gpr(MavenPublication) {
+                from(components.java)
+            }
+        }
+    }
+}
 
 //dependencies {
 //    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"

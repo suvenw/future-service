@@ -36,16 +36,13 @@ import com.suven.framework.util.crypt.CryptUtil;
 import com.suven.framework.util.crypt.PasswordUtil;
 import com.suven.framework.util.excel.ExcelUtils;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.xerces.impl.dv.util.Base64;
 import org.databene.commons.CollectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Base64Utils;
 
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -144,11 +141,11 @@ public class SysUserLoginServiceImpl implements SysUserLoginService {
         String userPassword = sysUserRequestVo.getPassword();
 //        userPassword = CryptUtil.encryptPassword(sysUserRequestVo.getPassword());
         /** todo 若前端密码使用aes加密,则注释下面这行代码,如果是原文时,先加密码,再解密,这是不规范的,方便测试 */
-//        userPassword = CryptUtil.encryptPassword(userPassword);
+        userPassword = CryptUtil.encryptPassword(userPassword);
         /** todo 若前端密码使用aes加密,则注释上面这行代码,如果是原文时,先加密码,再解密,再解密,这是不规范的,方便测试  */
 
 
-        userPassword = aesCoverPassword(userPassword,dto.getSalt());
+        userPassword = coverPassword(userPassword,dto.getSalt());
         String sysPassword = dto.getPassword();
         if (!userPassword.equals(sysPassword)) {
             return SystemMsgCodeEnum.SYS_USER_PWD_FAIL;
@@ -164,26 +161,9 @@ public class SysUserLoginServiceImpl implements SysUserLoginService {
         return null;
     }
 
-    /**
-     * des解密
-     * @param sourcePassword
-     * @param Salt
-     * @return
-     */
+    //aes解密
     private static String coverPassword(String sourcePassword,String Salt) {
         String decryptPassword = CryptUtil.decryptPassword(sourcePassword );
-        String password = CryptUtil.md5(decryptPassword+Salt) ;
-        return password;
-    }
-
-    /**
-     * aes解密
-     * @param sourcePassword
-     * @param Salt
-     * @return
-     */
-    private static String aesCoverPassword(String sourcePassword,String Salt) {
-        String decryptPassword = CryptUtil.aesDecryptPassword(sourcePassword );
         String password = CryptUtil.md5(decryptPassword+Salt) ;
         return password;
     }

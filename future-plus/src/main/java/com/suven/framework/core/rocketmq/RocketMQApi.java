@@ -1,7 +1,7 @@
 package com.suven.framework.core.rocketmq;
 
-import com.suven.framework.plus.logback.GlobalRpcLogbackThread;
 import com.suven.framework.common.constants.GlobalConfigConstants;
+import com.suven.framework.plus.logback.GlobalRpcLogbackThread;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.MessageQueueSelector;

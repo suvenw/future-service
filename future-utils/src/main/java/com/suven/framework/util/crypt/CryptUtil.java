@@ -168,7 +168,24 @@ public class CryptUtil {
 		return sb.toString();
 	}
 
-
+	/**
+	 * AES密码解密
+	 *
+	 * @param data
+	 * @return
+	 * @throws Exception
+	 */
+	public final static String aesDecryptPassword(String data) {
+		if (data == null){
+			return null;
+		}
+		try {
+			return aesDecrypt(data, PASSWORD_CRYPT_KEY);
+		} catch (Exception e) {
+			logger.error("", e);
+		}
+		return null;
+	}
 
 	/**
 	 * 密码解密

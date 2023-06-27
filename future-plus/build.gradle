@@ -19,6 +19,7 @@ project(':future-plus') {
         compile 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.15.2'
         compile 'org.elasticsearch:elasticsearch-core:7.15.2'
 
+        compile "org.apache.dubbo:dubbo:${libs.dubbo_version}"
         compile "org.springframework.boot:spring-boot-starter-data-elasticsearch:${libs.spring_boot_version}"
 
         compile 'org.apache.shiro:shiro-core:1.4.0:'

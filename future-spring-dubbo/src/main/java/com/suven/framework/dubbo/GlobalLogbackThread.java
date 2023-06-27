@@ -21,7 +21,12 @@ public class GlobalLogbackThread {
     public static final String LOGBACK_TRACE_ID = "logback_trace_id";
     public static final String LOGBACK_LOCAL_IP = "logback_local_ip";
 
-
+    public interface GlobalConfigConstants{
+        /**  ================ 7. LOGBACK start param   ================ **/
+        public static final String LOGBACK_TRACE_ID = "logback_trace_id";
+        public static final String LOGBACK_LOCAL_IP = "logback_local_ip";
+        /**  ================ 7. LOGBACK end param   ================ **/
+    }
     public static void setLogbackTraceId(String traceId){
         traceId = traceId == null ? "" : traceId;
         MDC.put(LOGBACK_TRACE_ID,traceId);
