@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import org.jetbrains.annotations.NotNull;
 import org.springframework.cglib.beans.BeanCopier;
 
 /**
@@ -43,7 +45,8 @@ public abstract class BeanCopierUtil {
         return target;
     }
 
-    public static <S, T> List<T> copyList(List<S> sourceList, Class<S> sourceClass, Class<T> targetClass) throws Exception {
+
+    public static <S, T> List<T> copyList( @NotNull List<S> sourceList,  @NotNull Class<S> sourceClass,  @NotNull Class<T> targetClass) throws Exception {
         List<T> targetList = new ArrayList<>();
         BeanCopier beanCopier = getBeanCopier(sourceClass, targetClass);
 
@@ -59,7 +62,7 @@ public abstract class BeanCopierUtil {
     }
 
 
-    public static <S, T> void copyList(List<S> sourceList, List<T> targetList, int sourceOffset, int targetOffset, int length) {
+    public static <S, T> void copyList( @NotNull List<S> sourceList,  @NotNull List<T> targetList, int sourceOffset, int targetOffset, int length) {
         if (sourceList == null || targetList == null || sourceList.isEmpty() || targetList.isEmpty()) {
             throw new IllegalArgumentException("sourceList and targetList required not empty.");
         }
@@ -84,7 +87,7 @@ public abstract class BeanCopierUtil {
     }
 
 
-    private static BeanCopier getBeanCopier(Class<?> sourceClass, Class<?> targetClass) {
+    private static BeanCopier getBeanCopier( @NotNull Class<?> sourceClass, @NotNull Class<?> targetClass) {
         String key = generateKey(sourceClass, targetClass);
         BeanCopier beanCopier = beanCopierCache.computeIfAbsent(key, k -> {
             return BeanCopier.create(sourceClass, targetClass, false);
