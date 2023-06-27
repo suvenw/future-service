@@ -5,23 +5,6 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * @Author 作者 : suven.wang
- * @CreateDate 创建时间: 2021-09-13
- * @WeeK 星期: 星期四
- * @Version 版本: v1.0.0
- * <pre>
- *
- *  @Description (说明):  切面逻辑实现配置类
- *
- * </pre>
- * <pre>
- * 修改记录
- *    修改后版本:     修改人：  修改日期:     修改内容:
- * </pre>
- * @Copyright: (c) 2021 gc by https://www.suven.top
- **/
-
 @Configuration("catAdviceConfigSetting")
 @ConfigurationProperties(value = "com.sixeoc.cat")
 public class AdviceConfigSetting {

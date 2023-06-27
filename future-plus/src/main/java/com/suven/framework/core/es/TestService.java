@@ -4,8 +4,6 @@ import org.apache.lucene.search.TotalHits;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
-
-import org.elasticsearch.core.TimeValue;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 @Service
     public class TestService {
@@ -44,7 +41,7 @@ import java.util.concurrent.TimeUnit;
             do {
                 try {
                     sourceBuilder.query(totalFilter).from(from).size(size);
-                    sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
+//                    sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
                     searchRequest.source(sourceBuilder);
 
                     SearchResponse response = highLevelClient.search(searchRequest,null);

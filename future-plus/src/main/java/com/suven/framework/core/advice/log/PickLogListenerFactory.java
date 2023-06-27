@@ -6,6 +6,8 @@ import com.suven.framework.common.constants.ReflectionsScan;
 import com.suven.framework.util.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,9 @@ public  class PickLogListenerFactory implements PickLogListener {
    private Logger logger = LoggerFactory.getLogger(PickLogListenerFactory.class);
 
     List<PickLogService> list = new ArrayList<>();
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /**
      * 业务功能实现调用的方法
@@ -72,7 +77,8 @@ public  class PickLogListenerFactory implements PickLogListener {
         for (Class<?> clazz : classList){
             try {
                 if(PickLogService.class.isAssignableFrom(clazz) ){
-                    PickLogService pickLogService = (PickLogService)clazz.newInstance();
+
+                    PickLogService pickLogService = (PickLogService)applicationContext.getBean(clazz);
                     Order interceptor = AnnotationUtils.findAnnotation(clazz, Order.class);
 
                     //没有排序编号;随机排序;
@@ -86,8 +92,7 @@ public  class PickLogListenerFactory implements PickLogListener {
                 }
 
             }catch (Exception e){
-                e.printStackTrace();
-                logger.debug("===================== initPickLogService ===================== ",e);
+                logger.error("===================== initPickLogServiceError ===================== ",e);
             }
         }
         list.addAll(0,handlerTreeMap.values());

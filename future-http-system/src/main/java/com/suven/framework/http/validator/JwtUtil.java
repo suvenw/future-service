@@ -1,6 +1,5 @@
 package com.suven.framework.http.validator;
 
-import cn.hutool.core.date.DateTime;
 import com.alibaba.fastjson.JSONObject;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -30,7 +29,7 @@ public class JwtUtil {
     public static String createToken(String subject) {
 
         // 生成JWT的时间
-        Date now = DateTime.now();
+        Date now = new Date();
         Date expire = new Date(now.getTime() + JWT_EXPIRE_TIME);
 
         // 生成签名的时候使用的秘钥secret，切记这个秘钥不能外露哦。它就是你服务端的私钥，在任何场景都不应该流露出去。

@@ -1,6 +1,7 @@
 package com.suven.framework.core.kafka;
 
 import com.suven.framework.util.json.JsonUtils;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ public abstract class KafkaConsumerAbstractHandler<T>{
                 return;
             }
             if(clazz == Object.class|| null == clazz){
-                clazz = this.getTemplateType();
+                clazz = this.getTempalteType();
             }
             logger.info("  onMessage ConsumerRecord  value=:[{}]" , record.value());
             setLogger(clazz);
@@ -75,7 +76,7 @@ public abstract class KafkaConsumerAbstractHandler<T>{
             throw new RuntimeException(e);
         }
     }
-    private Class<T> getTemplateType() {
+    private Class<T> getTempalteType() {
         Class<T> clazz = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         return clazz;
     }

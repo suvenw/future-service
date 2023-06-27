@@ -10,13 +10,9 @@ import java.util.HashMap;
 
 public class Sample2 {
     //设置APPID/AK/SK
-//    public static final String APP_ID = "11784039";//"你的 App ID";
-//    public static final String API_KEY = "nDuA7GxRW3cFc0bU1j6yEZKF";//"你的 Api Key";
-//    public static final String SECRET_KEY = "9y8cKbk5jhMueYZdxutM9MX4I984LrDw";//"你的 Secret Key";
-    public static final String APP_ID = "32876586";//""11784039";//"你的 App ID";32876586
-    public static final String API_KEY ="pe3N6PmgAzKGBEdHLC5xEyNq"; //"nDuA7GxRW3cFc0bU1j6yEZKF";//"你的 Api Key";//pe3N6PmgAzKGBEdHLC5xEyNq
-    public static final String SECRET_KEY = "VFkxCGZShi22IsekdF3Q5oKUOXfigh2c"; //"9y8cKbk5jhMueYZdxutM9MX4I984LrDw";//"你的 Secret Key";VFkxCGZShi22IsekdF3Q5oKUOXfigh2c
-
+    public static final String APP_ID = "11784039";//"你的 App ID";
+    public static final String API_KEY = "nDuA7GxRW3cFc0bU1j6yEZKF";//"你的 Api Key";
+    public static final String SECRET_KEY = "9y8cKbk5jhMueYZdxutM9MX4I984LrDw";//"你的 Secret Key";
 
     public static void main(String[] args) throws Exception{
         // 初始化一个AipSpeech
@@ -49,17 +45,12 @@ public class Sample2 {
 //        3为情感合成-度逍遥，4为情感合成-度丫丫，默认为普通女	否
 // 设置可选参数
         HashMap<String, Object> options = new HashMap<String, Object>();
-        options.put("spd", "3");
+        options.put("spd", "5");
         options.put("pit", "5");
         options.put("vol", "8");
         options.put("per", "0");
 
-        str = "关于唐代著名太宗皇帝的简介\n" +
-                "太宗（599年－649年），姓李，名世民，唐朝第二位皇帝，他在位期间实行了一系列改革和开拓扩张的政策，开创了唐朝的盛世。\n" +
-                "太宗是李渊的第三个儿子，年少时即显得聪明过人，从小受到很好的教育。他深谙儒家经典，熟练掌握文学、历史和哲学等学科，同时也善于武艺。\n" +
-                "贞观年间，太宗实行了一系列改革，包括改革政治制度、加强中央集权、减轻赋税、开放州县市场、加强农业生产等。他还提倡科举制度，选拔人才，推崇儒学，提拔和重用许多文学、历史学家和哲学家，他本人也亲自撰写了许多文学和历史著作。\n" +
-                "太宗重视武功，自己也是一名出色的将领，多次亲征战场，扩大了唐朝的疆域。他还重视外交，通过外交手段巩固了唐朝的国际地位，与邻国建立了友好关系，达成了一系列重要条约。\n" +
-                "太宗在位期间，唐朝经济、文化、艺术、科技等方面都取得了长足的发展，被后人称为“贞观之治”。他是中国历史上杰出的政治家、军事家、文化家，对中国历史和文化产生了深远影响。";
+        str = "百度您好";
         TtsResponse res = client.synthesis(str, "zh", 1, options);
 
 

@@ -215,7 +215,7 @@ public class SysDepartWebController {
 //            response = SysDepartShowResponseVo.class
 //    )
 //    @RequestMapping(value = UrlCommand.sys_sysDepart_myDeptTreeList,method = RequestMethod.GET)
-////    @RequiresPermissions({"sys:sysDepart:queryTreeList"})
+//    @RequiresPermissions({"sys:sysDepart:queryTreeList"})
 //    public void myDeptTreeList(OutputResponse out) {
 //        List<SysDepartTreeModelResponseVo> list = sysDepartFacade.myDeptTreeList();
 //        out.write(list, new String[0]);

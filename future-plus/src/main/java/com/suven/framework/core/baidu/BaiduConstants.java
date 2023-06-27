@@ -10,9 +10,9 @@ package com.suven.framework.core.baidu;
  **/
 public class BaiduConstants {
     //设置APPID/AK/SK
-    public static final String APP_ID = "32876586";//""11784039";//"你的 App ID";32876586
-    public static final String API_KEY ="pe3N6PmgAzKGBEdHLC5xEyNq"; //"nDuA7GxRW3cFc0bU1j6yEZKF";//"你的 Api Key";//pe3N6PmgAzKGBEdHLC5xEyNq
-    public static final String SECRET_KEY = "VFkxCGZShi22IsekdF3Q5oKUOXfigh2c"; //"9y8cKbk5jhMueYZdxutM9MX4I984LrDw";//"你的 Secret Key";VFkxCGZShi22IsekdF3Q5oKUOXfigh2c
+    public static final String APP_ID = "11784039";//"你的 App ID";
+    public static final String API_KEY = "nDuA7GxRW3cFc0bU1j6yEZKF";//"你的 Api Key";
+    public static final String SECRET_KEY = "9y8cKbk5jhMueYZdxutM9MX4I984LrDw";//"你的 Secret Key";
 
     public static final int CONNECTION_TIMEOUT_IN_MILLIS = 2000;//毫秒
     public static final int SOCKET_TIMEOUT_IN_MILLIS = 60000;//毫秒

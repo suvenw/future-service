@@ -75,6 +75,7 @@ public abstract class RocketMQConsumerAbstractHandler<T> implements RocketMQList
                     if(fla){//重试实现
                         isRetry = true;
                     }else {/**重试完了,还是异常,执行异常处理业务方法*/
+                        delCheckRedisKey(product.getGlobalId());
                         onException(product);
                         return;
                     }
@@ -137,8 +138,12 @@ public abstract class RocketMQConsumerAbstractHandler<T> implements RocketMQList
 
 
     protected boolean doubleCheck(long globalId, int failedRetryCount){
-        return redisClusterServer.setex(RedisKeys.MQ_CONSUMER + globalId,
-                String.valueOf(failedRetryCount), getCacheTime());
+
+        String key = RedisKeys.MQ_CONSUMER + globalId;
+        redisClusterServer.getSet(key, String.valueOf(failedRetryCount), getCacheTime());
+
+        Integer count = redisClusterServer.getT(key, Integer.class);
+        return count > 0;
     }
 
     /**

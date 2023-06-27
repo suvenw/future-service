@@ -93,6 +93,14 @@ public class SysUserFacade {
 	 * @return
 	 */
 	public SysLoginResponseVo userLogin(SysUserLoginRequestVo sysUserLoginRequestVo) {
+		String code = sysUserLoginRequestVo.getCaptcha();
+		String lowerCaseCode = code.toLowerCase();
+		String key = RedisUtil.formatKey(RedisKeys.USER_LOGIN_CHECK, lowerCaseCode);
+		String sysCode = redisClusterServer.get(key);
+		if(StringUtils.isBlank(sysCode) || !sysCode.equals(code)){
+			throw new SystemRuntimeException(SysResultCodeEnum.SYS_LOGIN_CODE_FAIL);
+		}
+
 		SysUserLoginRequestDto loginRequestDto = SysUserLoginRequestDto.build().clone(sysUserLoginRequestVo);
 		SysLoginResponseDto loginDto =  sysUserLoginService.loginSysUser(loginRequestDto);
 		if(loginDto == null ){
