@@ -1,7 +1,7 @@
 group 'com.suven.framework'
 version '1.0.0-SNAPSHOT'
 
-def mavenVersion = "0.0.162"
+def mavenVersion = "1.0.8"
 def mavenGroup = "com.suven.framework"
 
 //def mavenUrl = "http://nexus.7955.com"
@@ -181,25 +181,7 @@ allprojects {
 
 }
 
-subprojects {
-    publishing {
-        repositories {
-            maven {
-                name = "com.suven.framework"
-                url = uri("https://github.com/jovenwang/future-service.git")
-                credentials {
-                    username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-                    password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
-                }
-            }
-        }
-        publications {
-            gpr(MavenPublication) {
-                from(components.java)
-            }
-        }
-    }
-}
+
 
 //dependencies {
 //    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
