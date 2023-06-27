@@ -36,7 +36,7 @@ public class BusinessLogicException extends Exception {
         super(error.getMsg());
         this.error = error;
         this.errorCode = error.getCode();
-        this.errorMessage = String.format(error.getMsg(), errParam);
+        this.errorMessage = String.format(error.getMsg(), new Object[] { errParam });
     }
 
 

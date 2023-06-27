@@ -58,7 +58,7 @@ public interface IResultCodeEnum {
 		return msgEnum;
 	}
 
-	default public IResultCodeEnum formatMsg(Object... msgContent) {
+	default public IResultCodeEnum formatMsg(String ... msgContent) {
 		IResultCodeEnum msgEnum = MsgEnumType.format(this,msgContent);
 		return msgEnum;
 	}
@@ -73,8 +73,8 @@ public interface IResultCodeEnum {
 			this.errMsg = errMsg;
 		}
 
-		public static IResultCodeEnum format(IResultCodeEnum enumType, Object... msgContent){
-			String msg =  String.format(enumType.getMsg(), msgContent);
+		public static IResultCodeEnum format(IResultCodeEnum enumType, String... msgContent){
+			String msg =  String.format(enumType.getMsg(), new Object[] { msgContent });
 			return new MsgEnumType(enumType.getCode(),msg);
 
 		}

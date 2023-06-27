@@ -3,6 +3,7 @@ package com.suven.framework.file.util;
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.OSSException;
+import com.aliyun.oss.common.auth.DefaultCredentialProvider;
 import com.aliyun.oss.model.*;
 
 import java.io.File;
@@ -24,16 +25,16 @@ public class OssUtils {
 
 	/**
 	 * 上传文件
-	 * 
-	 * @param key 上传到OSS起的名
+	 *
+	 *  key 上传到OSS起的名
 	 * @param fileName 本地文件名
-	 * 
+	 *
 	 * @throws OSSException
 	 * @throws ClientException
 	 * @throws FileNotFoundException
 	 */
 	public static String uploadFile(String fileName) throws FileNotFoundException {
-		OSSClient client = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+		OSSClient client = createOssClient();
 		String key = "supplyerp/" + System.currentTimeMillis();
 		setBucketPublicReadable();
 		File file = new File(fileName);
@@ -50,21 +51,21 @@ public class OssUtils {
 
 		InputStream input = new FileInputStream(file);
 		client.putObject(bucketName, key, input, objectMeta);
-		return "http://oss.0085.com/" + key;
+		return key;
 	}
 
 	/**
 	 * 根据文件流上传文件
-	 * 
-	 * @param key 上传到OSS起的名
+	 *
+	 *  key 上传到OSS起的名
 	 * @param input 文件流
-	 * 
+	 *
 	 * @throws OSSException
 	 * @throws ClientException
 	 * @throws FileNotFoundException
 	 */
 	public static String uploadFile(InputStream input, String fileTypeName) {
-		OSSClient client = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+		OSSClient client = createOssClient();
 		String key = "supplyerp/" + System.currentTimeMillis() + "." + fileTypeName;
 		setBucketPublicReadable();
 		ObjectMetadata objectMeta = new ObjectMetadata();
@@ -77,17 +78,17 @@ public class OssUtils {
 			objectMeta.setContentType("image/png");
 		}
 		client.putObject(bucketName, key, input, objectMeta);
-		return "http://oss.0085.com/" + key;
+		return  key;
 	}
 
 	/**
 	 * 列出所有Object
-	 * 
-	 * @param bucketName
+	 *
+	 *  bucketName
 	 */
 	public static void listObjects() {
 		// 初始化OSSClient
-		OSSClient client = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+		OSSClient client = createOssClient();
 		// 获取指定bucket下的所有Object信息
 		ObjectListing listing = client.listObjects(bucketName);
 		// 遍历所有Object
@@ -98,44 +99,49 @@ public class OssUtils {
 
 	/**
 	 * 下载文件
-	 * 
-	 * @param client OSSClient对象
-	 * @param bucketName Bucket名
-	 * @param Objectkey 上传到OSS起的名
-	 * @param filename 文件下载到本地保存的路径
-	 * 
+	 *
+	 *  client OSSClient对象
+	 *  bucketName Bucket名
+	 * Objectkey 上传到OSS起的名
+	 *  filename 文件下载到本地保存的路径
+	 *
 	 * @throws OSSException
 	 * @throws ClientException
 	 */
 	public static void getObject(String key, String fileName) {
-		OSSClient client = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+		OSSClient client = createOssClient();
 		// 获取Object，返回结果为OSSObject对象
 		client.getObject(new GetObjectRequest(bucketName, key), new File(fileName));
 	}
 
 	/**
 	 * 新建bucket
-	 * 
-	 * @param bucketName
+	 *
+	 *  bucketName
 	 */
 	public static void createBucket() {
-		OSSClient client = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+		OSSClient client = createOssClient();
 		// 新建一个Bucket
 		client.createBucket(bucketName);
 
 	}
+	private static OSSClient createOssClient(){
+		DefaultCredentialProvider provider = new DefaultCredentialProvider(accessKeyId, accessKeySecret);
+		OSSClient client = new OSSClient(endpoint,provider,null);
+		return client;
+	}
 
 	/**
 	 * 把Bucket设置成所有人可读
-	 * 
-	 * @param client OSSClient对象
-	 * @param bucketName Bucket名
-	 * 
+	 *
+	 *  client OSSClient对象
+	 *  bucketName Bucket名
+	 *
 	 * @throws OSSException
 	 * @throws ClientException
 	 */
 	private static void setBucketPublicReadable() throws OSSException, ClientException {
-		OSSClient client = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+		OSSClient client = createOssClient();
 		// 创建bucket
 		client.createBucket(bucketName);
 		// 设置bucket的访问权限， public-read-write权限

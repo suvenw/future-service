@@ -2,6 +2,7 @@ package com.suven.framework.http.validator;
 
 import com.alibaba.fastjson.JSONObject;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.apache.commons.lang3.StringUtils;
@@ -73,10 +74,9 @@ public class JwtUtil {
      */
     public static long getUserId(String token) {
         Key key = generalKey();  //签名秘钥，和生成的签名的秘钥一模一样
-        Claims claims = Jwts.parser()  //得到DefaultJwtParser
-                .setSigningKey(key)                 //设置签名的秘钥
-                .parseClaimsJws(token).getBody();     //设置需要解析的jwt
-                claims.getSubject();
+        //得到DefaultJwtParser  //设置签名的秘钥  //设置需要解析的jwt
+        Claims claims =  Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        claims.getSubject();
         String obj = JwtUtil.getUserInfo(token);
         if (StringUtils.isBlank(obj)) { //查找不到直接返回错误值
             return -1;

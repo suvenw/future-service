@@ -99,8 +99,7 @@ public abstract class BaseHttpResponseHandlerConverter {
 				if(errorParam == null || errorParam.length <=0){
 					return codeEnum;
 				}
-				Object[] param = Arrays.asList(errorParam).toArray();
-				String msg = String.format(codeEnum.getMsg(), param);
+				String msg = String.format(codeEnum.getMsg(), new Object[] { errorParam });
 				return codeEnum.cloneMsg(msg);
 			}
 		} catch (Exception e) {

@@ -53,7 +53,7 @@
 //
 //    private static String formatMsg(String... error){
 //        String format = "参数请求错误，%s！";
-//        String msg =  String.format(format, Arrays.asList(error));
+//        String msg =  String.format(format, new Object[] { error });
 //        return msg;
 //    }
 //
