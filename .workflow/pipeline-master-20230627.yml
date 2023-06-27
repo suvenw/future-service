@@ -1,0 +1,63 @@
+version: '1.0'
+name: pipeline-master-20230627
+displayName: pipeline-master
+triggers:
+  trigger: manual
+  push:
+    branches:
+      prefix:
+        - ''
+stages:
+  - name: stage-8e43a291
+    displayName: gradel 构建
+    strategy: naturally
+    trigger: manual
+    executor:
+      - suvenw
+    steps:
+      - step: build@gradle
+        name: build_gradle
+        displayName: Gradle 构建
+        jdkVersion: '8'
+        gradleVersion: '4.4'
+        commands:
+          - '# Gradle默认构建命令'
+          - chmod +x ./gradle
+          - '#Gradle 编译'
+          - ./gradle idea
+          - '#Gradle 打包'
+          - ./gradle lib
+        artifacts:
+          - name: BUILD_ARTIFACT
+            path:
+              - ./build
+        caches:
+          - ~/.gradle/caches
+        notify: []
+        strategy:
+          retry: '0'
+  - name: stage-82d6514d
+    displayName: 未命名
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: build@gradle
+        name: build_gradle
+        displayName: Gradle 构建打包
+        jdkVersion: '8'
+        gradleVersion: '4.4'
+        commands:
+          - '# Gradle默认构建命令'
+          - ''
+          - ./gradlew lib
+        artifacts:
+          - name: BUILD_ARTIFACT
+            path:
+              - ./target
+              - ./build
+        caches:
+          - ~/.gradle/caches
+        notify: []
+        strategy:
+          retry: '0'
