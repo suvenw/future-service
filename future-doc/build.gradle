@@ -8,7 +8,8 @@ project(':future-doc') {
     jar.exclude 'logback.xml'
     jar.exclude '*.sh'
     jar.exclude '*.yml'
-    dependencies{
+
+    dependencies {
 
         compile fileTree( dir: "lib", include: '*.jar' )
         compile "org.springframework:spring-context:${libs.spring_version}"

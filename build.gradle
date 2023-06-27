@@ -122,40 +122,52 @@ allprojects {
     //  processResources << {
     //     file("$destinationDir/version.properties").text = 'version=' + project.version
     // }
-
+    //1.  gradle clean  清空缓存
+    //2.  gradle idea   编译代码
+    //3.  gradle lib  打包运行项目包,包括项目所有依赖包
     task lib(type: Sync, dependsOn: jar) {
         from configurations.compile
-        from jar.archivePath
+        from jar.archiveFile
         into 'build/lib'
     }
 
+   //4.gradle copylib 将当前模块所依赖模块jar包,复制到当前目录 lib_ext 上
     task copylib(type: Copy) {
         from 'build/lib'
         into 'build/lib_ext'
-        include 'future*.jar', 'future2*.jar'
+        include 'future*.jar'
     }
-
+    //5.gradle alllib 将项目所有模块jar中,复制到根目录的 lib_ext 上
+    task alllib(type: Copy ) {
+        from 'build/lib','build/libs'
+        into '../build/lib_ext'
+        include 'future*.jar'
+    }
+    //5.gradle webapp 将项目js或html,复制到 webapp 目录上
     task webapp(type: Sync) {
         from 'src/main/webapp'
         into 'build/lib/webapp'
     }
-    task copyEtc(type: Sync) {
+    //6.gradle copyetc 将项目中所依赖的配置文件,复制到 etc 目录上
+    task copyetc(type: Sync) {
         from '../future-utils/src/main/resources'
         into 'build/config/etc'
         from 'src/main/resources'
         into 'build/config/etc'
 
     }
-
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = 'sources'
+    //7.gradle sourcesJar 将项目中所模块生成源码 jar 包,用于版本发部使用
+    task sourcesJar(type: Jar, dependsOn: jar) {
+        archiveClassifier = 'sources'
         from sourceSets.main.allSource
     }
+
+    //8.gradle javadocJar 将项目中所模块生成源码介绍文档,用于代码使用
     task javadocJar(type: Jar) {
-        classifier = 'javadoc'
+        archiveClassifier = 'javadoc'
         from javadoc
     }
-
+   //8.gradle ziplib 将项目模块中所运行的jar和配合文件,压缩打包
     task ziplib(type: Zip) {
         from 'build/config'
         from 'src/dist'
@@ -164,10 +176,12 @@ allprojects {
         }
     }
 
+    //10.gradle copyClass 将项目模块中所有 classes 编译后的文件复制到根目录的 classes
     task copyClass(type: Copy) {
         from 'build/classes'
         into '../build/classes'
     }
+    //11.gradle copySrc 将项目模块中所有 classes 编译后的文件复制到根目录的 src
     task copySrc(type: Copy) {
         from 'src/main/java'
         into '../build/src/main/java'

@@ -1,0 +1,50 @@
+// 项目名称描述
+description = 'future-cat'
+//引用项目的公共版包版本信息
+def libs = rootProject.ext.libVersions
+
+
+project(':future-cat'){
+    jar.exclude 'env.conf'
+    jar.exclude 'logback.xml'
+    dependencies{
+
+        compile fileTree( dir: "lib", include: '*.jar' )
+        compile project(':future-global')
+
+        compile 'com.dianping.cat:cat-client:3.1.0'
+        compile "org.eclipse.jetty:jetty-server:${libs.jetty_version}"
+        compile "org.eclipse.jetty:jetty-servlet:${libs.jetty_version}"
+        compile "org.eclipse.jetty:jetty-servlets:${libs.jetty_version}"
+
+        //cat-core
+//        compile 'org.unidal.framework:foundation-service:4.1.1'
+//        compile 'org.unidal.framework:web-framework:4.1.1'
+//        compile 'org.unidal.framework:dal-jdbc:4.1.1'
+        compile 'org.xerial.snappy:snappy-java:1.1.7'
+        compile 'org.unidal.framework:foundation-service:2.5.0'
+        compile 'org.unidal.framework:web-framework:2.4.0'
+        compile 'org.unidal.framework:dal-jdbc:2.4.0'
+//        compile 'org.xerial.snappy:snappy-java:1.1.2'
+        compile 'com.google.code.gson:gson:2.8.5'
+        compile "io.netty:netty-all:${libs.netty_all_version}"
+        compile 'org.apache.commons:commons-lang3:3.4'
+
+        compile "ch.qos.logback:logback-classic:${libs.logback_version}"
+        compile "ch.qos.logback:logback-core:${libs.logback_version}"
+        compile "ch.qos.logback:logback-access:${libs.logback_version}"
+        compile "org.slf4j:slf4j-api:${libs.slf4j_version}"
+        compile "org.slf4j:slf4j-log4j12:${libs.slf4j_version}"
+        compile "org.slf4j:slf4j-ext:${libs.slf4j_version}"
+        compile "org.slf4j:jcl-over-slf4j:${libs.slf4j_version}"
+        compile "org.slf4j:log4j-over-slf4j:${libs.slf4j_version}"
+        compile 'net.logstash.logback:logstash-logback-encoder:5.1'
+        compile "org.springframework.boot:spring-boot-starter-web:${libs.spring_boot_version}"
+        compile 'com.alibaba:druid:1.1.21'
+        compile "org.apache.dubbo:dubbo:${libs.dubbo_version}"
+
+    }
+
+}
+
+
