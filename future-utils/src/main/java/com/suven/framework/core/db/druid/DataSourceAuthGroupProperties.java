@@ -43,7 +43,7 @@ import java.lang.annotation.Annotation;
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class,
         DruidDataSourceAutoConfigure.class, JdbcTemplateAutoConfiguration.class})
 @ConditionalOnProperty(name =  DatasourceConfiguration.SPRING_DATA_SOURCE_ENABLED,  matchIfMissing = true)
-@ConfigurationProperties(value = DatasourceConfiguration.SPRING_DATA_SOURCE)
+@ConfigurationProperties(prefix = DatasourceConfiguration.SPRING_DATA_SOURCE)
 @AutoConfigureBefore({DruidDataSourceAutoConfig.class})
 public class DataSourceAuthGroupProperties implements IDataSourceGroupProperties {
 

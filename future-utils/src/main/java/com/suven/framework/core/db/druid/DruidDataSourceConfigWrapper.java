@@ -32,7 +32,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * @author lihengming [89921218@qq.com]
  */
-@ConfigurationProperties("spring.datasource")
+@ConfigurationProperties(prefix = DatasourceConfiguration.SPRING_DATA_SOURCE)
 public class DruidDataSourceConfigWrapper implements InitializingBean {
 
     private Map<Object,Object> druid;

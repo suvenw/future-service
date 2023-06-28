@@ -1,0 +1,65 @@
+
+# 数据连接池配置信息
+spring:
+  datasource:
+    druid:
+      config:
+        enabled: true
+      dbType: mysql
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      filters: stat
+      initial-size: 1
+      initialize: true
+      max-active: 20
+      max-wait: 600
+      min-evictable-idle-time-millis: 300000
+      min-idle: 3
+      pool-prepared-statements: true
+      slave:
+        enabled: true
+      stat-view-servlet:
+        enabled: false
+      statViewServlet:
+        loginPassword: 123456
+        loginUsername: admin
+        resetEnable: false
+        urlPattern: /druid/*
+      test-on-borrow: true
+      test-on-return: true
+      test-while-idle: true
+      time-between-eviction-runs-millis: 60000
+      type: com.alibaba.druid.pool.DruidDataSource
+      validationQuery: select 'x';
+      web-stat-filter:
+        enabled: false
+      webStatFilter:
+        exclusions: '"*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*,/server/druid/*'
+        profileEnable: false
+        sessionStatEnable: false
+        urlPattern: /*
+  filter:
+    dos:
+      exclusions: /druid/*,/server/druid/*
+      urlPatterns: /server/*
+
+
+# mybatis-plus 配置生效启动开关
+top:
+  server:
+    mybatis:
+      enabled: true
+
+# mybatis-plus 配置
+mybatis-plus:
+  configuration:
+    cache-enabled: false
+    call-setters-on-nulls: true
+    jdbc-type-for-null: 'null'
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      column-underline: true
+      id-type: AUTO
+  mapper-locations: classpath*:/mapper/**/*Mapper.xml
+  type-aliases-package: com.suven.framework.*.entity

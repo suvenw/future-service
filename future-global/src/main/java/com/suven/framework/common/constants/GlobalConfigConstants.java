@@ -89,7 +89,7 @@ public interface GlobalConfigConstants {
 	public static final String REDIS_AUTO_CONFIG = "top.redis.cluster";
 	public static final String REDIS_AUTO_CONFIG_ENABLED = REDIS_AUTO_CONFIG + ".enabled";
 
-	public static final String REDIS_AUTO_CONFIG_ONE_ENABLED = REDIS_AUTO_CONFIG + "one.enabled";
+	public static final String REDIS_AUTO_CONFIG_ONE_ENABLED = REDIS_AUTO_CONFIG + ".group.enabled";
 
 	public static final String REDIS_CONFIG_CLUSTER_SERVERS = REDIS_AUTO_CONFIG + ".servers";
 	public static final String REDIS_CONFIG_CLUSTER_PASSWORD = REDIS_AUTO_CONFIG + ".password";

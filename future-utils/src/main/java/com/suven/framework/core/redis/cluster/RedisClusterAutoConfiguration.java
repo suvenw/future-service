@@ -81,7 +81,7 @@ public class RedisClusterAutoConfiguration implements RedisConfig, EnvironmentAw
 			String servers = this.getProperty(REDIS_CLUSTER_SERVERS);
 			if(servers == null){
 				logger.error("RedisClusterAutoConfiguration postProcessBeanDefinitionRegistry=[{}] Registry --- routingRedisCluster fail ......      ",REDIS_CLUSTER_SERVERS);
-//				return;
+				return;
 			}
 
 			String password = this.getProperty(REDIS_CLUSTER_PASSWORD);

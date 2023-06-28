@@ -111,7 +111,8 @@ public class AliyunSmsApi {
         // 构建一个客户端实例，用于发起请求
         IClientProfile profile = DefaultProfile.getProfile(
                 regionId, accessKeyId,accessSecret);
-        DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
+//        DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
+        DefaultProfile.addEndpoint( "cn-hangzhou", product, domain);
         DefaultAcsClient client = new DefaultAcsClient(profile);
 
         try
