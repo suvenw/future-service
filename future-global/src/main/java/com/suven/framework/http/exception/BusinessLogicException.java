@@ -2,10 +2,12 @@ package com.suven.framework.http.exception;
 
 import com.suven.framework.http.inters.IResultCodeEnum;
 
+import java.util.function.Supplier;
+
 /**
  * Created by Alex on 2014/9/3
  */
-public class BusinessLogicException extends Exception {
+public class BusinessLogicException extends Exception implements Supplier<BusinessLogicException> {
 
     private IResultCodeEnum error;
 
@@ -56,5 +58,13 @@ public class BusinessLogicException extends Exception {
         return errorMessage;
     }
 
-
+    /**
+     * Gets a result.
+     *
+     * @return a result
+     */
+    @Override
+    public BusinessLogicException get() {
+        return this;
+    }
 }

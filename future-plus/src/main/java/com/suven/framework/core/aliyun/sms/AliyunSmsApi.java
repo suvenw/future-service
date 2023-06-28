@@ -120,12 +120,12 @@ public class AliyunSmsApi {
 
             CommonRequest request = new CommonRequest();
 //            request.setSysProtocol(ProtocolType.HTTP);
-            request.setMethod(MethodType.POST);
+            request.setSysMethod(MethodType.POST);
             // 构造请求
-            request.setDomain( domain);
-            request.setMethod(MethodType.POST);
-            request.setVersion("2017-05-25");
-            request.setAction("SendSms");
+            request.setSysDomain( domain);
+            request.setSysMethod(MethodType.POST);
+            request.setSysVersion("2017-05-25");
+            request.setSysAction("SendSms");
 
 
 

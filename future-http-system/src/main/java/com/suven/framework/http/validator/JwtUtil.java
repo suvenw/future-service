@@ -57,9 +57,11 @@ public class JwtUtil {
     public static String getUserInfo(String token) {
         Key key = generalKey();  //签名秘钥，和生成的签名的秘钥一模一样
         try {
-            Claims claims = Jwts.parser()  //得到DefaultJwtParser
-                    .setSigningKey(key)                 //设置签名的秘钥
-                    .parseClaimsJws(token).getBody();     //设置需要解析的jwt
+//            Claims claims = Jwts.parser()  //得到DefaultJwtParser
+//                    .setSigningKey(key)                 //设置签名的秘钥
+//                    .parseClaimsJws(token).getBody();     //设置需要解析的jwt
+            //得到DefaultJwtParser  //设置签名的秘钥  //设置需要解析的jwt
+            Claims claims =  Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
             return claims.getSubject();
         }catch (Exception e){
         }

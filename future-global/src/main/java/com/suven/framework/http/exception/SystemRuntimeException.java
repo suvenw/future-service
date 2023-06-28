@@ -1,16 +1,20 @@
 package com.suven.framework.http.exception;
 
 
+import com.suven.framework.common.enums.SysResultCodeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.suven.framework.http.inters.IResultCodeEnum;
+import org.springframework.util.Assert;
+
+import java.util.function.Supplier;
 
 
 /**
  * @author vincentdeng
  *
  */
-public class SystemRuntimeException extends RuntimeException{
+public class SystemRuntimeException extends RuntimeException implements Supplier<SystemRuntimeException> {
 
 	private static Logger logger = LoggerFactory.getLogger(SystemRuntimeException.class);
 
@@ -100,6 +104,15 @@ public class SystemRuntimeException extends RuntimeException{
 	}
 
 
+	/**
+	 * Gets a result.
+	 *
+	 * @return a result
+	 */
+	@Override
+	public SystemRuntimeException get() {
+		return this;
+	}
 
 	/**
 	 * @return 返回 error。
@@ -108,5 +121,11 @@ public class SystemRuntimeException extends RuntimeException{
 	public IResultCodeEnum getError() {
 
 		return error;
+	}
+
+	public static void main(String[] args) {
+		int a = 0 ,  b = 100;
+		String ab  = null;
+		Assert.notNull(ab, String.valueOf(new SystemRuntimeException(SysResultCodeEnum.SYS_PARAM_ERROR).errorMessage));
 	}
 }
