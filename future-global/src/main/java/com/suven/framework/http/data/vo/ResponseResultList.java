@@ -1,7 +1,11 @@
 package com.suven.framework.http.data.vo;
 
 import com.suven.framework.common.api.ApiDesc;
+import com.suven.framework.common.api.IBeanClone;
+import com.suven.framework.core.db.IterableConverter;
+import org.apache.commons.collections4.CollectionUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,5 +133,33 @@ public class ResponseResultList<T> implements IResponseResultList{
 		this.total = total;
 		return this;
 	}
+
+	/**
+	 * 分页结果对象转换实现, 用于分页查询,将V为DTO对象,转换成V为VO对象的分页结果ResponseResultList
+	 * @param targetClazz 需要转换成结果目录对象
+	 * @return ResponseResultList
+	 */
+	public <V extends IBeanClone> ResponseResultList<V> coverBuild( Class<V> targetClazz){
+		List<V> resultList = IterableConverter.convertList(this.getList(), targetClazz);
+
+		ResponseResultList<V> result = new ResponseResultList<>();
+		result.toList(resultList)
+				.toIsNextPage(this.getIsNextPage())
+				.toPageIndex(this.getPageIndex())
+				.toTotal(this.getTotal());
+		return result;
+	}
+
+	/**
+	 * 转换结果, 用于分页查询
+	 * <p>page为null不会判断下一页
+	 * @param isNextPage        分页信息, 是否有下一页,
+	 * @return ResponseResultList
+	 */
+	public ResponseResultList<T> coverBuild(List<T> resultList, boolean isNextPage ) {
+		this.toList(resultList).toIsNextPage(isNextPage);
+		return this;
+	}
+
 
 }

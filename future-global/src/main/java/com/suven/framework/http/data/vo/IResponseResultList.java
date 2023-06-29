@@ -1,5 +1,6 @@
 package com.suven.framework.http.data.vo;
 
+
 import java.util.List;
 
 /**
@@ -32,4 +33,6 @@ public interface IResponseResultList<T> {
 
     /** 是否有下一页的标识,1.有下一页, 0.没有下一页 **/
     int getIsNextPage();
+
+
 }

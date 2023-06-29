@@ -4,9 +4,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.suven.framework.common.api.IBaseApi;
 import com.suven.framework.common.api.IBeanClone;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -185,7 +184,7 @@ public class IterableConverter {
      * @param list
      * @return   List<B>
      */
-    public static < T extends Serializable, V extends IBeanClone>  List<V> convertList(Collection<T> list, Class<V> clazz){
+    public static < T, V extends IBeanClone>  List<V> convertList(Collection<T> list, Class<V> clazz){
         if(CollectionUtils.isEmpty(list)){
             return Collections.emptyList();
         }
@@ -364,6 +363,8 @@ public class IterableConverter {
         return resultSet;
 
     }
+
+
 
 
 /*    public static void main(String[] args) {
