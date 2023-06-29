@@ -134,6 +134,11 @@ public class ResponseResultList<T> implements IResponseResultList{
 		return this;
 	}
 
+	/** 判断类对象的 list 聚合是否为空的实现方法 **/
+	public boolean isNotList(){
+		return null == list || list.isEmpty();
+	}
+
 	/**
 	 * 分页结果对象转换实现, 用于分页查询,将V为DTO对象,转换成V为VO对象的分页结果ResponseResultList
 	 * @param targetClazz 需要转换成结果目录对象
