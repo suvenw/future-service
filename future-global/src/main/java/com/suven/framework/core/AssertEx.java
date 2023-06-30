@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 
 public final class AssertEx{
     private AssertEx() {
-        throw new AssertionError("No java.util.ObjectsExt instances for you!");
+        throw new AssertionError("No java.util.AssertEx instances for you!");
     }
 
 
@@ -59,7 +59,7 @@ public final class AssertEx{
      * </pre>
      *
      * @param expression       布尔值
-     * @param errorMsgTemplate 错误抛出异常附带的消息模板，变量用{}代替
+     * @param errorMsgTemplate 错误抛出异常附带的消息模板，变量用{%s}代替
      * @param params           参数列表
      * @throws IllegalArgumentException if expression is {@code false}
      */
