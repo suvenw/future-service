@@ -49,7 +49,7 @@ fi
 JAVA_OPTS_EXT=' -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+CMSClassUnloadingEnabled -XX:SurvivorRatio=8 -XX:-UseParNewGC -verbose:gc  -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=30m -XX:-OmitStackTraceInFastThrow -XX:-UseLargePages'
 
 ## JAVACMD="$JAVA_HOME/bin/java"
-JAVACMD="$JAVA_HOME/bin/java"
+JAVACMD="${JAVA_HOME}/bin/java"
 
 # 项目运行依赖包目录
 SERVER_LIB="${SERVER_BASE_DIR}/lib/*"
@@ -58,13 +58,13 @@ SERVER_LIB_EXT="${SERVER_BASE_DIR}/lib_ext/*"
 # 项目运行依赖配置文件目录
 SERVER_ETC="${SERVER_BASE_DIR}/etc/"
 # 项目运行依赖 环境配置
-CLASSPATH="$SERVER_ETC:$SERVER_LIB:$SERVER_LIB_EXT"
+CLASSPATH="${SERVER_ETC}:${SERVER_LIB}:${SERVER_LIB_EXT}"
 # 项目运行启动命令
- exec -a  "$SERVER_NAME" "$JAVACMD" -server $JAVA_OPTS $JAVA_OPTS_EXT $ARGS -classpath "$CLASSPATH" $SERVER_MAIN  $SERVER_PORT \
+ exec -a  "$SERVER_NAME" $JAVACMD -server $JAVA_OPTS $JAVA_OPTS_EXT $ARGS -classpath "$CLASSPATH" $SERVER_MAIN  $SERVER_PORT \
    -Dapp.pid="$$" \
-   -Dapp.repo="$SERVER_LIB" \
+   -Dapp.repo="${SERVER_LIB}" \
    -Dapp.runing="java" \
-   -Dbasedir="$SERVER_PATH" \
+   -Dbasedir="$SERVER_BASE_DIR" \
    --spring.profiles.active=${SERVER_ENV}  > /dev/null  2>&1 &
 
     echo "--------JAVA ${SERVER_MAIN} 服务启动成功--------"
