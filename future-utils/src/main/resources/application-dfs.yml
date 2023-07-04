@@ -21,9 +21,9 @@ top:
       oss:
         enabled: true
         https: false
-        endpoint:
-        accessKeyId:
-        accessKeySecret:
+        endpoint: http://oss-cn-shanghai.aliyuncs.com
+        accessKeyId: accessKeyId
+        accessKeySecret: accessKeySecret
         bucketKeyValue: im,suven-im,user,suven-im
         bucketName: suven-im
         domain: 
