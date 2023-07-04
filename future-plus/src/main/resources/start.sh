@@ -153,7 +153,7 @@ function start()
     nohup exec -a ${SERVER_NAME} java -server ${JAVA_OPT}  ${RUN_MAIN} ${SERVER_PORT} --spring.profiles.active=${SERVER_ENV}
     echo "${SERVER_NAME} is starting，you can check the ${BASE_DIR}/logs/start.out"
     echo "--------服务启动成功--------"
-    echo "--------欢迎使用sixeco 广州私服 CRM ^_^--------"
+    echo "--------欢迎使用suven 广州私服 CRM ^_^--------"
     tail -f ${BASE_DIR}/logs/start.log
 }
 
