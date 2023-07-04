@@ -5,8 +5,8 @@ def mavenVersion = "1.0.8"
 def mavenGroup = "com.suven.framework"
 
 //def mavenUrl = "http://nexus.7955.com"
-//https://oa.sixeco.com/nexus/content/groups/public/
-def mavenUrl = "https://oa.sixeco.com/nexus"
+//https://oa.suven.com/nexus/content/groups/public/
+def mavenUrl = "https://oa.suven.com/nexus"
 def mavenUserName = 'admin'
 def mavenPassword = 'sixeco123'
 def mainClassName = 'com.suven.framework.MqMain'
