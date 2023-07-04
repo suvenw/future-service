@@ -8,7 +8,7 @@ def mavenGroup = "com.suven.framework"
 //https://oa.suven.com/nexus/content/groups/public/
 def mavenUrl = "https://oa.suven.com/nexus"
 def mavenUserName = 'admin'
-def mavenPassword = 'sixeco123'
+def mavenPassword = 'suven123'
 def mainClassName = 'com.suven.framework.MqMain'
 
 // 全局参数配置
